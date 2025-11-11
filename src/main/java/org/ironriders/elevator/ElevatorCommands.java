@@ -6,43 +6,45 @@ import org.ironriders.core.ElevatorWristCTL.ElevatorLevel;
 
 public class ElevatorCommands {
 
-  private ElevatorSubsystem elevatorSubsystem;
+    private ElevatorSubsystem elevatorSubsystem;
 
-  public ElevatorCommands(ElevatorSubsystem elevator) {
-    this.elevatorSubsystem = elevator;
+    public ElevatorCommands(ElevatorSubsystem elevator) {
+        this.elevatorSubsystem = elevator;
 
-    elevator.debugPublish("Rehome", home());
-    elevator.publish("Force Home", home());
-  }
+        elevator.debugPublish("Rehome", home());
+        elevator.publish("Force Home", home());
+    }
 
-  /**
-   * Command to set the elevator's target position to one of several predefined levels.
-   *
-   * @return a Command to change target, finishes when the elevator has reached it.
-   */
-  public Command set(ElevatorLevel level) {
-    return new Command() {
-      public void initialize() {
-        elevatorSubsystem.setGoal(level);
-      }
+    /**
+     * Command to set the elevator's target position to one of several predefined
+     * levels.
+     *
+     * @return a Command to change target, finishes when the elevator has reached
+     *         it.
+     */
+    public Command set(ElevatorLevel level) {
+        return new Command() {
+            public void initialize() {
+                elevatorSubsystem.setGoal(level);
+            }
 
-      public boolean isFinished() {
-        return elevatorSubsystem.isAtPosition();
-      }
-    };
-  }
+            public boolean isFinished() {
+                return elevatorSubsystem.isAtPosition();
+            }
+        };
+    }
 
-  /**
-   * Command to home the elevator, finding the bottom pos and remembering it.
-   *
-   * @return a Command that finishes when the bottom limit switch is pressed.
-   */
-  public Command home() {
-    return Commands.runOnce(() -> elevatorSubsystem.setNotHomed());
-  }
+    /**
+     * Command to home the elevator, finding the bottom pos and remembering it.
+     *
+     * @return a Command that finishes when the bottom limit switch is pressed.
+     */
+    public Command home() {
+        return Commands.runOnce(() -> elevatorSubsystem.setNotHomed());
+    }
 
-  public Command downRehomeReset() {
-    return Commands.sequence(
-        set(ElevatorLevel.DOWN), home(), elevatorSubsystem.runOnce(elevatorSubsystem::reset));
-  }
+    public Command downRehomeReset() {
+        return Commands.sequence(
+                set(ElevatorLevel.DOWN), home(), elevatorSubsystem.runOnce(elevatorSubsystem::reset));
+    }
 }

@@ -13,3 +13,4 @@ jobs:
           level: error
           fail_level: error
           checkstyle_config: google_checks.xml
+          workdir: "src/main/java/org/ironriders"
