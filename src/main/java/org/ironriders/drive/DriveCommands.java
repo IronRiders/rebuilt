@@ -15,10 +15,13 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.ironriders.lib.GameState;
 
+/** Commands for drive subsystem. */
 @Logged
 public class DriveCommands {
 
   private final DriveSubsystem driveSubsystem;
+
+  /** Initialize drive commands. */
   public DriveCommands(DriveSubsystem driveSubsystem) {
     this.driveSubsystem = driveSubsystem;
 
@@ -27,13 +30,13 @@ public class DriveCommands {
     this.driveSubsystem.publish(
         "Invert Drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
     this.driveSubsystem.publish(
-          "Invert Rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
+        "Invert Rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
   }
 
   /**
-   * @param translation
-   * @param rotation
-   * @param fieldRelative
+   * drive with set translation and rotation.
+   *
+   * @param fieldRelative drive relative to the robot or field.
    * @return a command that does what is described above
    */
   public Command drive(
@@ -45,6 +48,7 @@ public class DriveCommands {
         });
   }
 
+  /** Give me to joystick inputs basiclly. */
   public Command driveTeleop(
       DoubleSupplier inputTranslationX,
       DoubleSupplier inputTranslationY,
@@ -65,6 +69,7 @@ public class DriveCommands {
         () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_DRIVE_MAX_SPEED,
         () -> fieldRelative);
   }
+  /**Move a little bit in a specfic direction. */
 
   public Command jog(double robotRelativeAngleDegrees) {
     // Note - PathFinder does not do well with small moves so we move manually
@@ -96,6 +101,7 @@ public class DriveCommands {
   public void resetRotation() {
     driveSubsystem.resetRotation();
   }
+  /**Path find to a given pose2d. */
 
   public Command pathfindToPose(Pose2d targetPose) {
     return driveSubsystem.defer(
@@ -111,7 +117,8 @@ public class DriveCommands {
           return driveSubsystem.pathfindCommand;
         });
   }
-
+  /**Targeting subsystem stuff, go to what it wants. */
+  
   public Command pathfindToTarget() {
     return driveSubsystem.defer(
         () -> {
@@ -123,6 +130,7 @@ public class DriveCommands {
           return pathfindToPose(pose.get().toPose2d());
         });
   }
+  /**Stop path finding. */
 
   public Command cancelPathfind() {
     return driveSubsystem.runOnce(
@@ -132,6 +140,7 @@ public class DriveCommands {
           }
         });
   }
+  /**Set drive speed. */
 
   public Command setDriveTrainSpeed(double speed) {
     return driveSubsystem.runOnce(

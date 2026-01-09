@@ -5,6 +5,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.io.File;
 
+/** Constants for the drive subsystem. */
 public class DriveConstants {
 
   public static final double ROBOT_WIDTH = 37; // Front-back
@@ -32,10 +33,8 @@ public class DriveConstants {
   public static final double ROTATION_CONTROL_EXPONENT = 3.0;
   public static final double ROTATION_CONTROL_DEADBAND = 0.8;
 
-  public static final double SWERVE_DRIVE_MAX_SPEED =
-      6; // m/s 
-  public static final double SWERVE_MAXIMUM_ANGULAR_VELOCITY =
-      Math.PI * 2.5; // rad/s
+  public static final double SWERVE_DRIVE_MAX_SPEED = 6; // m/s
+  public static final double SWERVE_MAXIMUM_ANGULAR_VELOCITY = Math.PI * 2.5; // rad/s
 
   public static final double SWERVE_MAXIMUM_SPEED_AUTO = 1.0; // m/s
   public static final double SWERVE_MAXIMUM_ACCELERATION_AUTO = // TODO: This does nothing!!
@@ -46,4 +45,11 @@ public class DriveConstants {
 
   public static final double JOG_DISTANCE_INCHES = 0.5;
   public static final double JOG_SPEED = .25;
+  public static final double VISION_P = 0.1;
+
+  public static final double VISION_I = 0.05;
+  public static final double VISION_D = 0;
+  public static final double VISION_ROTATION_MAX_SPEED =
+      2; // rad/s (2 is about a third of a rotation i think)
+  public static final String VISION_CAMERA = "main";
 }
