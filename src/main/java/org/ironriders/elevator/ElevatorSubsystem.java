@@ -19,7 +19,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import org.ironriders.core.ElevatorWristCTL.ElevatorLevel;
+import org.ironriders.core.ElevatorWristControl.ElevatorLevel;
 import org.ironriders.lib.IronSubsystem;
 
 /** This subsystem controls the big ol' elevator that moves the manipulator vertically. */
@@ -47,6 +47,7 @@ public class ElevatorSubsystem extends IronSubsystem {
   private ElevatorLevel currentTarget = ElevatorLevel.DOWN;
   private boolean isHomed = false;
 
+  /** Initalize elevator subsystem. */
   public ElevatorSubsystem() {
     // lots of config!!
     SparkMaxConfig primaryConfig = new SparkMaxConfig();
@@ -116,7 +117,7 @@ public class ElevatorSubsystem extends IronSubsystem {
     } else {
       if (bottomLimitSwitch.isPressed()) {
         setHomed();
-        UpdateDashboard();
+        updateDashboard();
         return;
       }
 
@@ -124,10 +125,11 @@ public class ElevatorSubsystem extends IronSubsystem {
       primaryMotor.set(-ElevatorConstants.HOME_SPEED);
     }
 
-    UpdateDashboard();
+    updateDashboard();
   }
 
-  private void UpdateDashboard() {
+  /** Push all this subsystems values to elastic. */
+  private void updateDashboard() {
     // -- Debugging --
     debugPublish("Homed", isHomed);
     debugPublish("Goal State", currentTarget.toString());
@@ -155,12 +157,14 @@ public class ElevatorSubsystem extends IronSubsystem {
     this.goalSetpoint = new TrapezoidProfile.State(level.pos, 0d);
   }
 
+  /** Reset subsytem. */
   public void reset() {
     logMessage("resetting");
     primaryMotor.set(0);
     pidController.reset();
   }
 
+  /** Set all goals to 0. */
   public void zeroGoal() {
     logMessage("set zero goal");
     goalSetpoint = new TrapezoidProfile.State(0, 0d);
@@ -171,6 +175,7 @@ public class ElevatorSubsystem extends IronSubsystem {
     return bottomLimitSwitch;
   }
 
+  /** Set the elavator subsytwm to homed. */
   public void setHomed() {
     logMessage("setting homed");
     isHomed = true;
@@ -179,6 +184,7 @@ public class ElevatorSubsystem extends IronSubsystem {
     reset();
   }
 
+  /** Set the elavator subsytwm to not homed. */
   public void setNotHomed() {
     logMessage("setting non-homed");
     isHomed = false;

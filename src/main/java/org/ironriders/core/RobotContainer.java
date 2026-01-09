@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.ironriders.climb.ClimbCommands;
 import org.ironriders.climb.ClimbConstants;
 import org.ironriders.climb.ClimbSubsystem;
-import org.ironriders.core.ElevatorWristCTL.ElevatorWristState;
+import org.ironriders.core.ElevatorWristControl.ElevatorWristState;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
@@ -30,7 +30,7 @@ import org.ironriders.targeting.TargetingSubsystem;
  * Different button configurations for the driver controls PRIMARY_DRIVER: same as Driver Centered
  * Control Layout in the doc PRIMARY_DRIVER_WITH_BOOST: same as `William Boost buttons + primary
  * focus` in the doc SECONDARY_DRIVER_WITH_BOOST: same as `Secondary driver elevator controls` in
- * the doc
+ * the doc.
  */
 enum Config {
   PRIMARY_DRIVER,
@@ -52,7 +52,7 @@ public class RobotContainer {
   public final TargetingSubsystem targetingSubsystem = new TargetingSubsystem();
   public final TargetingCommands targetingCommands = targetingSubsystem.getCommands();
 
-  public final ElevatorWristCTL elevatorWristCommands = new ElevatorWristCTL();
+  public final ElevatorWristControl elevatorWristCommands = new ElevatorWristControl();
 
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
@@ -111,7 +111,6 @@ public class RobotContainer {
 
     // DRIVE CONTROLS
     driveSubsystem.setDefaultCommand(
-        
         robotCommands.driveTeleop(
             () ->
                 RobotUtils.controlCurve(
@@ -207,7 +206,6 @@ public class RobotContainer {
 
         primaryController.povUp().onTrue(intakeCommands.boost());
         primaryController.povDown().onTrue(intakeCommands.unboost());
-
 
         // Intake and then go down
         primaryController

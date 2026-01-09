@@ -1,5 +1,6 @@
 package org.ironriders.wrist;
 
+/** Constants for the wrist subsystem. */
 public class WristConstants {
   public static final Integer PRIMARY_WRIST_MOTOR = 12;
 

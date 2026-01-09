@@ -9,10 +9,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import org.ironriders.core.ElevatorWristCTL.WristRotation;
+import org.ironriders.core.ElevatorWristControl.WristRotation;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.RobotUtils;
 
+/** Subsystem for thw wrist. */
 public class WristSubsystem extends IronSubsystem {
   final SparkMax primaryMotor =
       new SparkMax(WristConstants.PRIMARY_WRIST_MOTOR, MotorType.kBrushless);
@@ -78,6 +79,7 @@ public class WristSubsystem extends IronSubsystem {
     debugPublish("Wrist PID", pidControler);
   }
 
+  /** Get what angle the wrist is at. */
   public double getCurrentAngle() {
     return (primaryMotor.getAbsoluteEncoder().getPosition() - WristConstants.ENCODER_OFFSET) * 360
         + WristConstants.CAD_POSITION_OFFSET;

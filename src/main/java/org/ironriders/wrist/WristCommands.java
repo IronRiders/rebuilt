@@ -2,8 +2,9 @@ package org.ironriders.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import org.ironriders.core.ElevatorWristCTL.WristRotation;
+import org.ironriders.core.ElevatorWristControl.WristRotation;
 
+/** Commands for the wrist subsystem. */
 public class WristCommands {
 
   private WristSubsystem wristSubsystem;
@@ -12,6 +13,7 @@ public class WristCommands {
     this.wristSubsystem = wrist;
   }
 
+  /** Command to go to a specfic WristRotation. */
   public Command set(WristRotation rotation) {
     return new Command() {
       public void initialize() {
