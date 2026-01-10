@@ -2,12 +2,14 @@ package org.ironriders.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import org.ironriders.core.ElevatorWristCTL.ElevatorLevel;
+import org.ironriders.core.ElevatorWristControl.ElevatorLevel;
+/**Commands for the elevator subsystem. */
 
 public class ElevatorCommands {
 
   private ElevatorSubsystem elevatorSubsystem;
-
+  /**Initalize elevator commands. */
+  
   public ElevatorCommands(ElevatorSubsystem elevator) {
     this.elevatorSubsystem = elevator;
 

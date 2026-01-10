@@ -1,5 +1,6 @@
 package org.ironriders.elevator;
 
+/** Constants for the elevator subsystem. */
 public class ElevatorConstants {
 
   public static final int PRIMARY_MOTOR_ID = 11;
