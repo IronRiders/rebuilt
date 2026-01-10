@@ -16,4 +16,4 @@ jobs:
           reporter: github-pr-check
           level: error
           fail_level: error
-          checkstyle_config: google_checks.xml
+          checkstyle_config: checkstyle.xml
