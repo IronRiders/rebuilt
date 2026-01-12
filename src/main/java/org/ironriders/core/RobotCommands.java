@@ -10,11 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 /**
  * These commands require more complex logic and are not directly tied to a subsystem. They
  * generally interface w/ multiple subsystems via their commands and are higher-level.
- *
- * <p>
- * These commands are those which the driver controls call.
  */
-@SuppressWarnings("unused") // Targeting and climb are unused by high-level commands
 public class RobotCommands {
     private final DriveCommands driveCommands;
 
@@ -31,7 +27,6 @@ public class RobotCommands {
     public RobotCommands(DriveCommands driveCommands, GenericHID controller) {
         this.driveCommands = driveCommands;
         this.controller = controller;
-        // TODO: More named commands, implement good autos
     }
 
     /**
