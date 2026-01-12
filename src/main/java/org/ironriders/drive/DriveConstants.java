@@ -17,6 +17,7 @@ public class DriveConstants {
     public static final int PRIMARY_CONTROLLER_PORT = 0;
     public static final int KEYPAD_CONTROLLER_PORT = 2;
     public static final int TERTIARY_CONTROLLER_PORT = 1;
+    public static final int GYRO_PORT = 9;
 
     public static final double PATHFIND_CANCEL_THRESHOLD = 0.3; // 0-1, controller input
 
@@ -46,11 +47,14 @@ public class DriveConstants {
 
     public static final double JOG_DISTANCE_INCHES = 0.5;
     public static final double JOG_SPEED = .25;
-    public static final double VISION_P = 0.1;
 
+    // Vision Constants
+
+    public static final double VISION_P = 0.1;
     public static final double VISION_I = 0.05;
     public static final double VISION_D = 0;
-    public static final double VISION_ROTATION_MAX_SPEED = 2; // rad/s (2 is about a third of a
-                                                              // rotation i think)
+
+    public static final double VISION_ROTATION_MAX_SPEED = 2; // rad/s 
+
     public static final String VISION_CAMERA = "main";
 }

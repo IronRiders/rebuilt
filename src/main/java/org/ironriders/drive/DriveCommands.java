@@ -46,7 +46,7 @@ public class DriveCommands {
         });
     }
 
-    /** Give me to joystick inputs basiclly. */
+    /** Give me to joystick inputs basically. */
     public Command driveTeleop(DoubleSupplier inputTranslationX, DoubleSupplier inputTranslationY,
             DoubleSupplier inputRotation, boolean fieldRelative) {
 
@@ -61,7 +61,7 @@ public class DriveCommands {
                 () -> fieldRelative);
     }
 
-    /** Move a little bit in a specfic direction. */
+    /** Move a little bit in a specific direction. */
     public Command jog(double robotRelativeAngleDegrees) {
         // Note - PathFinder does not do well with small moves so we move manually
 
@@ -85,8 +85,8 @@ public class DriveCommands {
         });
     }
 
-    public void resetRotation() {
-        driveSubsystem.resetRotation();
+    public Command resetRotation() {
+        return Commands.runOnce(() -> driveSubsystem.resetRotation());
     }
 
     /** Path find to a given pose2d. */

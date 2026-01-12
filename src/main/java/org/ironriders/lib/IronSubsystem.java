@@ -22,15 +22,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public abstract class IronSubsystem extends SubsystemBase {
 
     private final String diagnosticName =
-            this.getClass().getSimpleName().replaceAll("Subsystem$", ""); // the dollar sign
-    // here is regex
-    // to look for
-    // Subsystem, not
-    // part of the
-    // name (this
-    // isn't an
-    // anonymous
-    // class)
+            this.getClass().getSimpleName().replaceAll("Subsystem$", "");
+
     private final String dashboardPrefix = "Subsystems/" + diagnosticName + "/";
     private final String messagePrefix = diagnosticName + ": ";
 
@@ -41,12 +34,12 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     private String getThreadTime() {
-        String str = Objects.toString(
+        String timeStr = Objects.toString(
                 TimeUnit.MILLISECONDS.convert(System.nanoTime() - startupTime, TimeUnit.NANOSECONDS)
                         / 1000d,
                 "Error, could not get VM time!");
 
-        return "[" + str + "] ";
+        return "[" + timeStr + "] ";
     }
 
     /**
@@ -59,7 +52,7 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Send a elstaic notification with level WARNING. This will also apend your title to "warning
+     * Send a elastic notification with level WARNING. This will also append your title to "warning
      * in (your subsystem): and set that as the title". You should be careful to put as little
      * information in the title as possible so it doesn't overflow. This notification will last 10
      * seconds
@@ -68,15 +61,18 @@ public abstract class IronSubsystem extends SubsystemBase {
      */
     public void notifyWarning(Notification notif) {
         notif.setLevel(NotificationLevel.WARNING);
+
         String title = notif.getTitle();
         title = "Warning in " + messagePrefix + ":" + title;
+
         notif.setTitle(title);
         notif.setDisplayTimeSeconds(10);
+        
         putNotification(notif);
     }
 
     /**
-     * Send a elstaic notification with level info. This will also apend your title to "Message from
+     * Send a elastic notification with level info. This will also append your title to "Message from
      * (your subsystem): and set that as the title". You should be careful to put as little
      * information in the title as possible so it doesn't overflow. This notification will last 5
      * seconds
@@ -85,15 +81,18 @@ public abstract class IronSubsystem extends SubsystemBase {
      */
     public void notify(Notification notif) {
         notif.setLevel(NotificationLevel.INFO);
+
         String title = notif.getTitle();
         title = "Message from " + messagePrefix + ":" + title;
+
         notif.setTitle(title);
         notif.setDisplayTimeSeconds(5);
+        
         putNotification(notif);
     }
 
     /**
-     * Send a elstaic notification with level ERROR. This will also apend your title to "ERROR in
+     * Send a elastic notification with level ERROR. This will also append your title to "ERROR in
      * (your subsystem): and set that as the title". You should be careful to put as little
      * information in the title as possible so it doesn't overflow. This notification will last 30
      * seconds
@@ -102,10 +101,13 @@ public abstract class IronSubsystem extends SubsystemBase {
      */
     public void notifyError(Notification notif) {
         notif.setLevel(NotificationLevel.ERROR);
+
         String title = notif.getTitle();
         title = "ERROR in " + messagePrefix + ":" + title;
+
         notif.setTitle(title);
         notif.setDisplayTimeSeconds(30);
+
         putNotification(notif);
     }
 
@@ -157,14 +159,11 @@ public abstract class IronSubsystem extends SubsystemBase {
 
     /**
      * DEBUGGING ONLY Publish a Sendable (including Commands) diagnostic value to SmartDashboard
-     * with the prefix `debug/Subsystems/{subsystem name}/`. If the value is a Command, it will also
+     * with the prefix `debug/Subsystems/{subsystem name}/`. If the value is a Command, it will NOT also
      * be registered with PathPlanner's {@link NamedCommands}.
      */
     public void debugPublish(String name, Sendable value) {
         SmartDashboard.putData("debug/" + dashboardPrefix + name, value);
-        if (value instanceof Command) {
-            NamedCommands.registerCommand(name, (Command) value);
-        }
     }
 
     /**

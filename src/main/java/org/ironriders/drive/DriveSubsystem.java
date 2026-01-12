@@ -2,6 +2,7 @@ package org.ironriders.drive;
 
 import java.io.IOException;
 
+import static org.ironriders.drive.DriveConstants.GYRO_PORT;
 import static org.ironriders.drive.DriveConstants.SWERVE_DRIVE_MAX_SPEED;
 import static org.ironriders.drive.DriveConstants.SWERVE_JSON_DIRECTORY;
 import static org.ironriders.drive.DriveConstants.SWERVE_MAXIMUM_ANGULAR_VELOCITY;
@@ -119,9 +120,10 @@ public class DriveSubsystem extends IronSubsystem {
         return commands;
     }
 
-    /** Reset the giro to 0 degrees. */
+    /** Reset the gyro to 0 degrees. Good for correcting drift */
     public void resetRotation() {
-        Pigeon2 pigeon2 = new Pigeon2(9);
+        Pigeon2 pigeon2 = new Pigeon2(GYRO_PORT);
+        pigeon2.reset();
         swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getTranslation(), new Rotation2d(
                 pigeon2.getYaw(true).waitForUpdate(1).getValueAsDouble() * (Math.PI / 180f))));
         pigeon2.close();
@@ -136,7 +138,7 @@ public class DriveSubsystem extends IronSubsystem {
         return this.swerveDrive.getPose();
     }
 
-    /** Resets the Odometry to the current position. */
+    /** Resets the odometry to the given position. */
     public void resetOdometry(Pose2d pose2d) {
         swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(0)));
     }

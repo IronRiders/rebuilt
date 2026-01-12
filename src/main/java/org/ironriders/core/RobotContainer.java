@@ -78,46 +78,23 @@ public class RobotContainer {
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        // This configures what control scheme the controller will use.
-        // Changing this before the match will change the control layout for the driver
-        // this may be useful if different drivers prefer different configurations.
-        // See following document for configurations:
-        // https://docs.google.com/document/d/1xFyZLRxw_a8ykvMorcS_41jLqNv0-CR9rZUkbbDNRMI/edit?copiedFromTrash&tab=t.0
-        Config buttonConfiguration = Config.PRIMARY_DRIVER_WITH_BOOST;
-
-        // DRIVE CONTROLS
+        // --- DRIVE CONTROLS ---
         driveSubsystem.setDefaultCommand(robotCommands.driveTeleop(
-                () -> RobotUtils.controlCurve(-primaryController.getLeftY() // This sets the robot's
-                                                                            // x
-                        // translation (as
-                        // seen in driveTeleop) to
-                        // the left
-                        // joystick's y value
+                () -> RobotUtils.controlCurve(-primaryController.getLeftY()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                        DriveConstants.TRANSLATION_CONTROL_DEADBAND), // the deadband for the
-                // controller, not being
-                // used
-                // right now
-                () -> RobotUtils.controlCurve(-primaryController.getLeftX() // this sets the robot's
-                                                                            // y
-                        // translation (as
-                        // seen in driveTeleop) to
-                        // the left
-                        // joystick's x value
-                        * driveSubsystem.controlSpeedMultipler, // for all these, see getLeftY
+                        DriveConstants.TRANSLATION_CONTROL_DEADBAND), // Deadband is unused currently
+                () -> RobotUtils.controlCurve(-primaryController.getLeftX()
+                        * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> RobotUtils.controlCurve(-primaryController.getRightX() // this rotates the
-                                                                             // robot
-                        // based on the
-                        // right joysticks x value
-                        // (y value is
-                        // unused)
+                () -> RobotUtils.controlCurve(-primaryController.getRightX()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.ROTATION_CONTROL_EXPONENT,
                         DriveConstants.ROTATION_CONTROL_DEADBAND)));
 
+        // --- OTHER CONTROLS ---
+        // TODO: Schedule a meeting to talk to drive about this once we have the design.
     }
 
     /**

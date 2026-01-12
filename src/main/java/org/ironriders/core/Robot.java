@@ -27,7 +27,7 @@ public class Robot extends TimedRobot {
      * Runs when the robot starts.
      *
      * <ol>
-     * <li>Innitializes Robot Container
+     * <li>Initializes Robot Container
      * <li>Starts web server at port 5800
      * <li>Starts automatic capture on camera server
      * </ol>
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Initialization that applies to autonomous and teleop. Containes startup methods for various
+     * Initialization that applies to autonomous and teleop. Contains startup methods for various
      * parts of the robot, not part of WPILib. Created because we were tired of trying to keep all
      * the startup functions updated for both startup methods.
      */
