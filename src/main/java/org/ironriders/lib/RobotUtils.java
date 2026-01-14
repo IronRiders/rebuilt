@@ -16,10 +16,10 @@ public class RobotUtils {
   }
 
   /**
-   * Normalizes a rotational input value to the range [0, 360) degrees.
+   * Normalizes a rotational input value to the range (0, 360) degrees.
    *
    * @param input The input rotational value.
-   * @return The normalized rotational value within the range [0, 360) degrees.
+   * @return The normalized rotational value within the range (0, 360) degrees.
    */
   public static double absoluteRotation(double input) {
     return ((input % 360) + 360) % 360;
@@ -42,6 +42,7 @@ public class RobotUtils {
     if (in < min) {
       in = min;
     }
+
     return in;
   }
 
