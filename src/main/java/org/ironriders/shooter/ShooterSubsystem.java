@@ -3,6 +3,7 @@ package org.ironriders.shooter;
 import org.ironriders.lib.IronSubsystem;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.configs.VoltageConfigs;
@@ -45,10 +46,11 @@ public class ShooterSubsystem extends IronSubsystem{
         commands = new ShooterCommands(this);
 
         flyWheelMotor.getConfigurator().apply(new CurrentLimitsConfigs().withStatorCurrentLimit(40));
+        shooterHoodMotor.getConfigurator().apply(new CurrentLimitsConfigs().withStatorCurrentLimit(40));
+        shooterHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
         velocityPidController.setGoal(0);
         AnglePidController.setGoal(SHOOTERHOOD_MOTOR_MAX_VELOCITY_CONSTRAINT);
     }
-
 
     @Override
     public void periodic() {
@@ -68,8 +70,12 @@ public class ShooterSubsystem extends IronSubsystem{
 
     }
 
-    public double shooterHoodAngle(){
-        return 0;
+    public double getShooterHoodAngle(){
+        return shooterHoodMotor.getPosition().getValue().in(Degrees);
+    }
+
+    public void homeShooterHood(){
+        
     }
 
     public double[] getShooterAngle(double distance, double flyWheelVelocity ){ //distance in meters, velocity in meters per second
