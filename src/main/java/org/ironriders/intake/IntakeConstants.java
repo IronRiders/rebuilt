@@ -10,8 +10,7 @@ public class IntakeConstants {
     public enum State {
         INTAKE(-0.5),
         STOP(0),
-        BACK(1),
-        CENTER(-0.3);
+        BACK(1);
 
         public double speed;
 
