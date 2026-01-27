@@ -6,6 +6,7 @@ public class WristCommands {
     private final WristSubsystem wristSubsystem;
     public WristCommands(WristSubsystem subsystem) {
         this.wristSubsystem = subsystem;
+        this.wristSubsystem.publish("Reset Wrist Encoder", this.wristSubsystem.runOnce(() -> resetRotations()));
     }
 
     public Command resetRotations() {

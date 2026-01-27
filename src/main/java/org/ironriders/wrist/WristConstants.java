@@ -9,8 +9,9 @@ public class WristConstants {
     public static final double PIDIntegral = 0.0;
     public static final double PIDDerivative = 0.0;
     public static final TrapezoidProfile.Constraints Constraints = null;
+
     public enum WristPositions {
-        UP(0.0), //TODO: Set these later
+        UP(0.0), //TODO: Find these later
         DOWN(0.0);
 
         public final double position;
@@ -18,5 +19,11 @@ public class WristConstants {
         WristPositions(double position) {
             this.position = position;
         }
+    }
+
+    public class FeedForward {
+        public static final double kS = 0; //TODO: calculate this (https://www.reca.lc/arm)
+        public static final double kV = 0;
+        public static final double kG = 0;
     }
 }
