@@ -1,8 +1,9 @@
-package indexer;
+package org.ironriders.indexer;
+
+import org.ironriders.indexer.IndexerConstants.State;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import indexer.IndexerConstants.State;
 
 public class IndexerCommands {
     private final IndexerSubsystem indexer;
