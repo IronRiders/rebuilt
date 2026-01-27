@@ -1,4 +1,4 @@
-package org.ironriders.wristcontroller;
+package org.ironriders.wrist;
 
 import org.ironriders.lib.IronSubsystem;
 
@@ -8,17 +8,17 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 
-public class WristControllerSubsystem extends IronSubsystem {
+public class WristSubsystem extends IronSubsystem {
     private final com.ctre.phoenix6.hardware.TalonFX wristMotor = new TalonFX(
-            WristControllerConstants.WristMotorCantID);
+            WristConstants.WristMotorCantID);
     private final ProfiledPIDController pid;
-    private final WristControllerCommands commands;
+    private final WristCommands commands;
 
     // public final Command <---- Set this when I have commands
-    public WristControllerSubsystem() {
-        wristMotor.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(WristControllerConstants.WristMotorSupplyCurrentLimit));
-        pid = new ProfiledPIDController(WristControllerConstants.PIDProportional, WristControllerConstants.PIDIntegral, WristControllerConstants.PIDDerivative, WristControllerConstants.Constraints);
-        commands = new WristControllerCommands(this);
+    public WristSubsystem() {
+        wristMotor.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(WristConstants.WristMotorSupplyCurrentLimit));
+        pid = new ProfiledPIDController(WristConstants.PIDProportional, WristConstants.PIDIntegral, WristConstants.PIDDerivative, WristConstants.Constraints);
+        commands = new WristCommands(this);
     }
 
     @Override
