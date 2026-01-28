@@ -4,10 +4,20 @@
 
 package org.ironriders.core;
 
+import org.ironriders.climber.ClimberCommands;
+import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.RobotUtils;
+import org.ironriders.manipulation.indexer.IndexerCommands;
+import org.ironriders.manipulation.indexer.IndexerSubsystem;
+import org.ironriders.manipulation.intake.IntakeCommands;
+import org.ironriders.manipulation.intake.IntakeSubsystem;
+import org.ironriders.manipulation.shooter.ShooterCommands;
+import org.ironriders.manipulation.shooter.ShooterSubsystem;
+import org.ironriders.manipulation.wrist.WristCommands;
+import org.ironriders.manipulation.wrist.WristSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -19,45 +29,56 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-/**
- * Different button configurations for the driver controls PRIMARY_DRIVER: same as Driver Centered
- * Control Layout in the doc PRIMARY_DRIVER_WITH_BOOST: same as `William Boost buttons + primary
- * focus` in the doc SECONDARY_DRIVER_WITH_BOOST: same as `Secondary driver elevator controls` in
- * the doc.
- */
 enum Config {
     PRIMARY_DRIVER, PRIMARY_DRIVER_WITH_BOOST, SECONDARY_DRIVER_WITH_BOOST;
 }
 
-
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
     public final DriveSubsystem driveSubsystem = new DriveSubsystem();
     public final DriveCommands driveCommands = driveSubsystem.getCommands();
+
+    public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
+    public final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
+
+    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
+
+    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    public final ShooterCommands shooterCommands = shooterSubsystem.getCommands();
+
+    public final WristSubsystem wristSubsystem = new WristSubsystem();
+    public final WristCommands wristCommands = wristSubsystem.getCommands();
+
+    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    public final ClimberCommands climberCommands = climberSubsystem.getCommands();
 
     public final Double triggerThreshold = 0.75;
 
     private final SendableChooser<Command> autoChooser;
 
-    private final CommandXboxController primaryController =
-            new CommandXboxController(DriveConstants.PRIMARY_CONTROLLER_PORT);
-    private final CommandGenericHID secondaryController =
-            new CommandJoystick(DriveConstants.KEYPAD_CONTROLLER_PORT);
+    private final CommandXboxController primaryController = new CommandXboxController(
+            DriveConstants.PRIMARY_CONTROLLER_PORT);
+    private final CommandGenericHID secondaryController = new CommandJoystick(
+            DriveConstants.KEYPAD_CONTROLLER_PORT);
 
-    public final RobotCommands robotCommands =
-            new RobotCommands(driveCommands, primaryController.getHID());
+    public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
+            shooterCommands, wristCommands, climberCommands, primaryController.getHID());
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
      *
      * <p>
-     * builds the autos using {@link com.pathplanner.lib.auto.AutoBuilder#buildAutoChooser()
+     * builds the autos using
+     * {@link com.pathplanner.lib.auto.AutoBuilder#buildAutoChooser()
      * buildAutoChooser()} posts the auto selection to
      * {@link SmartDashboard#putData(String, SendableChooser) SmartDashboard}
      */
@@ -71,7 +92,8 @@ public class RobotContainer {
 
     /**
      * Th {@link CommandGenericHID#button(int)} method (such as
-     * {@link CommandXboxController#button(int)}, {@link CommandJoystick#button(int)}, or one of the
+     * {@link CommandXboxController#button(int)},
+     * {@link CommandJoystick#button(int)}, or one of the
      * {@link edu.wpi.first.wpilibj2.command.button.Trigger#Trigger(java.util.function.BooleanSupplier)}
      * constructors.
      */
@@ -83,7 +105,7 @@ public class RobotContainer {
                 () -> RobotUtils.controlCurve(-primaryController.getLeftY()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                        DriveConstants.TRANSLATION_CONTROL_DEADBAND), // Deadband is unused currently
+                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
                 () -> RobotUtils.controlCurve(-primaryController.getLeftX()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
