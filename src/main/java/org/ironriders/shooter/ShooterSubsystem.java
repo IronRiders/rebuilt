@@ -1,96 +1,145 @@
 package org.ironriders.shooter;
 
-import org.ironriders.lib.IronSubsystem;
-
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.configs.VoltageConfigs;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.RelativeEncoder;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
-import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
-import edu.wpi.first.units.measure.Distance;
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_MOTOR_MAX_ACCELERATION_CONSTRAINT;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_MOTOR_MAX_VELOCITY_CONSTRAINT;
-import static org.ironriders.shooter.ShooterConstants.GRAVITYCONSTANT;
-import static org.ironriders.shooter.ShooterConstants.HEIGHTDIFFERENCEHUBTOSHOOTER;
-import static org.ironriders.shooter.ShooterConstants.SHOOTERHOOD_MOTOR_MAX_ACCELERATION_CONSTRAINT;
-import static org.ironriders.shooter.ShooterConstants.SHOOTERHOOD_MOTOR_MAX_VELOCITY_CONSTRAINT;
+import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_D;
+import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_I;
+import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
+import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_MAX_VEL;
+import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_P;
+import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_RADIUS;
+import static org.ironriders.shooter.ShooterConstants.G;
+import static org.ironriders.shooter.ShooterConstants.HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
+import static org.ironriders.shooter.ShooterConstants.SHOOTER_D;
+import static org.ironriders.shooter.ShooterConstants.SHOOTER_HOOD_MAX_ACC;
+import static org.ironriders.shooter.ShooterConstants.SHOOTER_HOOD_MAX_VEL;
+import static org.ironriders.shooter.ShooterConstants.SHOOTER_I;
+import static org.ironriders.shooter.ShooterConstants.SHOOTER_P;
+import static org.ironriders.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
 
+import org.ironriders.lib.IronSubsystem;
+import org.ironriders.shooter.ShooterConstants.State;
 
-public class ShooterSubsystem extends IronSubsystem{
-    
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+
+public class ShooterSubsystem extends IronSubsystem {
     private ShooterCommands commands;
-    TalonFX flyWheelMotor = new TalonFX(0); //TODO set the actual CAN ID
 
-    TalonFX shooterHoodMotor = new TalonFX(0); //TODO set the actual CAN ID
+    public State currentState = State.STOW;
 
-    TrapezoidProfile.Constraints flyWheelConstraints = new TrapezoidProfile.Constraints(FLYWHEEL_MOTOR_MAX_VELOCITY_CONSTRAINT, FLYWHEEL_MOTOR_MAX_ACCELERATION_CONSTRAINT);
-    ProfiledPIDController velocityPidController = new ProfiledPIDController(0, 0, 0, flyWheelConstraints);
+    public final TalonFX flyWheelMotor = new TalonFX(999); // TODO set the actual CAN ID
 
-    TrapezoidProfile.Constraints AngleConstraints = new TrapezoidProfile.Constraints(SHOOTERHOOD_MOTOR_MAX_VELOCITY_CONSTRAINT, SHOOTERHOOD_MOTOR_MAX_ACCELERATION_CONSTRAINT);
-    ProfiledPIDController AnglePidController = new ProfiledPIDController(0, 0, 0, AngleConstraints);
-    public ShooterSubsystem (){
+    public final TalonFX shooterHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
 
-        //Need to add motor //TODO
+    public final TrapezoidProfile.Constraints flyWheelConstraints = new TrapezoidProfile.Constraints(FLYWHEEL_MAX_VEL,
+            FLYWHEEL_MAX_ACC);
+    public final ProfiledPIDController velocityPidController = new ProfiledPIDController(FLYWHEEL_P, FLYWHEEL_I,
+            FLYWHEEL_D, flyWheelConstraints);
+
+    public final TrapezoidProfile.Constraints AngleConstraints = new TrapezoidProfile.Constraints(SHOOTER_HOOD_MAX_VEL,
+            SHOOTER_HOOD_MAX_ACC);
+    public final ProfiledPIDController anglePidController = new ProfiledPIDController(SHOOTER_P, SHOOTER_I, SHOOTER_D,
+            AngleConstraints);
+
+    public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40);
+
+    public ShooterSubsystem() {
         commands = new ShooterCommands(this);
 
-        flyWheelMotor.getConfigurator().apply(new CurrentLimitsConfigs().withStatorCurrentLimit(40));
-        shooterHoodMotor.getConfigurator().apply(new CurrentLimitsConfigs().withStatorCurrentLimit(40));
+        // TODO: Need to add motor
+        flyWheelMotor.getConfigurator().apply(currentLimitsConfigs);
+
+        shooterHoodMotor.getConfigurator().apply(currentLimitsConfigs);
         shooterHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
+
+        velocityPidController.reset(getFlywheelVelocity().in(DegreesPerSecond));
         velocityPidController.setGoal(0);
-        AnglePidController.setGoal(SHOOTERHOOD_MOTOR_MAX_VELOCITY_CONSTRAINT);
+
+        anglePidController.reset(getShooterHoodAngle().in(Degrees));
+        // TODO: Maybe we should spin up the wheel and never stop it? idk sounds kinda like a bad idea.
+        anglePidController.setGoal(0); 
     }
 
     @Override
     public void periodic() {
+        switch (currentState) {
+            default: // If we don't recognize the state fall through to STOW
+            case STOW:
+                setFlywheelGoal(0);
+                setAngleGoal(SHOOTER_STOW_POSITION);
+                break;
+            case AIMED:
+                setFlywheelGoal(0);
+                setAngleGoal(calculateShooterAngle(10 /* TODO */)[0]); // TODO: IDK how this works @ryan
+                break;
+            case READY:
+                setFlywheelGoal(FLYWHEEL_MAX_VEL);
+                setAngleGoal(calculateShooterAngle(10 /* TODO */)[0]); // TODO: IDK how this works @ryan
+                break;
+        }
+
         updatePID();
     }
 
-    public ShooterCommands getCommands(){
+    public void setCurrentState(State state) {
+        currentState = state;
+    } 
+
+    public ShooterCommands getCommands() {
         return commands;
     }
 
-    public void updatePID(){
-        publish("Shooter RPM", flyWheelMotor.getVelocity().getValue().in(RPM));
-        publish("Shooter Differntial RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
+    public void updatePID() {
+        publish("Shooter RPM", getFlywheelVelocity().in(RPM));
+        publish("Shooter Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
 
-       
-       flyWheelMotor.set(velocityPidController.calculate(flyWheelMotor.getVelocity().getValue().in(DegreesPerSecond)));
+        flyWheelMotor.set(velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)));
+        shooterHoodMotor.set(anglePidController.calculate(getShooterHoodAngle().in(Degrees)));
+    }
+
+    public Angle getShooterHoodAngle() {
+        return shooterHoodMotor.getPosition().getValue();
+    }
+
+    public void homeShooterHood() {
 
     }
 
-    public double getShooterHoodAngle(){
-        return shooterHoodMotor.getPosition().getValue().in(Degrees);
+    public void setFlywheelGoal(double goal) {
+        velocityPidController.setGoal(goal);
     }
 
-    public void homeShooterHood(){
-        
+    public void setAngleGoal(double goal) {
+        anglePidController.setGoal(goal);
     }
 
-    public double[] getShooterAngle(double distance, double flyWheelVelocity ){ //distance in meters, velocity in meters per second
-        
+    public AngularVelocity getFlywheelVelocity() {
+        return flyWheelMotor.getVelocity().getValue();
+    }
+
+    public double[] calculateShooterAngle(double distance) { // distance in meters.
+        double flyWheelVelocity = (((2 * Math.PI) * FLYWHEEL_RADIUS) * getFlywheelVelocity().in(RPM)) / 180; // m/s
+
         double discriminant = Math.sqrt(
-            Math.pow(distance, 2)
-            - Math.pow(GRAVITYCONSTANT, 2) * Math.pow(distance, 4) / Math.pow(flyWheelVelocity, 4)
-            - 2 * HEIGHTDIFFERENCEHUBTOSHOOTER * GRAVITYCONSTANT * Math.pow(distance, 2) / Math.pow(flyWheelVelocity, 2)
-        );
-        double firstAngle = Math.atan((distance + discriminant) * Math.pow(flyWheelVelocity, 2) / GRAVITYCONSTANT / Math.pow(distance, 2)) ;
-        double secondAngle = Math.atan((distance - discriminant) * Math.pow(flyWheelVelocity, 2) / GRAVITYCONSTANT / Math.pow(distance, 2)) ;
+                Math.pow(distance, 2)
+                        - Math.pow(G, 2) * Math.pow(distance, 4) / Math.pow(flyWheelVelocity, 4)
+                        - 2 * HEIGHT_DIFFERENCE_HUB_TO_SHOOTER * G * Math.pow(distance, 2)
+                                / Math.pow(flyWheelVelocity, 2));
+        double firstAngle = Math
+                .atan((distance + discriminant) * Math.pow(flyWheelVelocity, 2) / G / Math.pow(distance, 2));
+        double secondAngle = Math
+                .atan((distance - discriminant) * Math.pow(flyWheelVelocity, 2) / G / Math.pow(distance, 2));
 
-        double[] angles = {firstAngle,secondAngle};
+        double[] angles = { firstAngle, secondAngle };
+
         return angles;
     }
-
-
 }
