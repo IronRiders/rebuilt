@@ -24,22 +24,10 @@ public class IntakeCommands {
     }
 
     public Command eject() {
-        return setAndWait(State.BACK);
+        return set(State.BACK);
     }
 
     public Command intake() {
-        return setAndWait(State.INTAKE);
-    }
-
-    private Command setAndWait(State start, State stop) {
-        return Commands.runOnce(() -> intake.setState(start))
-                .andThen(Commands.waitSeconds(IntakeConstants.EJECT_WAIT_TIME))
-                .andThen(() -> intake.setState(stop));
-    }
-
-    private Command setAndWait(State start) {
-        return Commands.runOnce(() -> intake.setState(start))
-                .andThen(Commands.waitSeconds(IntakeConstants.EJECT_WAIT_TIME))
-                .andThen(() -> intake.setMotor(State.STOP.speed));
+        return set(State.INTAKE);
     }
 }
