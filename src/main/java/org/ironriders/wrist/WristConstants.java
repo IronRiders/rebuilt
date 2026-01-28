@@ -12,25 +12,25 @@ public class WristConstants {
     public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current (not for the current in the
                                                      // motor including regen)
                                                      // in Amps
-    public static final double P = 0.0; // TODO: Test // proportional gain
+    public static final double P = 0.5; // TODO: Test // proportional gain
     public static final double I = 0.0; // Integral gain
-    public static final double D = 0.0; // Derivative gain
-    public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(0, 0); // TODO: Test
-                                                                                                           // later
+    public static final double D = 0.1; // Derivative gain
+    public static final TrapezoidProfile.Constraints CONSTRAINTS = 
+        new TrapezoidProfile.Constraints(100, 100); // TODO: Test later
 
     /**
-     * Wrist positions (Up & Down) in degrees from horizontal (interchangable with
+     * Wrist positions (Up & Down) in degrees from horizontal (interchangeable with
      * {@linkplain edu.wpi.first.math.trajectory.TrapezoidProfile TrapezoidProfiles}
      * with a velocity of 0).
      */
-    public enum WristPositions {
-        UP(0.0), // TODO: Find these later
+    public enum State {
+        UP(90.0), // TODO: Find these later
         DOWN(0.0);
 
-        public final double POSITION;
+        public final double position;
 
-        WristPositions(double POSITION) {
-            this.POSITION = POSITION;
+        State(double position) {
+            this.position = position;
         }
     }
 

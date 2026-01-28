@@ -3,41 +3,44 @@ package org.ironriders.wrist;
 import org.ironriders.lib.IronSubsystem;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 
 /**
- * Subsystem for controlling ?wrist?
+ * Subsystem for controlling wrist
  */
 public class WristSubsystem extends IronSubsystem {
 
     /* MOTOR COMPONENTS */
     private final com.ctre.phoenix6.hardware.TalonFX wristMotor = new TalonFX(
             WristConstants.MOTOR_ID);
-    private final ArmFeedforward armFeedforward;
-    private final ProfiledPIDController pid;
+
+    private final ArmFeedforward armFeedforward = new ArmFeedforward(
+            WristConstants.FeedForward.FRICTION,
+            WristConstants.FeedForward.GRAVITY,
+            WristConstants.FeedForward.COASTING);
+
+    private final ProfiledPIDController pid = new ProfiledPIDController(
+            WristConstants.P,
+            WristConstants.I,
+            WristConstants.D,
+            WristConstants.CONSTRAINTS);
 
     /* SUBSYSTEM COMPONENTS */
     private final WristCommands commands;
 
     public WristSubsystem() {
-        wristMotor.getConfigurator()
-                .apply(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimit(WristConstants.CURRENT_LIMIT));
-        pid = new ProfiledPIDController(
-                WristConstants.P,
-                WristConstants.I,
-                WristConstants.D,
-                WristConstants.CONSTRAINTS);
         commands = new WristCommands(this);
-        armFeedforward = new ArmFeedforward(
-                WristConstants.FeedForward.FRICTION,
-                WristConstants.FeedForward.GRAVITY,
-                WristConstants.FeedForward.COASTING);
+
+        TalonFXConfiguration configuration = new TalonFXConfiguration()
+                .withCurrentLimits(new CurrentLimitsConfigs().withSupplyCurrentLimit(WristConstants.CURRENT_LIMIT));
+
+        wristMotor.getConfigurator()
+                .apply(configuration);
     }
 
     @Override
@@ -76,11 +79,15 @@ public class WristSubsystem extends IronSubsystem {
      * motor's} {@linkplain edu.wpi.first.math.controller.ProfiledPIDController
      * profiled pid}.
      * 
-     * @param goal Up and down double positions (interchangable with trapazoid
+     * @param goal Up and down double positions (interchangeable with trapezoid
      *             profile's with a velocity goal of zero), currently both set to
      *             0.0. Should be set in degrees from horizontal.
      */
     public void setGoal(double goal) {
         pid.setGoal(goal);
+    }
+
+    public WristCommands getCommands() {
+        return commands;
     }
 }

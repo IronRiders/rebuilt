@@ -7,7 +7,7 @@ public class WristCommands {
 
     public WristCommands(WristSubsystem subsystem) {
         this.wristSubsystem = subsystem;
-        this.wristSubsystem.publish("Reset Wrist Encoder", this.wristSubsystem.runOnce(() -> resetRotations()));
+        this.wristSubsystem.publish("Reset Wrist Encoder", resetRotations());
     }
 
     public Command resetRotations() {
@@ -16,9 +16,9 @@ public class WristCommands {
         });
     }
 
-    public Command setGoal(WristConstants.WristPositions goal) {
+    public Command setGoal(WristConstants.State goal) {
         return wristSubsystem.runOnce(() -> {
-            wristSubsystem.setGoal(goal.POSITION);
+            wristSubsystem.setGoal(goal.position);
         });
     }
 }
