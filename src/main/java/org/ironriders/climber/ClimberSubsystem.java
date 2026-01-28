@@ -24,6 +24,8 @@ public class ClimberSubsystem extends IronSubsystem {
         configuration = new TalonFXConfiguration();
 
         configuration.CurrentLimits.withSupplyCurrentLimit(ClimberConstants.STALL_LIMIT);
+        configuration.Feedback.withSensorToMechanismRatio(ClimberConstants.GEAR_RATIO);
+
         primaryMotor.getConfigurator().apply(configuration);
         secondaryMotor.getConfigurator().apply(configuration);
 
@@ -53,6 +55,6 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     public double getPosition() {
-        return primaryMotor.getPosition().getValueAsDouble() * ClimberConstants.GEAR_RATIO;
+        return primaryMotor.getPosition().getValueAsDouble();
     }
 }

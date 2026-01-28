@@ -114,8 +114,7 @@ public class RobotContainer {
                                 () -> RobotUtils.controlCurve(-primaryController.getLeftY()
                                                 * driveSubsystem.controlSpeedMultipler,
                                                 DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND), // Deadband is unused
-                                                                                              // currently
+                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
                                 () -> RobotUtils.controlCurve(-primaryController.getLeftX()
                                                 * driveSubsystem.controlSpeedMultipler,
                                                 DriveConstants.TRANSLATION_CONTROL_EXPONENT,

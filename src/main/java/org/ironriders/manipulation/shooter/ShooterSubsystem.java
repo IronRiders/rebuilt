@@ -8,17 +8,22 @@ import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_I;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_VEL;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_P;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_RADIUS;
 import static org.ironriders.manipulation.shooter.ShooterConstants.G;
 import static org.ironriders.manipulation.shooter.ShooterConstants.HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
+import static org.ironriders.manipulation.shooter.ShooterConstants.MAX_ROTATION;
+import static org.ironriders.manipulation.shooter.ShooterConstants.MIN_ROTATION;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_D;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_HOOD_MAX_ACC;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_HOOD_MAX_VEL;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_I;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_P;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
+import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_VELOCITY;
+
+import java.util.Optional;
 
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.lib.RobotUtils;
 import org.ironriders.manipulation.shooter.ShooterConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -54,7 +59,6 @@ public class ShooterSubsystem extends IronSubsystem {
     public ShooterSubsystem() {
         commands = new ShooterCommands(this);
 
-        // TODO: Need to add motor
         flyWheelMotor.getConfigurator().apply(currentLimitsConfigs);
 
         shooterHoodMotor.getConfigurator().apply(currentLimitsConfigs);
@@ -78,7 +82,7 @@ public class ShooterSubsystem extends IronSubsystem {
                 break;
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
-                setAngleGoal(calculateShooterAngle(10 /* TODO */)[0]); // TODO: IDK how this works @ryan
+                setAngleGoal(calculateShooterAngle(10 /* TODO */).get());
                 break;
         }
 
@@ -121,21 +125,28 @@ public class ShooterSubsystem extends IronSubsystem {
         return flyWheelMotor.getVelocity().getValue();
     }
 
-    public double[] calculateShooterAngle(double distance) { // distance in meters.
-        double flyWheelVelocity = (((2 * Math.PI) * FLYWHEEL_RADIUS) * getFlywheelVelocity().in(RPM)) / 180; // m/s
-
+    public Optional<Double> calculateShooterAngle(double distance) { // distance in meters.
         double discriminant = Math.sqrt(
                 Math.pow(distance, 2)
-                        - Math.pow(G, 2) * Math.pow(distance, 4) / Math.pow(flyWheelVelocity, 4)
+                        - Math.pow(G, 2) * Math.pow(distance, 4) / Math.pow(TARGET_BALL_VELOCITY, 4)
                         - 2 * HEIGHT_DIFFERENCE_HUB_TO_SHOOTER * G * Math.pow(distance, 2)
-                                / Math.pow(flyWheelVelocity, 2));
-        double firstAngle = Math
-                .atan((distance + discriminant) * Math.pow(flyWheelVelocity, 2) / G / Math.pow(distance, 2));
-        double secondAngle = Math
-                .atan((distance - discriminant) * Math.pow(flyWheelVelocity, 2) / G / Math.pow(distance, 2));
+                                / Math.pow(TARGET_BALL_VELOCITY, 2));
 
-        double[] angles = { firstAngle, secondAngle };
+        if(discriminant <= 0) {
+            return Optional.of(0d); // No angles to reach the target!
+        }
 
-        return angles;
+        double firstAngle = Math // High arc
+                .atan((distance + discriminant) * Math.pow(TARGET_BALL_VELOCITY, 2) / G / Math.pow(distance, 2));
+        double secondAngle = Math // Low arc
+                .atan((distance - discriminant) * Math.pow(TARGET_BALL_VELOCITY, 2) / G / Math.pow(distance, 2));
+
+        if (RobotUtils.tolerance(MIN_ROTATION, MAX_ROTATION, secondAngle)) {
+            return Optional.of(secondAngle);
+        } else if(RobotUtils.tolerance(MIN_ROTATION, MAX_ROTATION, firstAngle)) {
+            return Optional.of(firstAngle);
+        } else {
+            return Optional.empty();
+        }
     }
 }

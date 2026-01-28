@@ -21,7 +21,10 @@ public class ShooterConstants {
 
   public static final double SHOOTER_STOW_POSITION = 0.0;
 
-  public static final double FLYWHEEL_RADIUS = 2; // inches
+  public static final double TARGET_BALL_VELOCITY = 10.0; //m/s
+
+  public static final double MIN_ROTATION = 15;
+  public static final double MAX_ROTATION = 45;
 
   public enum State {
     READY(),
