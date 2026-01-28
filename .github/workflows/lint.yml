@@ -1,9 +1,5 @@
 name: Linter
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: workflow_call
 jobs:
   checkstyle:
     name: runner / checkstyle
