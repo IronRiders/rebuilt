@@ -24,7 +24,6 @@ public class ShooterConstants {
   public static final double FLYWHEEL_RADIUS = 2; // inches
 
   public enum State {
-    AIMED(),
     READY(),
     STOW();
   }

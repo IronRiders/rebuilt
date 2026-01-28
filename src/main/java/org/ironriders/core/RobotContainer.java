@@ -52,7 +52,6 @@ enum Config {
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        // The robot's subsystems and commands are defined here...
         public final DriveSubsystem driveSubsystem = new DriveSubsystem();
         public final DriveCommands driveCommands = driveSubsystem.getCommands();
 

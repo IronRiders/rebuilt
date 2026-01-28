@@ -76,10 +76,6 @@ public class ShooterSubsystem extends IronSubsystem {
                 setFlywheelGoal(0);
                 setAngleGoal(SHOOTER_STOW_POSITION);
                 break;
-            case AIMED:
-                setFlywheelGoal(0);
-                setAngleGoal(calculateShooterAngle(10 /* TODO */)[0]); // TODO: IDK how this works @ryan
-                break;
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
                 setAngleGoal(calculateShooterAngle(10 /* TODO */)[0]); // TODO: IDK how this works @ryan

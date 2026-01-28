@@ -5,12 +5,15 @@ import java.util.function.DoubleSupplier;
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.manipulation.indexer.IndexerCommands;
+import org.ironriders.manipulation.indexer.IndexerConstants;
 import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.shooter.ShooterCommands;
+import org.ironriders.manipulation.shooter.ShooterConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * These commands require more complex logic and are not directly tied to a
@@ -52,5 +55,13 @@ public class RobotCommands {
     public Command driveTeleop(DoubleSupplier inputTranslationX, DoubleSupplier inputTranslationY,
             DoubleSupplier inputRotation) {
         return driveCommands.driveTeleop(inputTranslationX, inputTranslationY, inputRotation, true);
+    }
+
+    public Command readyShooter() {
+        return Commands.parallel(shooterCommands.set(ShooterConstants.State.READY), indexerCommands.set(IndexerConstants.State.STOP));
+    }
+
+    public Command fire() {
+        return Commands.sequence(readyShooter(), indexerCommands.set(IndexerConstants.State.INDEX));
     }
 }
