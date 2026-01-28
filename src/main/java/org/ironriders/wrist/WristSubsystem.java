@@ -12,22 +12,30 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
  * Subsystem for controlling ?wrist?
  */
 public class WristSubsystem extends IronSubsystem {
+
+    /* MOTOR COMPONENTS */
     private final com.ctre.phoenix6.hardware.TalonFX wristMotor = new TalonFX(
-            WristConstants.WRIST_MOTOR_CANT_ID);
-    private final ProfiledPIDController pid;
-    private final WristCommands commands;
+            WristConstants.MOTOR_ID);
     private final ArmFeedforward armFeedforward;
+    private final ProfiledPIDController pid;
+
+    /* SUBSYSTEM COMPONENTS */
+    private final WristCommands commands;
 
     public WristSubsystem() {
         wristMotor.getConfigurator()
                 .apply(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimit(WristConstants.WRIST_MOTOR_SUPPLY_CURRENT_LIMIT));
-        pid = new ProfiledPIDController(WristConstants.PID_PROPORTIONAL, WristConstants.PID_INTEGRAL,
-                WristConstants.PID_DERIVATIVE, WristConstants.PID_CONSTRAINTS);
+                        .withSupplyCurrentLimit(WristConstants.CURRENT_LIMIT));
+        pid = new ProfiledPIDController(
+                WristConstants.P,
+                WristConstants.I,
+                WristConstants.D,
+                WristConstants.CONSTRAINTS);
         commands = new WristCommands(this);
-        armFeedforward = new ArmFeedforward(WristConstants.FeedForward.STATIC_FRICTION_OVERCOME_VOLTAGE,
-                WristConstants.FeedForward.GRAVITY_OVERCOME_VOLTAGE,
-                WristConstants.FeedForward.MAINTAIN_VELOCITY_VOLTAGE);
+        armFeedforward = new ArmFeedforward(
+                WristConstants.FeedForward.FRICTION,
+                WristConstants.FeedForward.GRAVITY,
+                WristConstants.FeedForward.COASTING);
     }
 
     @Override

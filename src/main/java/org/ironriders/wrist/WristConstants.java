@@ -6,12 +6,16 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
  * Constants for {@linkplain org.ironriders.wrist.WristSubsystem WristSubsystem}
  */
 public class WristConstants {
-    public static final int WRIST_MOTOR_CANT_ID = 0b1011011000011;
-    public static final double WRIST_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
-    public static final double PID_PROPORTIONAL = 0.0; // TODO: Test
-    public static final double PID_INTEGRAL = 0.0;
-    public static final double PID_DERIVATIVE = 0.0;
-    public static final TrapezoidProfile.Constraints PID_CONSTRAINTS = null;
+
+    /* MOTOR CONSTANTS */
+    public static final int MOTOR_ID = 0b1011011000011;
+    public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current (not for the current in the
+                                                     // motor including regen)
+                                                     // in Amps
+    public static final double P = 0.0; // TODO: Test // proportional gain
+    public static final double I = 0.0; // Integral gain
+    public static final double D = 0.0; // Derivative gain
+    public static final TrapezoidProfile.Constraints CONSTRAINTS = null;
 
     /**
      * Wrist positions (Up & Down) in degrees from horizontal (interchangable with
@@ -33,9 +37,9 @@ public class WristConstants {
      * Inner class for feed forward voltages
      */
     public class FeedForward {
-        public static final double STATIC_FRICTION_OVERCOME_VOLTAGE = 0; // TODO: calculate this
-                                                                         // (https://www.reca.lc/arm)
-        public static final double MAINTAIN_VELOCITY_VOLTAGE = 0;
-        public static final double GRAVITY_OVERCOME_VOLTAGE = 0;
+        public static final double FRICTION = 0; // TODO: calculate this // Static friction overcome voltage
+                                                 // (https://www.reca.lc/arm)
+        public static final double COASTING = 0; // Voltage required to maintain velocity
+        public static final double GRAVITY = 0; // Voltage required to overcome gravity
     }
 }
