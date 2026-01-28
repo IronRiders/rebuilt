@@ -24,14 +24,10 @@ public class IntakeCommands {
     }
 
     public Command eject() {
-        return setAndWait(State.BACK);
+        return set(State.BACK);
     }
 
     public Command intake() {
-        return setAndWait(State.INTAKE);
-    }
-
-    private Command setAndWait(State start) {
-        return Commands.runOnce(() -> intake.setState(start));
+        return set(State.INTAKE);
     }
 }
