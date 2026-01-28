@@ -13,8 +13,7 @@ public class ClimberConstants {
     public static final double MAX_VEL = 180;
     public static final double MAX_ACC = 180;
 
-    public static final int ENCODER_A = -1;
-    public static final int ENCODER_B = -1;
+    public static final double GEAR_RATIO = 1/1; //TODO
 
     public enum State {
         CLIMBED(40),

@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.Encoder;
 
 public class ClimberSubsystem extends IronSubsystem {
     private ClimberCommands commands = new ClimberCommands(this);
@@ -17,8 +16,6 @@ public class ClimberSubsystem extends IronSubsystem {
     private final TalonFX secondaryMotor = new TalonFX(ClimberConstants.SECONDARY_ID);
 
     private TalonFXConfiguration configuration;
-
-    private final Encoder encoder = new Encoder(ClimberConstants.ENCODER_A, ClimberConstants.ENCODER_B);
 
     private ProfiledPIDController pidController = new ProfiledPIDController(ClimberConstants.P, ClimberConstants.I,
             ClimberConstants.D, new Constraints(ClimberConstants.MAX_VEL, ClimberConstants.MAX_ACC));
@@ -56,6 +53,6 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     public double getPosition() {
-        return encoder.getRaw(); // TODO: Not sure if this is right
+        return primaryMotor.getPosition().getValueAsDouble() * ClimberConstants.GEAR_RATIO;
     }
 }
