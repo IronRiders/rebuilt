@@ -42,11 +42,10 @@ public class WristSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
-        double feedforwardAmount = armFeedforward.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity)
-                / RobotController.getBatteryVoltage(); // Normalize feedforward to PID Output
-        wristMotor.setVoltage(
+        wristMotor.set(
                 pid.calculate(this.getPosition())
-                        + feedforwardAmount);
+                        + (armFeedforward.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity)
+                                / RobotController.getBatteryVoltage()));
     }
 
     /**

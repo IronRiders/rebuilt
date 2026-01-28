@@ -15,7 +15,8 @@ public class WristConstants {
     public static final double P = 0.0; // TODO: Test // proportional gain
     public static final double I = 0.0; // Integral gain
     public static final double D = 0.0; // Derivative gain
-    public static final TrapezoidProfile.Constraints CONSTRAINTS = null;
+    public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(0, 0); // TODO: Test
+                                                                                                           // later
 
     /**
      * Wrist positions (Up & Down) in degrees from horizontal (interchangable with
