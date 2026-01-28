@@ -14,10 +14,10 @@ public class WristSubsystem extends IronSubsystem {
     private final ProfiledPIDController pid;
     private final WristCommands commands;
 
-    // public final Command <---- Set this when I have commands
     public WristSubsystem() {
         wristMotor.getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(WristConstants.WristMotorSupplyCurrentLimit));
         pid = new ProfiledPIDController(WristConstants.PIDProportional, WristConstants.PIDIntegral, WristConstants.PIDDerivative, WristConstants.Constraints);
+
         commands = new WristCommands(this);
     }
 
@@ -35,5 +35,9 @@ public class WristSubsystem extends IronSubsystem {
     }
     public void setGoal(double goal) {
         pid.setGoal(goal);
+    }
+
+    public WristCommands getCommands() {
+        return commands;
     }
 }

@@ -4,10 +4,20 @@
 
 package org.ironriders.core;
 
+import org.ironriders.climber.ClimberCommands;
+import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.RobotUtils;
+import org.ironriders.manipulation.indexer.IndexerCommands;
+import org.ironriders.manipulation.indexer.IndexerSubsystem;
+import org.ironriders.manipulation.intake.IntakeCommands;
+import org.ironriders.manipulation.intake.IntakeSubsystem;
+import org.ironriders.manipulation.shooter.ShooterCommands;
+import org.ironriders.manipulation.shooter.ShooterSubsystem;
+import org.ironriders.manipulation.wrist.WristCommands;
+import org.ironriders.manipulation.wrist.WristSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -40,6 +50,21 @@ public class RobotContainer {
     // The robot's subsystems and commands are defined here...
     public final DriveSubsystem driveSubsystem = new DriveSubsystem();
     public final DriveCommands driveCommands = driveSubsystem.getCommands();
+
+    public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
+    public final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
+
+    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
+
+    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    public final ShooterCommands shooterCommands = shooterSubsystem.getCommands();
+
+    public final WristSubsystem wristSubsystem = new WristSubsystem();
+    public final WristCommands wristCommands = wristSubsystem.getCommands();
+
+    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    public final ClimberCommands climberCommands = climberSubsystem.getCommands();
 
     public final Double triggerThreshold = 0.75;
 
