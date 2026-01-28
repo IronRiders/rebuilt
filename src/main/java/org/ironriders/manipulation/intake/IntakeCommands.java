@@ -1,6 +1,6 @@
-package org.ironriders.intake;
+package org.ironriders.manipulation.intake;
 
-import org.ironriders.intake.IntakeConstants.State;
+import org.ironriders.manipulation.intake.IntakeConstants.State;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;

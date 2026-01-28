@@ -1,21 +1,20 @@
-package org.ironriders.indexer;
+package org.ironriders.manipulation.intake;
 
-import org.ironriders.indexer.IndexerConstants.State;
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.manipulation.intake.IntakeConstants.State;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-public class IndexerSubsystem extends IronSubsystem {
-    private final IndexerCommands commands = new IndexerCommands(this);
+public class IntakeSubsystem extends IronSubsystem {
+    private final IntakeCommands commands = new IntakeCommands(this);
 
-    private TalonFX motor = new TalonFX(IndexerConstants.ID);
+    private final TalonFX motor = new TalonFX(IntakeConstants.ID);
     private TalonFXConfiguration configuration;
-
-    public IndexerSubsystem() {
+    public IntakeSubsystem() {
         configuration = new TalonFXConfiguration();
 
-        configuration.CurrentLimits.withSupplyCurrentLimit(IndexerConstants.STALL_LIMIT);
+        configuration.CurrentLimits.withSupplyCurrentLimit(IntakeConstants.INTAKE_MOTOR_STALL_LIMIT);
         motor.getConfigurator().apply(configuration);
     }
 
@@ -27,7 +26,8 @@ public class IndexerSubsystem extends IronSubsystem {
         setMotor(state.speed);
     }
 
-    public IndexerCommands getCommands() {
+    public IntakeCommands getCommands() {
         return commands;
     }
+
 }

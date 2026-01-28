@@ -1,6 +1,6 @@
-package org.ironriders.indexer;
+package org.ironriders.manipulation.indexer;
 
-import org.ironriders.indexer.IndexerConstants.State;
+import org.ironriders.manipulation.indexer.IndexerConstants.State;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;

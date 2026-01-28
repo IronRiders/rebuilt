@@ -1,6 +1,6 @@
-package org.ironriders.shooter;
+package org.ironriders.manipulation.shooter;
 
-import org.ironriders.shooter.ShooterConstants.State;
+import org.ironriders.manipulation.shooter.ShooterConstants.State;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;

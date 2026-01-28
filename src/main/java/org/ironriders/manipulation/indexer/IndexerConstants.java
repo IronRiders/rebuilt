@@ -1,4 +1,4 @@
-package org.ironriders.indexer;
+package org.ironriders.manipulation.indexer;
 
 public class IndexerConstants {
     public static int ID = 0x3a33;

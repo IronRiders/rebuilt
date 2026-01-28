@@ -1,25 +1,25 @@
-package org.ironriders.shooter;
+package org.ironriders.manipulation.shooter;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_D;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_I;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_MAX_VEL;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_P;
-import static org.ironriders.shooter.ShooterConstants.FLYWHEEL_RADIUS;
-import static org.ironriders.shooter.ShooterConstants.G;
-import static org.ironriders.shooter.ShooterConstants.HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
-import static org.ironriders.shooter.ShooterConstants.SHOOTER_D;
-import static org.ironriders.shooter.ShooterConstants.SHOOTER_HOOD_MAX_ACC;
-import static org.ironriders.shooter.ShooterConstants.SHOOTER_HOOD_MAX_VEL;
-import static org.ironriders.shooter.ShooterConstants.SHOOTER_I;
-import static org.ironriders.shooter.ShooterConstants.SHOOTER_P;
-import static org.ironriders.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
+import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_D;
+import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_I;
+import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
+import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_VEL;
+import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_P;
+import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_RADIUS;
+import static org.ironriders.manipulation.shooter.ShooterConstants.G;
+import static org.ironriders.manipulation.shooter.ShooterConstants.HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
+import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_D;
+import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_HOOD_MAX_ACC;
+import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_HOOD_MAX_VEL;
+import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_I;
+import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_P;
+import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
 
 import org.ironriders.lib.IronSubsystem;
-import org.ironriders.shooter.ShooterConstants.State;
+import org.ironriders.manipulation.shooter.ShooterConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;

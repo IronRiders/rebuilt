@@ -1,4 +1,4 @@
-package org.ironriders.shooter;
+package org.ironriders.manipulation.shooter;
 
 public class ShooterConstants {
 

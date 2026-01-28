@@ -1,4 +1,4 @@
-package org.ironriders.intake;
+package org.ironriders.manipulation.intake;
 
 public class IntakeConstants {
     public static final int ID = 676767;
