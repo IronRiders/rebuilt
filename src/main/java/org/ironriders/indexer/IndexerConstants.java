@@ -1,4 +1,4 @@
-package indexer;
+package org.ironriders.indexer;
 
 public class IndexerConstants {
     public static int ID = 0x3a33;

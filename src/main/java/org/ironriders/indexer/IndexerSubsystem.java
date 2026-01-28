@@ -1,10 +1,10 @@
-package indexer;
+package org.ironriders.indexer;
 
+import org.ironriders.indexer.IndexerConstants.State;
 import org.ironriders.lib.IronSubsystem;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
-import indexer.IndexerConstants.State;
 
 public class IndexerSubsystem extends IronSubsystem {
     private final IndexerCommands commands = new IndexerCommands(this);
