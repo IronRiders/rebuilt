@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Subsystem for controlling ?wrist?
@@ -40,12 +42,11 @@ public class WristSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
-        double pos = this.getPosition();
+        double feedforwardAmount = armFeedforward.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity)
+                / RobotController.getBatteryVoltage(); // Normalize feedforward to PID Output
         wristMotor.setVoltage(
-                pid.calculate(pos)
-                        + armFeedforward.calculate(
-                                pid.getSetpoint().position,
-                                pid.getSetpoint().velocity));
+                pid.calculate(this.getPosition())
+                        + feedforwardAmount);
     }
 
     /**
