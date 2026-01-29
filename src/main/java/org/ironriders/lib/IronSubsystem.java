@@ -13,17 +13,16 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
- * Common base for 4180 subsystems (mostly error/warning/debug messages and pushing stuff to the
+ * Common base for 4180 subsystems (mostly error/warning/debug messages and
+ * pushing stuff to the
  * dashboard).
  */
 public abstract class IronSubsystem extends SubsystemBase {
 
-    private final String diagnosticName =
-            this.getClass().getSimpleName().replaceAll("Subsystem$", "");
+    private final String diagnosticName = this.getClass().getSimpleName().replaceAll("Subsystem$", "");
 
     private final String dashboardPrefix = "Subsystems/" + diagnosticName + "/";
     private final String messagePrefix = diagnosticName + ": ";
@@ -53,9 +52,12 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Send a elastic notification with level WARNING. This will also append your title to "warning
-     * in (your subsystem): and set that as the title". You should be careful to put as little
-     * information in the title as possible so it doesn't overflow. This notification will last 10
+     * Send a elastic notification with level WARNING. This will also append your
+     * title to "warning
+     * in (your subsystem): and set that as the title". You should be careful to put
+     * as little
+     * information in the title as possible so it doesn't overflow. This
+     * notification will last 10
      * seconds
      *
      * @param notif The elastic notification to send.
@@ -68,14 +70,17 @@ public abstract class IronSubsystem extends SubsystemBase {
 
         notif.setTitle(title);
         notif.setDisplayTimeSeconds(10);
-        
+
         putNotification(notif);
     }
 
     /**
-     * Send a elastic notification with level info. This will also append your title to "Message from
-     * (your subsystem): and set that as the title". You should be careful to put as little
-     * information in the title as possible so it doesn't overflow. This notification will last 5
+     * Send a elastic notification with level info. This will also append your title
+     * to "Message from
+     * (your subsystem): and set that as the title". You should be careful to put as
+     * little
+     * information in the title as possible so it doesn't overflow. This
+     * notification will last 5
      * seconds
      *
      * @param notif The elastic notification to send.
@@ -88,14 +93,17 @@ public abstract class IronSubsystem extends SubsystemBase {
 
         notif.setTitle(title);
         notif.setDisplayTimeSeconds(5);
-        
+
         putNotification(notif);
     }
 
     /**
-     * Send a elastic notification with level ERROR. This will also append your title to "ERROR in
-     * (your subsystem): and set that as the title". You should be careful to put as little
-     * information in the title as possible so it doesn't overflow. This notification will last 30
+     * Send a elastic notification with level ERROR. This will also append your
+     * title to "ERROR in
+     * (your subsystem): and set that as the title". You should be careful to put as
+     * little
+     * information in the title as possible so it doesn't overflow. This
+     * notification will last 30
      * seconds
      *
      * @param notif The elastic notification to send.
@@ -127,7 +135,8 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * DEBUGGING ONLY Publish a boolean diagnostic value to SmartDashboard with the prefix
+     * DEBUGGING ONLY Publish a boolean diagnostic value to SmartDashboard with the
+     * prefix
      * `debug/Subsystems/{subsystem name}/`.
      */
     public void debugPublish(String name, boolean value) {
@@ -135,7 +144,8 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * DEBUGGING ONLY Publish a double diagnostic value to SmartDashboard with the prefix
+     * DEBUGGING ONLY Publish a double diagnostic value to SmartDashboard with the
+     * prefix
      * `debug/Subsystems/{subsystem name}/`.
      */
     public void debugPublish(String name, double value) {
@@ -143,7 +153,8 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * DEBUGGING ONLY Publish an String diagnostic value to SmartDashboard with the prefix
+     * DEBUGGING ONLY Publish an String diagnostic value to SmartDashboard with the
+     * prefix
      * `debug/Subsystems/{subsystem name}/`.
      */
     public void debugPublish(String name, String value) {
@@ -151,8 +162,10 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * DEBUGGING ONLY Publish a Sendable (including Commands) diagnostic value to SmartDashboard
-     * with the prefix `debug/Subsystems/{subsystem name}/`. If the value is a Command, it will NOT also
+     * DEBUGGING ONLY Publish a Sendable (including Commands) diagnostic value to
+     * SmartDashboard
+     * with the prefix `debug/Subsystems/{subsystem name}/`. If the value is a
+     * Command, it will NOT also
      * be registered with PathPlanner's {@link NamedCommands}.
      */
     public void debugPublish(String name, Sendable value) {
@@ -160,7 +173,8 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Publish a boolean diagnostic value to SmartDashboard with the prefix `Subsystems/{subsystem
+     * Publish a boolean diagnostic value to SmartDashboard with the prefix
+     * `Subsystems/{subsystem
      * name}/`.
      */
     public void publish(String name, boolean value) {
@@ -168,7 +182,8 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Publish a double diagnostic value to SmartDashboard with the prefix `Subsystems/{subsystem
+     * Publish a double diagnostic value to SmartDashboard with the prefix
+     * `Subsystems/{subsystem
      * name}/`.
      */
     public void publish(String name, double value) {
@@ -176,7 +191,8 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Publish an String diagnostic value to SmartDashboard with the prefix `Subsystems/{subsystem
+     * Publish an String diagnostic value to SmartDashboard with the prefix
+     * `Subsystems/{subsystem
      * name}/`.
      */
     public void publish(String name, String value) {
@@ -184,8 +200,10 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Publish a Sendable (including Commands) diagnostic value to SmartDashboard with the prefix
-     * `Subsystems/{subsystem name}/`. If the value is a Command, it will also be registered with
+     * Publish a Sendable (including Commands) diagnostic value to SmartDashboard
+     * with the prefix
+     * `Subsystems/{subsystem name}/`. If the value is a Command, it will also be
+     * registered with
      * PathPlanner's {@link NamedCommands}.
      */
     public void publish(String name, Sendable value) {
@@ -196,8 +214,10 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Reports a String error message to {@link DriverStation#reportError(String, boolean)
-     * DriverStation} with the time and subsystem name; Sends a notification to elastic with level
+     * Reports a String error message to
+     * {@link DriverStation#reportError(String, boolean)
+     * DriverStation} with the time and subsystem name; Sends a notification to
+     * elastic with level
      * {@link NotificationLevel#ERROR ERROR}. with just the raw message.
      *
      * @param message The error message to report.
@@ -209,9 +229,11 @@ public abstract class IronSubsystem extends SubsystemBase {
     }
 
     /**
-     * Reports a String warning message to {@link DriverStation#reportWarning(String, boolean)
+     * Reports a String warning message to
+     * {@link DriverStation#reportWarning(String, boolean)
      * DriverStation} with the time and subsystem name; Sends a notification to
-     * {@linkplain org.ironriders.lib.Elastic#sendNotification(Notification) Elastic} with level
+     * {@linkplain org.ironriders.lib.Elastic#sendNotification(Notification)
+     * Elastic} with level
      * {@link NotificationLevel#WARNING WARNING} with just the raw message.
      *
      * @param message The warning message to report.

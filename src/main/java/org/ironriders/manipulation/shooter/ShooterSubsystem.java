@@ -23,7 +23,7 @@ import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_V
 import java.util.Optional;
 
 import org.ironriders.lib.IronSubsystem;
-import org.ironriders.lib.RobotUtils;
+import org.ironriders.lib.Utils;
 import org.ironriders.manipulation.shooter.ShooterConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -141,9 +141,9 @@ public class ShooterSubsystem extends IronSubsystem {
         double secondAngle = Math // Low arc
                 .atan((distance - discriminant) * Math.pow(TARGET_BALL_VELOCITY, 2) / G / Math.pow(distance, 2));
 
-        if (RobotUtils.tolerance(MIN_ROTATION, MAX_ROTATION, secondAngle)) {
+        if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, secondAngle)) {
             return Optional.of(secondAngle);
-        } else if(RobotUtils.tolerance(MIN_ROTATION, MAX_ROTATION, firstAngle)) {
+        } else if(Utils.inRange(MIN_ROTATION, MAX_ROTATION, firstAngle)) {
             return Optional.of(firstAngle);
         } else {
             return Optional.empty();

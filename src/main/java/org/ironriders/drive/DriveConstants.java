@@ -4,57 +4,49 @@ import java.io.File;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.wpilibj.Filesystem;
 
 /** Constants for the drive subsystem. */
 public class DriveConstants {
+    public enum Controller {
+        DRIVER(),
+        VISION();
 
-    public static final double ROBOT_WIDTH = 37; // Front-back
-    public static final double ROBOT_LENGTH = 37; // Side-side
+        Controller() {
+        }
+    }
 
-    // Ports, IDs, Configs, etc.
-    public static final int PRIMARY_CONTROLLER_PORT = 0;
-    public static final int KEYPAD_CONTROLLER_PORT = 2;
-    public static final int TERTIARY_CONTROLLER_PORT = 1;
-    public static final int GYRO_PORT = 9;
+    public static final File SWERVE_JSON_DIRECTORY = new File(Filesystem.getDeployDirectory(), "swerve");
 
-    public static final double PATHFIND_CANCEL_THRESHOLD = 0.3; // 0-1, controller input
+    public static final PPHolonomicDriveController HOLONOMIC_CONFIG = new PPHolonomicDriveController(
+            new PIDConstants(1.0, 0.0, 0.0), // Translation PID
+            new PIDConstants(1.0, 0.0, 0.0) // Rotation PID
+    );
 
-    public static final File SWERVE_JSON_DIRECTORY =
-            new File(Filesystem.getDeployDirectory(), "swerve");
-
-    public static final PPHolonomicDriveController HOLONOMIC_CONFIG =
-            new PPHolonomicDriveController(new PIDConstants(2.5, 0.05, 0.0), // Translation PID
-                    new PIDConstants(10.0, 0.2, 0.0) // Rotation PID
-            );
-
-    // Mathematical Constants
     public static final double TRANSLATION_CONTROL_EXPONENT = 3.0;
     public static final double TRANSLATION_CONTROL_DEADBAND = 0.8;
     public static final double ROTATION_CONTROL_EXPONENT = 3.0;
     public static final double ROTATION_CONTROL_DEADBAND = 0.8;
 
-    public static final double SWERVE_DRIVE_MAX_SPEED = 6; // m/s
-    public static final double SWERVE_MAXIMUM_ANGULAR_VELOCITY = Math.PI * 2.5; // rad/s
+    public static final double SWERVE_MAX_TRANSLATION_TELEOP = 0.6; // m/s
+    public static final double SWERVE_MAX_ANGULAR_TELEOP = Math.PI / 3; // rad/s
 
-    public static final double SWERVE_MAXIMUM_SPEED_AUTO = 1.0; // m/s
-    public static final double SWERVE_MAXIMUM_ACCELERATION_AUTO = // TODO: This does nothing!!
-            SWERVE_MAXIMUM_SPEED_AUTO / 2; // m/s^2
-    public static final double SWERVE_MAXIMUM_ANGULAR_VELOCITY_AUTO = Math.PI * 4; // rad/s
-    public static final double SWERVE_MAXIMUM_ANGULAR_ACCELERATION_AUTO =
-            SWERVE_MAXIMUM_ANGULAR_VELOCITY_AUTO / 2; // rad/s^2
+    public static final double SWERVE_MAX_TRANSLATION_PATHFIND = 0.3; // m/s
+    public static final double SWERVE_MAX_ANGULAR_PATHFIND = Math.PI / 3; // rad/s
 
-    public static final double JOG_DISTANCE_INCHES = 0.5;
-    public static final double JOG_SPEED = .25;
+    public static final double SWERVE_MAX_TRANSLATION_ACCEL_PATHFIND = SWERVE_MAX_TRANSLATION_PATHFIND / 2;
+    public static final double SWERVE_MAX_ANGULAR_ACCEL_PATHFIND = SWERVE_MAX_ANGULAR_PATHFIND / 2;
 
-    // Vision Constants
+    public static final PathConstraints PATHFIND_CONSTRAINTS = new PathConstraints(SWERVE_MAX_TRANSLATION_PATHFIND,
+            SWERVE_MAX_TRANSLATION_ACCEL_PATHFIND, SWERVE_MAX_ANGULAR_PATHFIND,
+            SWERVE_MAX_ANGULAR_ACCEL_PATHFIND);
 
-    public static final double VISION_P = 0.1;
-    public static final double VISION_I = 0.05;
-    public static final double VISION_D = 0;
+    public static final double DRIVE_OVERRIDE_THRESHOLD = 0.3; // Input threshold to override vision and drive
+                                                               // anyway.
 
-    public static final double VISION_ROTATION_MAX_SPEED = 2; // rad/s 
-
-    public static final String VISION_CAMERA = "main";
+    
+    public static final int CONTROLLER_PRIMARY_PORT = 0;
+    public static final int CONTROLLER_SECONDARY_PORT = 1;
 }

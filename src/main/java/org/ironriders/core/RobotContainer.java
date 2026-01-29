@@ -9,7 +9,7 @@ import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
-import org.ironriders.lib.RobotUtils;
+import org.ironriders.lib.Utils;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
@@ -69,9 +69,9 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     private final CommandXboxController primaryController = new CommandXboxController(
-            DriveConstants.PRIMARY_CONTROLLER_PORT);
+            DriveConstants.CONTROLLER_PRIMARY_PORT);
     private final CommandGenericHID secondaryController = new CommandJoystick(
-            DriveConstants.KEYPAD_CONTROLLER_PORT);
+            DriveConstants.CONTROLLER_SECONDARY_PORT);
 
     public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
             shooterCommands, wristCommands, climberCommands, primaryController.getHID());
@@ -108,16 +108,13 @@ public class RobotContainer {
 
         // --- DRIVE CONTROLS ---
         driveSubsystem.setDefaultCommand(robotCommands.driveTeleop(
-                () -> RobotUtils.controlCurve(primaryController.getLeftY()
-                        * driveSubsystem.controlSpeedMultipler,
+                () -> Utils.controlCurve(primaryController.getLeftY(),
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> RobotUtils.controlCurve(primaryController.getLeftX()
-                        * driveSubsystem.controlSpeedMultipler,
+                () -> Utils.controlCurve(primaryController.getLeftX(),
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> RobotUtils.controlCurve(primaryController.getRightX()
-                        * driveSubsystem.controlSpeedMultipler,
+                () -> Utils.controlCurve(primaryController.getRightX(),
                         DriveConstants.ROTATION_CONTROL_EXPONENT,
                         DriveConstants.ROTATION_CONTROL_DEADBAND)));
 
