@@ -2,30 +2,46 @@ package org.ironriders.core;
 
 import java.util.function.DoubleSupplier;
 
+import org.ironriders.climber.ClimberCommands;
 import org.ironriders.drive.DriveCommands;
+import org.ironriders.manipulation.indexer.IndexerCommands;
+import org.ironriders.manipulation.indexer.IndexerConstants;
+import org.ironriders.manipulation.intake.IntakeCommands;
+import org.ironriders.manipulation.shooter.ShooterCommands;
+import org.ironriders.manipulation.shooter.ShooterConstants;
+import org.ironriders.manipulation.wrist.WristCommands;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
- * These commands require more complex logic and are not directly tied to a subsystem. They
- * generally interface w/ multiple subsystems via their commands and are higher-level.
+ * These commands require more complex logic and are not directly tied to a
+ * subsystem. They
+ * generally interface w/ multiple subsystems via their commands and are
+ * higher-level.
  */
+
 public class RobotCommands {
     private final DriveCommands driveCommands;
+    private final IndexerCommands indexerCommands;
+    private final IntakeCommands intakeCommands;
+    private final ShooterCommands shooterCommands;
+    private final WristCommands wristCommands;
+    private final ClimberCommands climberCommands;
 
     private final GenericHID controller;
 
-    /**
-     * Creates final variables for all command classes.
-     *
-     * @param driveCommands DriveCommands instance
-     * @param targetingCommands TargetingCommands instance
-     * @param climbCommands ClimbCommands instance
-     * @param controller GenericHID controller (joystick/gamepad) instance
-     */
-    public RobotCommands(DriveCommands driveCommands, GenericHID controller) {
+    public RobotCommands(DriveCommands driveCommands, IndexerCommands indexerCommands, IntakeCommands intakeCommands,
+            ShooterCommands shooterCommands, WristCommands wristCommands, ClimberCommands climberCommands,
+            GenericHID controller) {
         this.driveCommands = driveCommands;
+        this.indexerCommands = indexerCommands;
+        this.intakeCommands = intakeCommands;
+        this.shooterCommands = shooterCommands;
+        this.wristCommands = wristCommands;
+        this.climberCommands = climberCommands;
+
         this.controller = controller;
     }
 
@@ -34,10 +50,18 @@ public class RobotCommands {
      *
      * @param inputTranslationX DoubleSupplier, value from 0-1.
      * @param inputTranslationY DoubleSupplier, value from 0-1.
-     * @param inputRotation DoubleSupplier, value from 0-1.
+     * @param inputRotation     DoubleSupplier, value from 0-1.
      */
     public Command driveTeleop(DoubleSupplier inputTranslationX, DoubleSupplier inputTranslationY,
             DoubleSupplier inputRotation) {
         return driveCommands.driveTeleop(inputTranslationX, inputTranslationY, inputRotation, true);
+    }
+
+    public Command readyShooter() {
+        return Commands.parallel(shooterCommands.set(ShooterConstants.State.READY), indexerCommands.set(IndexerConstants.State.STOP));
+    }
+
+    public Command fire() {
+        return Commands.sequence(readyShooter(), indexerCommands.set(IndexerConstants.State.INDEX));
     }
 }

@@ -1,4 +1,4 @@
-package org.ironriders.wrist;
+package org.ironriders.manipulation.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
 

@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-// TODO: Update to rebuilt
+import org.ironriders.lib.Utils;
+import org.ironriders.vision.VisionSubsystem;
 
 /**
  * Representation of an element on the field.
@@ -20,24 +21,32 @@ public class FieldElement {
 
   /** The type of elements on the field. */
   public enum ElementType {
-    STATION,
-    REEF,
-    PROCESSOR,
-    BARGE,
+    OUTPOST,
+    HUB,
+    TOWER,
+    DEPOT,
+    BUMP,
+    TRENCH
   }
 
   /** Generic (alliance-independent) element identifiers. */
   public enum Position {
-    LEFT_STATION(0, ElementType.STATION),
-    RIGHT_STATION(1, ElementType.STATION),
-    REEF_FRONT(2, ElementType.REEF),
-    REEF_FRONT_LEFT(3, ElementType.REEF),
-    REEF_BACK_LEFT(4, ElementType.REEF),
-    REEF_BACK(5, ElementType.REEF),
-    REEF_BACK_RIGHT(6, ElementType.REEF),
-    REEF_FRONT_RIGHT(7, ElementType.REEF),
-    PROCESSOR(8, ElementType.PROCESSOR),
-    BARGE(9, ElementType.BARGE);
+    LEFT_OUTPOST(0, ElementType.OUTPOST),
+    RIGHT_OUTPOST(1, ElementType.OUTPOST),
+    HUB_FRONT(2, ElementType.HUB),
+    HUB_BACK(3, ElementType.HUB),
+    RIGHT_TOWER(4, ElementType.TOWER),
+    LEFT_TOWER(5, ElementType.TOWER),
+    RIGHT_DEPOT(6, ElementType.DEPOT),
+    LEFT_DEPOT(7, ElementType.DEPOT),
+    BUMP_FRONT_RIGHT(8, ElementType.BUMP),
+    BUMP_FRONT_LEFT(9, ElementType.BUMP),
+    BUMP_BACK_RIGHT(10, ElementType.BUMP),
+    BUMP_BACK_LEFT(11, ElementType.BUMP),
+    TRENCH_FRONT_RIGHT(12, ElementType.TRENCH),
+    TRENCH_FRONT_LEFT(13, ElementType.TOWER),
+    TRENCH_BACK_RIGHT(14, ElementType.TRENCH),
+    TRENCH_BACK_LEFT(15, ElementType.TRENCH);
 
     public final int id;
     public final ElementType type;
@@ -53,9 +62,9 @@ public class FieldElement {
   public final Pose3d pose;
   public final String name;
 
-  private static int[] BLUE_TAGS = {13, 12, 18, 19, 20, 21, 22, 17, 16, 14};
+  private static int[] BLUE_TAGS = Utils.everyIntInRange(17, 32);
 
-  private static int[] RED_TAGS = {1, 2, 7, 6, 11, 10, 9, 8, 3, 5};
+  private static int[] RED_TAGS = Utils.everyIntInRange(1, 16);
 
   private static List<FieldElement> BLUE_ELEMENTS =
       loadElements(DriverStation.Alliance.Blue, BLUE_TAGS);
@@ -106,7 +115,7 @@ public class FieldElement {
     return Stream.of(Position.values())
         .map(
             element -> {
-              var pose = FieldUtils.FIELD_LAYOUT.getTagPose(tags[element.id]);
+              var pose = VisionSubsystem.fieldLayout.getTagPose(tags[element.id]);
               if (pose.isEmpty()) {
                 Optional.empty();
               }
