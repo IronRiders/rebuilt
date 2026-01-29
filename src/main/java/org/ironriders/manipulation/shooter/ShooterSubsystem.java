@@ -22,8 +22,10 @@ import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_V
 
 import java.util.Optional;
 
+import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.field.FieldElement;
 import org.ironriders.manipulation.shooter.ShooterConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -31,6 +33,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -68,8 +71,9 @@ public class ShooterSubsystem extends IronSubsystem {
         velocityPidController.setGoal(0);
 
         anglePidController.reset(getShooterHoodAngle().in(Degrees));
-        // TODO: Maybe we should spin up the wheel and never stop it? idk sounds kinda like a bad idea.
-        anglePidController.setGoal(0); 
+        // TODO: Maybe we should spin up the wheel and never stop it? idk sounds kinda
+        // like a bad idea.
+        anglePidController.setGoal(0);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class ShooterSubsystem extends IronSubsystem {
                 break;
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
-                setAngleGoal(calculateShooterAngle(10 /* TODO */).get());
+                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()).get());
                 break;
         }
 
@@ -91,7 +95,14 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public void setCurrentState(State state) {
         currentState = state;
-    } 
+    }
+
+    public double calculateDistanceToHub() {
+        return Utils
+                .getPose3dDifference(new Pose3d(DriveSubsystem.getSwerveDrive().getPose()), FieldElement
+                        .nearestTo(DriveSubsystem.getSwerveDrive().getPose(), FieldElement.ElementType.HUB).get().pose)
+                .getNorm();
+    }
 
     public ShooterCommands getCommands() {
         return commands;
@@ -143,7 +154,7 @@ public class ShooterSubsystem extends IronSubsystem {
 
         if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, secondAngle)) {
             return Optional.of(secondAngle);
-        } else if(Utils.inRange(MIN_ROTATION, MAX_ROTATION, firstAngle)) {
+        } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, firstAngle)) {
             return Optional.of(firstAngle);
         } else {
             return Optional.empty();

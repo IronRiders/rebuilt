@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 /** Utility class to encourage the robot's dangerous math addiction. */
 public class Utils {
@@ -47,6 +48,10 @@ public class Utils {
 
   public static Translation2d getPoseDifference(Pose2d pose1, Pose2d pose2) {
     return new Translation2d(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
+  }
+
+  public static Translation3d getPose3dDifference(Pose3d pose1, Pose3d pose2) {
+    return new Translation3d(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY(), pose1.getZ() - pose2.getZ());
   }
 
   public static double clamp(double min, double max, double in) {
