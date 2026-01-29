@@ -132,7 +132,7 @@ public class ShooterSubsystem extends IronSubsystem {
                         - 2 * HEIGHT_DIFFERENCE_HUB_TO_SHOOTER * G * Math.pow(distance, 2)
                                 / Math.pow(TARGET_BALL_VELOCITY, 2));
 
-        if(discriminant <= 0) {
+        if (discriminant <= 0) {
             return Optional.of(0d); // No angles to reach the target!
         }
 

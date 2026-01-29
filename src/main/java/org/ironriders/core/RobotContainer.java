@@ -21,7 +21,10 @@ import org.ironriders.manipulation.wrist.WristSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -86,6 +89,9 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
+        DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
+        DogLog.setPdh(new PowerDistribution());
+
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
     }
@@ -102,15 +108,15 @@ public class RobotContainer {
 
         // --- DRIVE CONTROLS ---
         driveSubsystem.setDefaultCommand(robotCommands.driveTeleop(
-                () -> RobotUtils.controlCurve(-primaryController.getLeftY()
+                () -> RobotUtils.controlCurve(primaryController.getLeftY()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> RobotUtils.controlCurve(-primaryController.getLeftX()
+                () -> RobotUtils.controlCurve(primaryController.getLeftX()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> RobotUtils.controlCurve(-primaryController.getRightX()
+                () -> RobotUtils.controlCurve(primaryController.getRightX()
                         * driveSubsystem.controlSpeedMultipler,
                         DriveConstants.ROTATION_CONTROL_EXPONENT,
                         DriveConstants.ROTATION_CONTROL_DEADBAND)));

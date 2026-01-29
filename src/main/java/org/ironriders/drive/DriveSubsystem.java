@@ -34,8 +34,10 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 /**
- * The DriveSubsystem encompasses everything that the Swerve Drive needs to function. It keeps track
- * of the robot's position and angle, and uses the controller input to figure out how the individual
+ * The DriveSubsystem encompasses everything that the Swerve Drive needs to
+ * function. It keeps track
+ * of the robot's position and angle, and uses the controller input to figure
+ * out how the individual
  * modules need to turn and be angled.
  */
 public class DriveSubsystem extends IronSubsystem {
@@ -103,12 +105,14 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     /**
-     * Vrrrrooooooooom brrrrrrrrr BRRRRRR wheeee BRRR brrrr VRRRRROOOOOOM ZOOOOOOM ZOOOOM
+     * Vrrrrooooooooom brrrrrrrrr BRRRRRR wheeee BRRR brrrr VRRRRROOOOOOM ZOOOOOOM
+     * ZOOOOM
      * WAHOOOOOOOOO WAHAHAHHA (Drives given a desired translation and rotation.)
      *
-     * @param translation Desired translation in meters per second.
-     * @param rotation Desired rotation in radians per second.
-     * @param fieldRelative If not field relative, the robot will move relative to its own rotation.
+     * @param translation   Desired translation in meters per second.
+     * @param rotation      Desired rotation in radians per second.
+     * @param fieldRelative If not field relative, the robot will move relative to
+     *                      its own rotation.
      */
     public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
         swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
@@ -210,8 +214,10 @@ public class DriveSubsystem extends IronSubsystem {
         } else {
 
             if (controlsDrive) {
-                // Saftey measure, if vision control is requested but we lose the tag, stop moving.
-                // Otherwise we will just keep moving in the previously commanded direction forever
+                // Saftey measure, if vision control is requested but we lose the tag, stop
+                // moving.
+                // Otherwise we will just keep moving in the previously commanded direction
+                // forever
                 swerveDrive.drive(new Translation2d(0, 0), 0, false, true);
             }
         }

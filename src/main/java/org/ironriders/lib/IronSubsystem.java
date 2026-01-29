@@ -8,6 +8,7 @@ import org.ironriders.lib.Elastic.NotificationLevel;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -115,17 +116,9 @@ public abstract class IronSubsystem extends SubsystemBase {
         Elastic.sendNotification(new Notification().withTitle(title).withDescription(text));
     }
 
-    /**
-     * Returns a command to print the message out with a timestamp in {@linkplain System.out
-     * standard out} Also sends a notification to elastic with the same message
-     *
-     * @param msg the text to be printed
-     * @return a runOnce command with the current time, the subsystem name (that extends this
-     *         subsystem), and the message
-     */
-    public Command logMessage(String msg) {
+    public void log(String msg) {
         putTitleTextNotifcation(getThreadTime() + messagePrefix, msg);
-        return Commands.runOnce(() -> System.out.println(getThreadTime() + messagePrefix + msg));
+        DogLog.log(getThreadTime() + messagePrefix, msg);
     }
 
     /** Get a diagnostic value from SmartDashboard. */
