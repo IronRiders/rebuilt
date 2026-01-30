@@ -26,7 +26,9 @@ public class ShooterConstants {
 
   public static final double SHOOTER_STOW_POSITION = 0.0;
 
-  public static final double SHOOTER_MAX_RANGE = 14.5; // meters
+  public static final double ESTIMATION_STARTING_DISTANCE = 5;
+
+  public static double SHOOTER_MAX_RANGE = 14.5; // meters (fake constant)
 
   public static final double MIN_ROTATION = Math.toRadians(15);
   public static final double MAX_ROTATION = Math.toRadians(45);

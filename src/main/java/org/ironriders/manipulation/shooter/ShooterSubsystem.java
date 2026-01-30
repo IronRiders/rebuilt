@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
+import static org.ironriders.manipulation.shooter.ShooterConstants.ESTIMATION_STARTING_DISTANCE;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_D;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_I;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
@@ -23,6 +24,8 @@ import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_P;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_TOLERANCE;
 import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_VELOCITY;
+
+import java.util.Optional;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
@@ -47,6 +50,8 @@ public class ShooterSubsystem extends IronSubsystem {
     private ShooterCommands commands;
 
     public State currentState = State.STOW;
+
+    public boolean inRange = false;
 
     public final TalonFX flyWheelMotor = new TalonFX(999); // TODO set the actual CAN ID
 
@@ -83,22 +88,32 @@ public class ShooterSubsystem extends IronSubsystem {
         anglePidController.setTolerance(SHOOTER_TOLERANCE);
 
         for (double i = 0; i <= 15; i += 0.5) {
-            DogLog.log("Shooter-test", i + " | Rad: " + String.valueOf(calculateShooterAngle(i).in(Radians)) + " Deg: " + String.valueOf(calculateShooterAngle(i).in(Degrees)));
+            DogLog.log("Shooter-test", i + " | Rad: " + String.valueOf(calculateShooterAngle(i).in(Radians)) + " Deg: "
+                    + String.valueOf(calculateShooterAngle(i).in(Degrees)));
         }
         DogLog.log("Shooter-test-pose", FieldPositions.get(ElementType.HUB).toString());
         DogLog.log("Shooter-our-pose", DriveSubsystem.getSwerveDrive().getPose().toString());
-        DogLog.log("Shooter-real-test", String.valueOf(calculateShooterAngle(calculateDistanceToHub())));
+        DogLog.log("Shooter-real-test", String.valueOf(calculateShooterAngle(calculateDistanceToHub()).in(Degrees)));
+        DogLog.log("Shooter-max-range", estimateMaxRange().get());
 
         setCurrentState(State.IDLE);
+
+        Optional<Double> range = estimateMaxRange();
+
+        if (range.isPresent()) {
+            SHOOTER_MAX_RANGE = range.get();
+        }
     }
 
     @Override
     public void periodic() {
         updatePID();
 
-        if (calculateDistanceToHub() < SHOOTER_MAX_RANGE) {
+        if (calculateDistanceToHub() < SHOOTER_MAX_RANGE && !inRange) {
+            inRange = true;
             setCurrentState(State.READY);
-        } else {
+        } else if (inRange && calculateDistanceToHub() > SHOOTER_MAX_RANGE) {
+            inRange = false;
             setCurrentState(State.IDLE);
         }
     }
@@ -141,7 +156,9 @@ public class ShooterSubsystem extends IronSubsystem {
         publish("Shooter RPM", getFlywheelVelocity().in(RPM));
         publish("Shooter Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
 
-        flyWheelMotor.set(Utils.clamp(0, 1, velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)))); // Don't brake
+        flyWheelMotor
+                .set(Utils.clamp(0, 1, velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)))); // Don't
+                                                                                                                      // brake
         shooterHoodMotor.set(anglePidController.calculate(getShooterHoodAngle().in(Degrees)));
     }
 
@@ -151,6 +168,43 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public void homeShooterHood() {
 
+    }
+
+    public Optional<Double> estimateMaxRange() { // Try to find the maximum range from the provided ball speed.
+        double low = ESTIMATION_STARTING_DISTANCE;
+        double high = ESTIMATION_STARTING_DISTANCE;
+        double step = 1d;
+        double loops = 0d;
+
+        while (loops <= 25) {
+            Double result = calculateShooterAngle(high).in(Radians);
+
+            if (result == -1) {
+                break;
+            }
+
+            low = high; // Last known good (or too low)
+            high += step;
+            step *= 2;
+            loops += 1;
+        }
+
+        if (loops > 25) {
+            return Optional.empty();
+        }
+
+        for (int i = 0; i < 50; i++) {
+            double mid = (low + high) / 2.0;
+            Double result = calculateShooterAngle(mid).in(Radians);
+
+            if (result == -1) {
+                high = mid;
+            } else {
+                low = mid;
+            }
+        }
+
+        return Optional.of(low);
     }
 
     public void setFlywheelGoal(double goal) {
@@ -172,7 +226,7 @@ public class ShooterSubsystem extends IronSubsystem {
         double inner = Math.pow(v, 4) - G * (G * distance * distance + 2 * y * v * v);
 
         if (inner < 0) {
-            return Angle.ofBaseUnits(0d, Radians); // Target unreachable
+            return Angle.ofBaseUnits(-1d, Degrees); // Target unreachable
         }
 
         double sqrt = Math.sqrt(inner);
@@ -187,7 +241,7 @@ public class ShooterSubsystem extends IronSubsystem {
         } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, lowAngle)) {
             return Angle.ofBaseUnits(lowAngle, Radians);
         } else {
-            return Angle.ofBaseUnits(0d, Radians); // Bad angle
+            return Angle.ofBaseUnits(-2d, Degrees); // Bad angle
         }
     }
 }
