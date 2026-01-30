@@ -38,7 +38,7 @@ public class VisionSubsystem extends IronSubsystem {
     double skew;
     double lastSkew = -9999;
 
-    public static AprilTagFieldLayout fieldLayout;
+    public static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public VisionSubsystem() {
         try {

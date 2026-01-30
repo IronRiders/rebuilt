@@ -18,6 +18,8 @@ import org.ironriders.manipulation.shooter.ShooterCommands;
 import org.ironriders.manipulation.shooter.ShooterSubsystem;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristSubsystem;
+import org.ironriders.vision.VisionCommands;
+import org.ironriders.vision.VisionSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -64,6 +66,9 @@ public class RobotContainer {
     public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public final ClimberCommands climberCommands = climberSubsystem.getCommands();
 
+    public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public final VisionCommands visionCommands = visionSubsystem.getCommands();
+
     public final Double triggerThreshold = 0.75;
 
     private final SendableChooser<Command> autoChooser;
@@ -74,7 +79,7 @@ public class RobotContainer {
             DriveConstants.CONTROLLER_SECONDARY_PORT);
 
     public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
-            shooterCommands, wristCommands, climberCommands, primaryController.getHID());
+            shooterCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.

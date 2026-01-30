@@ -63,8 +63,12 @@ public class FieldElement {
   public final String name;
 
   private static int[] BLUE_TAGS = Utils.everyIntInRange(17, 32);
+ // private static int[] BLUE_TAGS = {0};
+
 
   private static int[] RED_TAGS = Utils.everyIntInRange(1, 16);
+ // private static int[] RED_TAGS = {1};
+
 
   private static List<FieldElement> BLUE_ELEMENTS =
       loadElements(DriverStation.Alliance.Blue, BLUE_TAGS);

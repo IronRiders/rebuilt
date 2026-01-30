@@ -20,8 +20,6 @@ import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_P;
 import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
 import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_VELOCITY;
 
-import java.util.Optional;
-
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
@@ -32,9 +30,11 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
@@ -74,6 +74,11 @@ public class ShooterSubsystem extends IronSubsystem {
         // TODO: Maybe we should spin up the wheel and never stop it? idk sounds kinda
         // like a bad idea.
         anglePidController.setGoal(0);
+
+        for (double i = 0; i <= 15; i++) {
+            DogLog.log("Shooter-test", i + " : " + calculateShooterAngle(i).toString());
+            DogLog.log("Shooter-test", calculateDistanceToHub());
+        }
     }
 
     @Override
@@ -86,7 +91,7 @@ public class ShooterSubsystem extends IronSubsystem {
                 break;
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
-                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()).get());
+                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()));
                 break;
         }
 
@@ -99,8 +104,8 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public double calculateDistanceToHub() {
         return Utils
-                .getPose3dDifference(new Pose3d(DriveSubsystem.getSwerveDrive().getPose()), FieldElement
-                        .nearestTo(DriveSubsystem.getSwerveDrive().getPose(), FieldElement.ElementType.HUB).get().pose)
+                .getPoseDifference(DriveSubsystem.getSwerveDrive().getPose(), Utils.flattenPose3d(FieldElement
+                        .nearestTo(DriveSubsystem.getSwerveDrive().getPose(), FieldElement.ElementType.HUB).get().pose))
                 .getNorm();
     }
 
@@ -136,28 +141,28 @@ public class ShooterSubsystem extends IronSubsystem {
         return flyWheelMotor.getVelocity().getValue();
     }
 
-    public Optional<Double> calculateShooterAngle(double distance) { // distance in meters.
-        double discriminant = Math.sqrt(
-                Math.pow(distance, 2)
-                        - Math.pow(G, 2) * Math.pow(distance, 4) / Math.pow(TARGET_BALL_VELOCITY, 4)
-                        - 2 * HEIGHT_DIFFERENCE_HUB_TO_SHOOTER * G * Math.pow(distance, 2)
-                                / Math.pow(TARGET_BALL_VELOCITY, 2));
+    public Double calculateShooterAngle(double distance) {
+        double v = TARGET_BALL_VELOCITY;
+        double y = HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
 
-        if (discriminant <= 0) {
-            return Optional.of(0d); // No angles to reach the target!
+        double inner = Math.pow(v, 4) - G * (G * distance * distance + 2 * y * v * v);
+
+        if (inner < 0) {
+            return 0d; // Target unreachable
         }
 
-        double firstAngle = Math // High arc
-                .atan((distance + discriminant) * Math.pow(TARGET_BALL_VELOCITY, 2) / G / Math.pow(distance, 2));
-        double secondAngle = Math // Low arc
-                .atan((distance - discriminant) * Math.pow(TARGET_BALL_VELOCITY, 2) / G / Math.pow(distance, 2));
+        double sqrt = Math.sqrt(inner);
 
-        if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, secondAngle)) {
-            return Optional.of(secondAngle);
-        } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, firstAngle)) {
-            return Optional.of(firstAngle);
+        double lowAngle = Units.radiansToDegrees(Math.atan((v * v - sqrt) / (G * distance)));
+        double highAngle = Units.radiansToDegrees(Math.atan((v * v + sqrt) / (G * distance)));
+
+        if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, lowAngle)) {
+            return lowAngle;
+        } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
+            return highAngle;
         } else {
-            return Optional.empty();
+            return 0d; // Bad angle
         }
     }
+
 }

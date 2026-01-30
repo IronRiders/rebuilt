@@ -74,17 +74,15 @@ public class Utils {
     }
   }
 
-  public static int[] everyIntInRange(int min, int max) {
-    int[] out = { 0 };
+  public static int[] everyIntInRange(int a, int b) {
+    int start = Math.min(a, b);
+    int end = Math.max(a, b);
 
-    if (max < min) {
-      return out;
+    int[] result = new int[end - start + 1];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = start + i;
     }
 
-    for (int i = 0; min < max; i++) {
-      out[i] = min + i;
-    }
-
-    return out;
+    return result;
   }
 }
