@@ -16,16 +16,22 @@ public class ShooterConstants {
   public static final double FLYWHEEL_I = 0.0;
   public static final double FLYWHEEL_D = 0.0;
 
+  public static final double FLYWHEEL_TOLERANCE = 40; // rpm
+
   public static final double SHOOTER_P = 0.5;
   public static final double SHOOTER_I = 0.0;
   public static final double SHOOTER_D = 0.0;
 
+  public static final double SHOOTER_TOLERANCE = 0.1;
+
   public static final double SHOOTER_STOW_POSITION = 0.0;
+
+  public static final double SHOOTER_MAX_RANGE = 14.5; // meters
 
   public static final double MIN_ROTATION = 15;
   public static final double MAX_ROTATION = 45;
 
-  public static final double SPINDOWN_TIME = 2;  // seconds
+  public static final double SPINDOWN_TIME = 2;  // time to automatically go into idle mode after, currently TODO
 
   public enum State {
     READY(),

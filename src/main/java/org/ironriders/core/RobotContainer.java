@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -101,6 +102,10 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Select", autoChooser);
     }
 
+    public void periodicCommand() {
+
+    }
+
     /**
      * Th {@link CommandGenericHID#button(int)} method (such as
      * {@link CommandXboxController#button(int)},
@@ -112,7 +117,7 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
 
         // --- DRIVE CONTROLS ---
-        driveSubsystem.setDefaultCommand(robotCommands.driveTeleop(
+        driveSubsystem.setDefaultCommand(Commands.parallel(robotCommands.driveTeleop(
                 () -> Utils.controlCurve(primaryController.getLeftY(),
                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
@@ -121,7 +126,8 @@ public class RobotContainer {
                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
                 () -> Utils.controlCurve(primaryController.getRightX(),
                         DriveConstants.ROTATION_CONTROL_EXPONENT,
-                        DriveConstants.ROTATION_CONTROL_DEADBAND)));
+                        DriveConstants.ROTATION_CONTROL_DEADBAND)),
+                Commands.run(() -> periodicCommand())));
 
         // --- OTHER CONTROLS ---
         // TODO: Schedule a meeting to talk to drive about this once we have the design.
