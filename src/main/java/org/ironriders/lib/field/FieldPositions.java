@@ -16,12 +16,15 @@ public class FieldPositions {
     /*
      * Gets the position in meters of the specified element type. Automatically does alliance mirroring.
      * 
-     * !Currently only HUB is implemented, all other types will return a blank Pose3d()!
+     * !Currently only HUB and TOWER are implemented, all other types will return a blank Pose3d()!
      */
     public static Pose3d get(ElementType element) {
         switch (element) {
             case HUB:
                 return preparePose(Hub.HUB_CENTER);
+
+            case TOWER:
+                return preparePose(Tower.TOWER_CENTER);
             
             default:
                 break;
@@ -62,6 +65,10 @@ public class FieldPositions {
                 new Rotation3d());
         public static final Pose3d HUB_CENTER = new Pose3d(new Translation3d(182.11, 158.84, 44.25),
                 new Rotation3d());
+    }
+
+    public class Tower {
+        public static final Pose3d TOWER_CENTER = new Pose3d(new Translation3d(158.84-11.38, 47+155.05, 0), new Rotation3d());
     }
 
     public class Field {
