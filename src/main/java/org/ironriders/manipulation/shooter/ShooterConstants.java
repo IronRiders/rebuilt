@@ -28,8 +28,8 @@ public class ShooterConstants {
 
   public static final double SHOOTER_MAX_RANGE = 14.5; // meters
 
-  public static final double MIN_ROTATION = 15;
-  public static final double MAX_ROTATION = 45;
+  public static final double MIN_ROTATION = Math.toRadians(15);
+  public static final double MAX_ROTATION = Math.toRadians(45);
 
   public static final double SPINDOWN_TIME = 2;  // time to automatically go into idle mode after, currently TODO
 

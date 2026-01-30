@@ -3,6 +3,7 @@ package org.ironriders.manipulation.shooter;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_D;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_I;
 import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
@@ -82,7 +83,7 @@ public class ShooterSubsystem extends IronSubsystem {
         anglePidController.setTolerance(SHOOTER_TOLERANCE);
 
         for (double i = 0; i <= 15; i += 0.5) {
-            DogLog.log("Shooter-test", i + " : " + Math.toRadians(calculateShooterAngle(i)));
+            DogLog.log("Shooter-test", i + " | Rad: " + String.valueOf(calculateShooterAngle(i).in(Radians)) + " Deg: " + String.valueOf(calculateShooterAngle(i).in(Degrees)));
         }
         DogLog.log("Shooter-test-pose", FieldPositions.get(ElementType.HUB).toString());
         DogLog.log("Shooter-our-pose", DriveSubsystem.getSwerveDrive().getPose().toString());
@@ -93,24 +94,6 @@ public class ShooterSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
-        switch (currentState) {
-            default: // If we don't recognize the state fall through to STOW
-            case STOW:
-                setFlywheelGoal(0);
-                setAngleGoal(SHOOTER_STOW_POSITION);
-                break;
-
-            case IDLE:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
-                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()));
-                break;
-
-            case READY:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL);
-                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()));
-                break;
-        }
-
         updatePID();
 
         if (calculateDistanceToHub() < SHOOTER_MAX_RANGE) {
@@ -122,6 +105,25 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public void setCurrentState(State state) {
         currentState = state;
+
+        switch (currentState) {
+            default: // If we don't recognize the state fall through to STOW
+            case STOW:
+                setFlywheelGoal(0);
+                setAngleGoal(SHOOTER_STOW_POSITION);
+                break;
+
+            case IDLE:
+                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
+                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()).in(Degrees));
+                break;
+
+            case READY:
+                setFlywheelGoal(FLYWHEEL_MAX_VEL);
+                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()).in(Degrees));
+                break;
+        }
+
     }
 
     public double calculateDistanceToHub() {
@@ -139,7 +141,7 @@ public class ShooterSubsystem extends IronSubsystem {
         publish("Shooter RPM", getFlywheelVelocity().in(RPM));
         publish("Shooter Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
 
-        flyWheelMotor.set(velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)));
+        flyWheelMotor.set(Utils.clamp(0, 1, velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)))); // Don't brake
         shooterHoodMotor.set(anglePidController.calculate(getShooterHoodAngle().in(Degrees)));
     }
 
@@ -163,30 +165,29 @@ public class ShooterSubsystem extends IronSubsystem {
         return flyWheelMotor.getVelocity().getValue();
     }
 
-    public Double calculateShooterAngle(double distance) {
+    public Angle calculateShooterAngle(double distance) {
         double v = TARGET_BALL_VELOCITY;
         double y = HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
 
         double inner = Math.pow(v, 4) - G * (G * distance * distance + 2 * y * v * v);
 
         if (inner < 0) {
-            return 0d; // Target unreachable
+            return Angle.ofBaseUnits(0d, Radians); // Target unreachable
         }
 
         double sqrt = Math.sqrt(inner);
 
-        double lowAngle = Units.radiansToDegrees(Math.atan((v * v - sqrt) / (G * distance)));
-        double highAngle = Units.radiansToDegrees(Math.atan((v * v + sqrt) / (G * distance)));
+        double lowAngle = Math.atan((v * v - sqrt) / (G * distance));
+        double highAngle = Math.atan((v * v + sqrt) / (G * distance));
 
         DogLog.log("Shooter-angles-test", "High: " + String.valueOf(highAngle) + " | Low: " + String.valueOf(lowAngle));
 
         if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
-            return highAngle;
+            return Angle.ofBaseUnits(highAngle, Radians);
         } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, lowAngle)) {
-            return lowAngle;
+            return Angle.ofBaseUnits(lowAngle, Radians);
         } else {
-            return 0d; // Bad angle
+            return Angle.ofBaseUnits(0d, Radians); // Bad angle
         }
     }
-
 }
