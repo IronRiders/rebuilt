@@ -23,12 +23,14 @@ import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_V
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
-import org.ironriders.lib.field.FieldElement;
+import org.ironriders.lib.field.FieldElement.ElementType;
+import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.shooter.ShooterConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -56,12 +58,14 @@ public class ShooterSubsystem extends IronSubsystem {
     public final ProfiledPIDController anglePidController = new ProfiledPIDController(SHOOTER_P, SHOOTER_I, SHOOTER_D,
             AngleConstraints);
 
-    public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40);
+    public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(40);
 
     public ShooterSubsystem() {
         commands = new ShooterCommands(this);
 
         flyWheelMotor.getConfigurator().apply(currentLimitsConfigs);
+        flyWheelMotor.setNeutralMode(NeutralModeValue.Coast);
 
         shooterHoodMotor.getConfigurator().apply(currentLimitsConfigs);
         shooterHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
@@ -70,14 +74,16 @@ public class ShooterSubsystem extends IronSubsystem {
         velocityPidController.setGoal(0);
 
         anglePidController.reset(getShooterHoodAngle().in(Degrees));
-        // TODO: Maybe we should spin up the wheel and never stop it? idk sounds kinda
-        // like a bad idea.
         anglePidController.setGoal(0);
 
-        for (double i = 0; i <= 15; i++) {
+        for (double i = 0; i <= 15; i += 1) {
             DogLog.log("Shooter-test", i + " : " + Math.toRadians(calculateShooterAngle(i)));
-            //DogLog.log("Shooter-test", calculateDistanceToHub());
         }
+        DogLog.log("Shooter-test-pose", FieldPositions.get(ElementType.HUB).toString());
+        DogLog.log("Shooter-our-pose", DriveSubsystem.getSwerveDrive().getPose().toString());
+        DogLog.log("Shooter-real-test", String.valueOf(calculateShooterAngle(calculateDistanceToHub())));
+
+        setCurrentState(State.IDLE);
     }
 
     @Override
@@ -88,6 +94,12 @@ public class ShooterSubsystem extends IronSubsystem {
                 setFlywheelGoal(0);
                 setAngleGoal(SHOOTER_STOW_POSITION);
                 break;
+
+            case IDLE:
+                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
+                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()));
+                break;
+
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
                 setAngleGoal(calculateShooterAngle(calculateDistanceToHub()));
@@ -103,8 +115,8 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public double calculateDistanceToHub() {
         return Utils
-                .getPoseDifference(DriveSubsystem.getSwerveDrive().getPose(), Utils.flattenPose3d(FieldElement
-                        .nearestTo(DriveSubsystem.getSwerveDrive().getPose(), FieldElement.ElementType.HUB).get().pose))
+                .getPoseDifference(DriveSubsystem.getSwerveDrive().getPose(),
+                        Utils.flattenPose3d(FieldPositions.get(ElementType.HUB)))
                 .getNorm();
     }
 

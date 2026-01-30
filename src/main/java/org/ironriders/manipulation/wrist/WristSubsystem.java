@@ -41,6 +41,8 @@ public class WristSubsystem extends IronSubsystem {
 
         wristMotor.getConfigurator()
                 .apply(configuration);
+
+        pid.reset(getPosition());
     }
 
     @Override

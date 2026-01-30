@@ -25,8 +25,11 @@ public class ShooterConstants {
   public static final double MIN_ROTATION = 15;
   public static final double MAX_ROTATION = 45;
 
+  public static final double SPINDOWN_TIME = 2;  // seconds
+
   public enum State {
     READY(),
+    IDLE(),
     STOW();
   }
 }

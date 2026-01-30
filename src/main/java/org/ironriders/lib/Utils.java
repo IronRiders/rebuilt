@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 
 /** Utility class to encourage the robot's dangerous math addiction. */
 public class Utils {
@@ -84,5 +85,9 @@ public class Utils {
     }
 
     return result;
+  }
+
+  public static Pose3d inchesToMeters(Pose3d pose) {
+    return pose.times( 0.0254);
   }
 }
