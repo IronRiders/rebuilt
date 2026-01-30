@@ -32,7 +32,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -76,8 +75,8 @@ public class ShooterSubsystem extends IronSubsystem {
         anglePidController.setGoal(0);
 
         for (double i = 0; i <= 15; i++) {
-            DogLog.log("Shooter-test", i + " : " + calculateShooterAngle(i).toString());
-            DogLog.log("Shooter-test", calculateDistanceToHub());
+            DogLog.log("Shooter-test", i + " : " + Math.toRadians(calculateShooterAngle(i)));
+            //DogLog.log("Shooter-test", calculateDistanceToHub());
         }
     }
 
@@ -156,10 +155,12 @@ public class ShooterSubsystem extends IronSubsystem {
         double lowAngle = Units.radiansToDegrees(Math.atan((v * v - sqrt) / (G * distance)));
         double highAngle = Units.radiansToDegrees(Math.atan((v * v + sqrt) / (G * distance)));
 
-        if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, lowAngle)) {
-            return lowAngle;
-        } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
+        DogLog.log("Shooter-test", "High: " + String.valueOf(highAngle) + " | Low: " + String.valueOf(lowAngle));
+
+        if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
             return highAngle;
+        } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, lowAngle)) {
+            return lowAngle;
         } else {
             return 0d; // Bad angle
         }

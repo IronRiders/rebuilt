@@ -60,12 +60,4 @@ public class RobotCommands {
             DoubleSupplier inputRotation) {
         return driveCommands.driveTeleop(inputTranslationX, inputTranslationY, inputRotation, true);
     }
-
-    public Command readyShooter() {
-        return Commands.parallel(shooterCommands.set(ShooterConstants.State.READY), indexerCommands.set(IndexerConstants.State.STOP));
-    }
-
-    public Command fire() {
-        return Commands.sequence(readyShooter(), indexerCommands.set(IndexerConstants.State.INDEX));
-    }
 }
