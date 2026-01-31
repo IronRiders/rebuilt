@@ -42,7 +42,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
@@ -94,7 +93,7 @@ public class ShooterSubsystem extends IronSubsystem {
         DogLog.log("Shooter-test-pose", FieldPositions.get(ElementType.HUB).toString());
         DogLog.log("Shooter-our-pose", DriveSubsystem.getSwerveDrive().getPose().toString());
         DogLog.log("Shooter-real-test", String.valueOf(calculateShooterAngle(calculateDistanceToHub()).in(Degrees)));
-        DogLog.log("Shooter-max-range", estimateMaxRange().get());
+        DogLog.log("Shooter-max-range", String.valueOf(estimateMaxRange().get().doubleValue()));
 
         setCurrentState(State.IDLE);
 
