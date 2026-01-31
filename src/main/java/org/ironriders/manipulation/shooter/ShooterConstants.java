@@ -4,6 +4,7 @@ public class ShooterConstants {
 
   public static final double G = 9.8; // m/s
   public static final double HEIGHT_DIFFERENCE_HUB_TO_SHOOTER = 1.3208; // m
+  
   public static final double TARGET_BALL_VELOCITY = 11.4; //m/s (see https://www.reca.lc/flywheel)
 
   public static final double FLYWHEEL_MAX_VEL = 6065; // (see https://www.reca.lc/flywheel)

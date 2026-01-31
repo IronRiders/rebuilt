@@ -102,7 +102,7 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Select", autoChooser);
     }
 
-    public void periodicCommand() {
+    public void periodic() {
 
     }
 
@@ -127,7 +127,7 @@ public class RobotContainer {
                 () -> Utils.controlCurve(primaryController.getRightX(),
                         DriveConstants.ROTATION_CONTROL_EXPONENT,
                         DriveConstants.ROTATION_CONTROL_DEADBAND)),
-                Commands.run(() -> periodicCommand())));
+                Commands.run(() -> periodic())));
 
         // --- OTHER CONTROLS ---
         // TODO: Schedule a meeting to talk to drive about this once we have the design.

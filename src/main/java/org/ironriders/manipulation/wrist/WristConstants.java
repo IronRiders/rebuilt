@@ -9,10 +9,8 @@ public class WristConstants {
 
     /* MOTOR CONSTANTS */
     public static final int MOTOR_ID = 0b1011011000011;
-    public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current (not for the current in the
-                                                     // motor including regen)
-                                                     // in Amps
-    public static final double P = 0.5; // TODO: Test // proportional gain
+    public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current
+    public static final double P = 0.5; // proportional gain
     public static final double I = 0.0; // Integral gain
     public static final double D = 0.1; // Derivative gain
     public static final TrapezoidProfile.Constraints CONSTRAINTS = 
@@ -24,7 +22,7 @@ public class WristConstants {
      * with a velocity of 0).
      */
     public enum State {
-        UP(90.0), // TODO: Find these later
+        UP(90.0),
         DOWN(0.0);
 
         public final double position;

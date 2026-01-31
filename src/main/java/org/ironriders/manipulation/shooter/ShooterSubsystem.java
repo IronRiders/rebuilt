@@ -50,7 +50,7 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public State currentState = State.STOW;
 
-    public boolean inRange = false;
+    public static boolean inRange = false;
 
     public final TalonFX flyWheelMotor = new TalonFX(999); // TODO set the actual CAN ID
 
@@ -146,9 +146,17 @@ public class ShooterSubsystem extends IronSubsystem {
                         Utils.flattenPose3d(FieldPositions.get(ElementType.HUB)))
                 .getNorm();
     }
-;
+
     public ShooterCommands getCommands() {
         return commands;
+    }
+
+    public static boolean inRange() {
+        return inRange;
+    }
+
+    public boolean isReady() {
+        return velocityPidController.atGoal() && anglePidController.atGoal();
     }
 
     public void updatePID() {
@@ -156,8 +164,9 @@ public class ShooterSubsystem extends IronSubsystem {
         publish("Shooter Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
 
         flyWheelMotor
-                .set(Utils.clamp(0, 1, velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)))); // Don't
-                                                                                                                      // brake
+                .set(Utils.clamp(0, 1, // Don't brake
+                        velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)))); 
+
         shooterHoodMotor.set(anglePidController.calculate(getShooterHoodAngle().in(Degrees)));
     }
 

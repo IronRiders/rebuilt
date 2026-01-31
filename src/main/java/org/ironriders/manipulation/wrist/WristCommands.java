@@ -16,7 +16,7 @@ public class WristCommands {
         });
     }
 
-    public Command setGoal(WristConstants.State goal) {
+    public Command set(WristConstants.State goal) {
         return wristSubsystem.runOnce(() -> {
             wristSubsystem.setGoal(goal.position);
         });
