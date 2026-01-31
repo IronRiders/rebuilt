@@ -9,7 +9,6 @@ import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerConstants;
 import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeConstants;
-import org.ironriders.manipulation.intake.IntakeConstants.State;
 import org.ironriders.manipulation.shooter.ShooterCommands;
 import org.ironriders.manipulation.shooter.ShooterConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
@@ -71,7 +70,8 @@ public class RobotCommands {
     }
 
     public Command intake() {
-        return Commands.parallel(intakeCommands.set(IntakeConstants.State.INTAKE), wristCommands.set(WristConstants.State.DOWN));
+        return Commands.parallel(intakeCommands.set(IntakeConstants.State.INTAKE),
+                wristCommands.set(WristConstants.State.DOWN));
     }
 
     public Command stow() { // Reset everything
