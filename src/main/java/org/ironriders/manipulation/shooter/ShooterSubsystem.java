@@ -109,7 +109,7 @@ public class ShooterSubsystem extends IronSubsystem {
     public void periodic() {
         updatePID();
 
-        if (calculateDistanceToHub() < SHOOTER_MAX_RANGE && !inRange) {
+        if (!inRange && calculateDistanceToHub() < SHOOTER_MAX_RANGE) {
             inRange = true;
             setCurrentState(State.READY);
         } else if (inRange && calculateDistanceToHub() > SHOOTER_MAX_RANGE) {
@@ -147,7 +147,7 @@ public class ShooterSubsystem extends IronSubsystem {
                         Utils.flattenPose3d(FieldPositions.get(ElementType.HUB)))
                 .getNorm();
     }
-
+;
     public ShooterCommands getCommands() {
         return commands;
     }
@@ -190,7 +190,7 @@ public class ShooterSubsystem extends IronSubsystem {
         }
 
         if (loops > 25) {
-            return Optional.empty();
+            return Optional.empty(); // Give up.
         }
 
         for (int i = 0; i < 50; i++) {
