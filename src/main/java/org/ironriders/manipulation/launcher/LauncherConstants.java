@@ -1,6 +1,6 @@
-package org.ironriders.manipulation.shooter;
+package org.ironriders.manipulation.launcher;
 
-public class ShooterConstants {
+public class LauncherConstants {
 
   public static final double G = 9.8; // m/s
   public static final double HEIGHT_DIFFERENCE_HUB_TO_SHOOTER = 1.3208; // m

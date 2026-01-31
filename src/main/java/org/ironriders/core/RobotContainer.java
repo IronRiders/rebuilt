@@ -14,8 +14,8 @@ import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeSubsystem;
-import org.ironriders.manipulation.shooter.ShooterCommands;
-import org.ironriders.manipulation.shooter.ShooterSubsystem;
+import org.ironriders.manipulation.launcher.LauncherCommands;
+import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristSubsystem;
 import org.ironriders.vision.VisionCommands;
@@ -58,8 +58,8 @@ public class RobotContainer {
     public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
 
-    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    public final ShooterCommands shooterCommands = shooterSubsystem.getCommands();
+    public final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
+    public final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
 
     public final WristSubsystem wristSubsystem = new WristSubsystem();
     public final WristCommands wristCommands = wristSubsystem.getCommands();
@@ -80,7 +80,7 @@ public class RobotContainer {
             DriveConstants.CONTROLLER_SECONDARY_PORT);
 
     public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
-            shooterCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
+            launcherCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.

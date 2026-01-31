@@ -9,8 +9,8 @@ import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerConstants;
 import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeConstants;
-import org.ironriders.manipulation.shooter.ShooterCommands;
-import org.ironriders.manipulation.shooter.ShooterConstants;
+import org.ironriders.manipulation.launcher.LauncherCommands;
+import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristConstants;
 import org.ironriders.vision.VisionCommands;
@@ -30,7 +30,7 @@ public class RobotCommands {
     private final DriveCommands driveCommands;
     private final IndexerCommands indexerCommands;
     private final IntakeCommands intakeCommands;
-    private final ShooterCommands shooterCommands;
+    private final LauncherCommands launcherCommands;
     private final WristCommands wristCommands;
     private final ClimberCommands climberCommands;
     private final VisionCommands visionCommands;
@@ -38,13 +38,13 @@ public class RobotCommands {
     private final GenericHID controller;
 
     public RobotCommands(DriveCommands driveCommands, IndexerCommands indexerCommands, IntakeCommands intakeCommands,
-            ShooterCommands shooterCommands, WristCommands wristCommands, ClimberCommands climberCommands,
+            LauncherCommands launcherCommands, WristCommands wristCommands, ClimberCommands climberCommands,
             VisionCommands visionCommands,
             GenericHID controller) {
         this.driveCommands = driveCommands;
         this.indexerCommands = indexerCommands;
         this.intakeCommands = intakeCommands;
-        this.shooterCommands = shooterCommands;
+        this.launcherCommands = launcherCommands;
         this.wristCommands = wristCommands;
         this.climberCommands = climberCommands;
         this.visionCommands = visionCommands;
@@ -65,7 +65,7 @@ public class RobotCommands {
     }
 
     public Command launch() {
-        return Commands.sequence(shooterCommands.set(ShooterConstants.State.READY),
+        return Commands.sequence(launcherCommands.set(LauncherConstants.State.READY),
                 indexerCommands.set(IndexerConstants.State.INDEX));
     }
 
@@ -75,7 +75,7 @@ public class RobotCommands {
     }
 
     public Command stow() { // Reset everything
-        return Commands.parallel(shooterCommands.set(ShooterConstants.State.STOW),
+        return Commands.parallel(launcherCommands.set(LauncherConstants.State.STOW),
                 indexerCommands.set(IndexerConstants.State.STOP), intakeCommands.set(IntakeConstants.State.STOP),
                 wristCommands.set(WristConstants.State.UP), climberCommands.set(ClimberConstants.State.MIN));
     }

@@ -1,29 +1,29 @@
-package org.ironriders.manipulation.shooter;
+package org.ironriders.manipulation.launcher;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
-import static org.ironriders.manipulation.shooter.ShooterConstants.ESTIMATION_STARTING_DISTANCE;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_D;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_I;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_ACC;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_MAX_VEL;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_P;
-import static org.ironriders.manipulation.shooter.ShooterConstants.FLYWHEEL_TOLERANCE;
-import static org.ironriders.manipulation.shooter.ShooterConstants.G;
-import static org.ironriders.manipulation.shooter.ShooterConstants.HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
-import static org.ironriders.manipulation.shooter.ShooterConstants.MAX_ROTATION;
-import static org.ironriders.manipulation.shooter.ShooterConstants.MIN_ROTATION;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_D;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_HOOD_MAX_ACC;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_HOOD_MAX_VEL;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_I;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_MAX_RANGE;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_P;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_STOW_POSITION;
-import static org.ironriders.manipulation.shooter.ShooterConstants.SHOOTER_TOLERANCE;
-import static org.ironriders.manipulation.shooter.ShooterConstants.TARGET_BALL_VELOCITY;
+import static org.ironriders.manipulation.launcher.LauncherConstants.ESTIMATION_STARTING_DISTANCE;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_D;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_I;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_ACC;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_VEL;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_P;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_TOLERANCE;
+import static org.ironriders.manipulation.launcher.LauncherConstants.G;
+import static org.ironriders.manipulation.launcher.LauncherConstants.HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
+import static org.ironriders.manipulation.launcher.LauncherConstants.MAX_ROTATION;
+import static org.ironriders.manipulation.launcher.LauncherConstants.MIN_ROTATION;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_D;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_HOOD_MAX_ACC;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_HOOD_MAX_VEL;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_I;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_MAX_RANGE;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_P;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_STOW_POSITION;
+import static org.ironriders.manipulation.launcher.LauncherConstants.SHOOTER_TOLERANCE;
+import static org.ironriders.manipulation.launcher.LauncherConstants.TARGET_BALL_VELOCITY;
 
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
-import org.ironriders.manipulation.shooter.ShooterConstants.State;
+import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -45,8 +45,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
-public class ShooterSubsystem extends IronSubsystem {
-    private ShooterCommands commands;
+public class LauncherSubsystem extends IronSubsystem {
+    private LauncherCommands commands;
 
     public State currentState = State.STOW;
 
@@ -54,7 +54,7 @@ public class ShooterSubsystem extends IronSubsystem {
 
     public final TalonFX flyWheelMotor = new TalonFX(999); // TODO set the actual CAN ID
 
-    public final TalonFX shooterHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
+    public final TalonFX launcherHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
 
     public final TrapezoidProfile.Constraints flyWheelConstraints = new TrapezoidProfile.Constraints(FLYWHEEL_MAX_VEL,
             FLYWHEEL_MAX_ACC);
@@ -69,31 +69,31 @@ public class ShooterSubsystem extends IronSubsystem {
     public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(40);
 
-    public ShooterSubsystem() {
-        commands = new ShooterCommands(this);
+    public LauncherSubsystem() {
+        commands = new LauncherCommands(this);
 
         flyWheelMotor.getConfigurator().apply(currentLimitsConfigs);
         flyWheelMotor.setNeutralMode(NeutralModeValue.Coast);
 
-        shooterHoodMotor.getConfigurator().apply(currentLimitsConfigs);
-        shooterHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
+        launcherHoodMotor.getConfigurator().apply(currentLimitsConfigs);
+        launcherHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
 
         velocityPidController.reset(getFlywheelVelocity().in(DegreesPerSecond));
         velocityPidController.setGoal(0);
         velocityPidController.setTolerance(FLYWHEEL_TOLERANCE);
 
-        anglePidController.reset(getShooterHoodAngle().in(Degrees));
+        anglePidController.reset(getLauncherHoodAngle().in(Degrees));
         anglePidController.setGoal(0);
         anglePidController.setTolerance(SHOOTER_TOLERANCE);
 
         for (double i = 0; i <= 15; i += 0.5) {
-            DogLog.log("Shooter-test", i + " | Rad: " + String.valueOf(calculateShooterAngle(i).in(Radians)) + " Deg: "
-                    + String.valueOf(calculateShooterAngle(i).in(Degrees)));
+            DogLog.log("Launcher-test", i + " | Rad: " + String.valueOf(calculateLauncherAngle(i).in(Radians)) + " Deg: "
+                    + String.valueOf(calculateLauncherAngle(i).in(Degrees)));
         }
-        DogLog.log("Shooter-test-pose", FieldPositions.get(ElementType.HUB).toString());
-        DogLog.log("Shooter-our-pose", DriveSubsystem.getSwerveDrive().getPose().toString());
-        DogLog.log("Shooter-real-test", String.valueOf(calculateShooterAngle(calculateDistanceToHub()).in(Degrees)));
-        DogLog.log("Shooter-max-range", String.valueOf(estimateMaxRange().get().doubleValue()));
+        DogLog.log("Launcher-test-pose", FieldPositions.get(ElementType.HUB).toString());
+        DogLog.log("Launcher-our-pose", DriveSubsystem.getSwerveDrive().getPose().toString());
+        DogLog.log("Launcher-real-test", String.valueOf(calculateLauncherAngle(calculateDistanceToHub()).in(Degrees)));
+        DogLog.log("Launcher-max-range", String.valueOf(estimateMaxRange().get().doubleValue()));
 
         setCurrentState(State.IDLE);
 
@@ -129,12 +129,12 @@ public class ShooterSubsystem extends IronSubsystem {
 
             case IDLE:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
-                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()).in(Degrees));
+                setAngleGoal(calculateLauncherAngle(calculateDistanceToHub()).in(Degrees));
                 break;
 
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
-                setAngleGoal(calculateShooterAngle(calculateDistanceToHub()).in(Degrees));
+                setAngleGoal(calculateLauncherAngle(calculateDistanceToHub()).in(Degrees));
                 break;
         }
 
@@ -147,7 +147,7 @@ public class ShooterSubsystem extends IronSubsystem {
                 .getNorm();
     }
 
-    public ShooterCommands getCommands() {
+    public LauncherCommands getCommands() {
         return commands;
     }
 
@@ -160,21 +160,21 @@ public class ShooterSubsystem extends IronSubsystem {
     }
 
     public void updatePID() {
-        publish("Shooter RPM", getFlywheelVelocity().in(RPM));
-        publish("Shooter Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
+        publish("Launcher RPM", getFlywheelVelocity().in(RPM));
+        publish("Launcher Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
 
         flyWheelMotor
                 .set(Utils.clamp(0, 1, // Don't brake
                         velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond)))); 
 
-        shooterHoodMotor.set(anglePidController.calculate(getShooterHoodAngle().in(Degrees)));
+        launcherHoodMotor.set(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)));
     }
 
-    public Angle getShooterHoodAngle() {
-        return shooterHoodMotor.getPosition().getValue();
+    public Angle getLauncherHoodAngle() {
+        return launcherHoodMotor.getPosition().getValue();
     }
 
-    public void homeShooterHood() {
+    public void homeLauncherHood() {
 
     }
 
@@ -185,7 +185,7 @@ public class ShooterSubsystem extends IronSubsystem {
         double loops = 0d;
 
         while (loops <= 25) {
-            Double result = calculateShooterAngle(high).in(Radians);
+            Double result = calculateLauncherAngle(high).in(Radians);
 
             if (result == -1) {
                 break;
@@ -203,7 +203,7 @@ public class ShooterSubsystem extends IronSubsystem {
 
         for (int i = 0; i < 50; i++) {
             double mid = (low + high) / 2.0;
-            Double result = calculateShooterAngle(mid).in(Radians);
+            Double result = calculateLauncherAngle(mid).in(Radians);
 
             if (result == -1) {
                 high = mid;
@@ -227,7 +227,7 @@ public class ShooterSubsystem extends IronSubsystem {
         return flyWheelMotor.getVelocity().getValue();
     }
 
-    public Angle calculateShooterAngle(double distance) {
+    public Angle calculateLauncherAngle(double distance) {
         double v = TARGET_BALL_VELOCITY;
         double y = HEIGHT_DIFFERENCE_HUB_TO_SHOOTER;
 
@@ -242,7 +242,7 @@ public class ShooterSubsystem extends IronSubsystem {
         double lowAngle = Math.atan((v * v - sqrt) / (G * distance));
         double highAngle = Math.atan((v * v + sqrt) / (G * distance));
 
-        DogLog.log("Shooter-angles-test", "High: " + String.valueOf(highAngle) + " | Low: " + String.valueOf(lowAngle));
+        DogLog.log("Launcher-angles-test", "High: " + String.valueOf(highAngle) + " | Low: " + String.valueOf(lowAngle));
 
         if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
             return Angle.ofBaseUnits(highAngle, Radians);
