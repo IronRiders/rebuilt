@@ -40,6 +40,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -152,6 +153,10 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public void setTarget(Pose3d target) {
         currentTarget = target;
+    }
+
+    public void setTarget(Pose2d target) {
+        currentTarget = Utils.expandPose2d(target);
     }
 
     public boolean isReady() {

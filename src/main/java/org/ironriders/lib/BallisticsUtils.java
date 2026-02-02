@@ -78,7 +78,6 @@ public class BallisticsUtils {
                 inputPose.getRotation());
     }
 
-
     /*
      * Get the closest pose to @param inputPose that is in @param range.
      */
@@ -91,6 +90,13 @@ public class BallisticsUtils {
      */
     public static Pose3d snapPoseToRange(Pose3d inputPose) {
         return snapPoseToRange(inputPose, LauncherSubsystem.range, get3dPosition());
+    }
+
+    /*
+     * Get the closest pose to @param inputPose that is in the LauncherSubsystem's range.
+     */
+    public static Pose2d snapPoseToRange(Pose2d inputPose) {
+        return Utils.flattenPose3d(snapPoseToRange(Utils.expandPose2d(inputPose), LauncherSubsystem.range, get3dPosition()));
     }
 
     // --- Angle ---

@@ -117,10 +117,8 @@ public class RobotContainer {
         DogLog.log("Zone Distance test", String.valueOf(passingZone.distanceTo().getNorm()));
     }
 
-    public void periodic() {
-        Translation2d distance = passingZone.distanceTo();
-    
-        launcherSubsystem.setTarget(Utils.expandPose2d(new Pose2d(distance.getX(), distance.getY(), new Rotation2d())));
+    public void periodic() {    
+        launcherSubsystem.setTarget(BallisticsUtils.snapPoseToRange(scoringZone.closestPoint()));
 
         DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?: "
                 + String.valueOf(scoringZone.inside()));
