@@ -32,6 +32,18 @@ public class Zone {
         }
     }
 
+    public Zone(ZoneType type) {
+        this.polygon = null;
+
+        this.type = type;
+
+        Field2d field = DriveSubsystem.getSwerveDrive().field;
+        for (Pose2d point : polygon) {
+            field.getObject((type.name() + id).replaceAll(" ", "")).setPose(point); // Hopefully unique
+            id += 1;
+        }
+    }
+
     /*
      * Get the zone's polygon
      */
