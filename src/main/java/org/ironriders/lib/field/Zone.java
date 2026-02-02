@@ -123,7 +123,7 @@ public class Zone {
             }
         }
 
-        return minDist;
+        return minDist.times(-1);
     }
 
     public Pose2d closestPoint() {
