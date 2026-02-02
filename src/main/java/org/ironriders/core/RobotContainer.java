@@ -4,6 +4,8 @@
 
 package org.ironriders.core;
 
+import java.lang.reflect.Field;
+
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
@@ -107,10 +109,11 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
 
-        Pose2d[] poly = { new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(0d, Units.inchesToMeters(FieldPositions.Field.FIELD_WIDTH), new Rotation2d()),
-                new Pose2d(2d, 2d, new Rotation2d()) };
 
-        Zone zone = new Zone(poly, ZoneType.PASSING);
+        Zone zone = new Zone(FieldPositions.Zones.get(ZoneType.PASSING), ZoneType.PASSING); // TODO: Messy to have to specify the zone
+        Zone zone2 = new Zone(FieldPositions.Zones.get(ZoneType.SCORING), ZoneType.SCORING);
+
+        DriveSubsystem.getSwerveDrive().field.setRobotPose(10, 10, new Rotation2d());
 
         DogLog.log("Distance test", String.valueOf(zone.distanceTo(new Pose2d(), zone.getPolygon()).getNorm()));
     }

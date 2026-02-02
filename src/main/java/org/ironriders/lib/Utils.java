@@ -3,6 +3,7 @@ package org.ironriders.lib;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -89,5 +90,9 @@ public class Utils {
 
   public static Pose3d inchesToMeters(Pose3d pose) {
     return pose.times( 0.0254);
+  }
+
+  public static Pose3d expandPose2d(Pose2d pose) {
+    return new Pose3d(pose.getX(), pose.getY(), 0d, new Rotation3d(pose.getRotation()));
   }
 }

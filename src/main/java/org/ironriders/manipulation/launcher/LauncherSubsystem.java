@@ -27,6 +27,7 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TO
 
 import java.util.Optional;
 
+import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
@@ -111,6 +112,8 @@ public class LauncherSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
+        DriveSubsystem.getSwerveDrive().field.getObject("LauncherTarget").setPose(Utils.flattenPose3d(currentTarget));
+
         switch (currentState) {
             case READY:
             case IDLE:
