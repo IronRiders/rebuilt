@@ -4,8 +4,6 @@
 
 package org.ironriders.core;
 
-import java.lang.reflect.Field;
-
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
@@ -30,9 +28,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -80,6 +76,10 @@ public class RobotContainer {
 
     public final Double triggerThreshold = 0.75;
 
+    public final Zone passingZone = new Zone(FieldPositions.Zones.get(ZoneType.PASSING), ZoneType.PASSING); // TODO: Messy to have to
+    // specify the zone
+    public final Zone scoringZone = new Zone(FieldPositions.Zones.get(ZoneType.SCORING), ZoneType.SCORING);
+
     private final SendableChooser<Command> autoChooser;
 
     private final CommandXboxController primaryController = new CommandXboxController(
@@ -109,17 +109,15 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
 
-
-        Zone zone = new Zone(FieldPositions.Zones.get(ZoneType.PASSING), ZoneType.PASSING); // TODO: Messy to have to specify the zone
-        Zone zone2 = new Zone(FieldPositions.Zones.get(ZoneType.SCORING), ZoneType.SCORING);
-
-        DriveSubsystem.getSwerveDrive().field.setRobotPose(10, 10, new Rotation2d());
-
-        DogLog.log("Distance test", String.valueOf(zone.distanceTo(new Pose2d(), zone.getPolygon()).getNorm()));
+        DogLog.log("Distance test", String.valueOf(passingZone.distanceTo().getNorm()));
     }
 
     public void periodic() {
-
+        if (scoringZone.inside()) { // Auto-target
+            launcherCommands.setTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP));
+        } else if (passingZone.inside()) {
+            launcherCommands.setTarget(Utils.expandPose2d(passingZone.closestPoint()));
+        }
     }
 
     /**

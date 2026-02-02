@@ -67,7 +67,7 @@ public class FieldPositions {
 
     public static Pose2d[] preparePolygon(Pose2d[] input) {
         Pose2d[] out = input;
-        
+
         int i = 0;
         for (Pose2d pose : input) {
             out[i] = Utils.flattenPose3d(preparePose(Utils.expandPose2d(pose))); // Cursed
@@ -95,31 +95,37 @@ public class FieldPositions {
     }
 
     public class Zones {
-        public static Pose2d[] get(ZoneType type) { // TODO: This limits to only having one zone per type, fine for now
+        public static Pose2d[] get(ZoneType type) {
+            // TODO: This limits to only having one zone per type, fine for now
             switch (type) {
                 default:
                 case PASSING:
                     return preparePolygon(PASSING_ZONE);
-                
+
                 case SCORING:
                     return preparePolygon(SCORING_ZONE);
             }
         }
 
-        private static final double PASSING_ZONE_HEIGHT = 4;
-        private static final double SCORING_ZONE_HEIGHT = 4.5;
+        private static final double PASSING_ZONE_HEIGHT = 4.5;
+        private static final double SCORING_ZONE_HEIGHT = 4;
 
-        private static final double ZONE_BUFFER = 2 + PASSING_ZONE_HEIGHT;
+        private static final double ZONE_BUFFER = 2 + SCORING_ZONE_HEIGHT;
 
         private static final double FIELD_WIDTH_METERS = Units.inchesToMeters(FieldPositions.Field.FIELD_WIDTH);
 
-        public static final Pose2d[] PASSING_ZONE = new FieldPositions().new Square(new Pose2d(), new Pose2d(
-                PASSING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
+        // Center of the field
+        public static final Pose2d[] PASSING_ZONE = new FieldPositions().new Square(
+                new Pose2d(ZONE_BUFFER, 0, new Rotation2d()),
+                new Pose2d(PASSING_ZONE_HEIGHT + ZONE_BUFFER, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
+        // Edge of the field
         public static final Pose2d[] SCORING_ZONE = new FieldPositions().new Square(
-                new Pose2d(ZONE_BUFFER, 0, new Rotation2d()),
-                new Pose2d(SCORING_ZONE_HEIGHT + ZONE_BUFFER, FIELD_WIDTH_METERS, new Rotation2d())).getPoints();
+                new Pose2d(),
+                new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
+                .getPoints();
+
     }
 
     private class Square {

@@ -1,11 +1,10 @@
 package org.ironriders.lib.field;
 
-import java.util.UUID;
-
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
@@ -111,6 +110,11 @@ public class Zone {
         }
 
         return minDist;
+    }
+
+    public Pose2d closestPoint() {
+        Translation2d distance = distanceTo();
+        return new Pose2d(distance.getX() + getPose().getX(), distance.getY() + getPose().getY(), new Rotation2d());
     }
 
     // --- Internal Methods ---
