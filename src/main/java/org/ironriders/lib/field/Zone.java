@@ -1,10 +1,13 @@
 package org.ironriders.lib.field;
 
+import java.util.UUID;
+
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public class Zone {
     public enum ZoneType {
@@ -16,10 +19,18 @@ public class Zone {
 
     public Pose2d[] polygon;
 
+    static int id = 0;
+
     public Zone(Pose2d[] polygon, ZoneType type) {
         this.polygon = polygon;
 
         this.type = type;
+
+        Field2d field = DriveSubsystem.getSwerveDrive().field;
+        for (Pose2d point : polygon) {
+            field.getObject((type.name() + id).replaceAll(" ", "")).setPose(point); // Hopefully unique
+            id += 1;
+        }
     }
 
     /*

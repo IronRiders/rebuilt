@@ -10,6 +10,9 @@ import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.lib.field.Zone;
+import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
@@ -27,6 +30,7 @@ import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -102,6 +106,13 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
+
+        Pose2d[] poly = { new Pose2d(0d, 0d, new Rotation2d()), new Pose2d(0d, Units.inchesToMeters(FieldPositions.Field.FIELD_WIDTH), new Rotation2d()),
+                new Pose2d(2d, 2d, new Rotation2d()) };
+
+        Zone zone = new Zone(poly, ZoneType.PASSING);
+
+        DogLog.log("Distance test", String.valueOf(zone.distanceTo(new Pose2d(), zone.getPolygon()).getNorm()));
     }
 
     public void periodic() {
