@@ -114,7 +114,7 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
 
-        DogLog.log("Distance test", String.valueOf(passingZone.distanceTo().getNorm()));
+        DogLog.log("Zone Distance test", String.valueOf(passingZone.distanceTo().getNorm()));
     }
 
     public void periodic() {
@@ -122,7 +122,7 @@ public class RobotContainer {
     
         launcherSubsystem.setTarget(Utils.expandPose2d(new Pose2d(-distance.getX(), -distance.getY(), new Rotation2d())));
 
-        DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?:"
+        DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?: "
                 + String.valueOf(scoringZone.inside()));
     }
 
