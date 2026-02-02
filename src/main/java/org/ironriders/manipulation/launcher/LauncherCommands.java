@@ -19,10 +19,6 @@ public class LauncherCommands {
     }
 
     public Command set(State state) { // Will wait until we are ready
-        if (state == State.READY && !LauncherSubsystem.inRange()) {
-            return new Command() {};
-        }
-
         return new Command() {
             @Override
             public void initialize() {
