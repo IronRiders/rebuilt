@@ -33,7 +33,7 @@ public class Zone {
     }
 
     public Zone(ZoneType type) {
-        this.polygon = null;
+        this.polygon = FieldPositions.Zones.get(type);
 
         this.type = type;
 
