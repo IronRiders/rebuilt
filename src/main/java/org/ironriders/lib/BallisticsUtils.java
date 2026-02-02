@@ -95,7 +95,7 @@ public class BallisticsUtils {
 
     // --- Angle ---
     public static Angle calculateAngleToHub() {
-        return calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP));
+        return calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP));
     }
 
     public static Angle calculateAngleToInternalTarget() {
@@ -139,7 +139,7 @@ public class BallisticsUtils {
         double min = 0d;
 
         while (loops <= 25) {
-            Double result = calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), high)
+            Double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), high)
                     .in(Radians);
 
             if (result == -1) {
@@ -162,7 +162,7 @@ public class BallisticsUtils {
 
         for (int i = 0; i < 50; i++) {
             double mid = (low + high) / 2.0;
-            double result = calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), mid)
+            double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), mid)
                     .in(Radians);
 
             if (result == -1)

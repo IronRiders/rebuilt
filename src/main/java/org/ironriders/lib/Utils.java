@@ -92,6 +92,11 @@ public class Utils {
     return new Pose3d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
 
+  public static Pose2d inchesToMeters(Pose2d pose) {
+    return new Pose2d(pose.getTranslation().times(0.0254), pose.getRotation());
+  }
+
+
   public static Pose3d expandPose2d(Pose2d pose) {
     return new Pose3d(pose.getX(), pose.getY(), 0d, new Rotation3d(pose.getRotation()));
   }

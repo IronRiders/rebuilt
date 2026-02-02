@@ -91,10 +91,10 @@ public class LauncherSubsystem extends IronSubsystem {
         for (double i = 0; i <= 15; i += 0.5) {
             DogLog.log("Launcher-test",
                     i + " | Rad: "
-                            + calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), i)
+                            + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Radians)
                             + " Deg: "
-                            + calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), i)
+                            + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Degrees));
         }
         DogLog.log("Launcher-test-pose", FieldPositions.get(ElementType.HUB).toString());

@@ -3,6 +3,7 @@ package org.ironriders.lib.field;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.Utils;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,11 +26,7 @@ public class Zone {
 
         this.type = type;
 
-        Field2d field = DriveSubsystem.getSwerveDrive().field;
-        for (Pose2d point : polygon) {
-            field.getObject((type.name() + id).replaceAll(" ", "")).setPose(point); // Hopefully unique
-            id += 1;
-        }
+        printPolygon();
     }
 
     public Zone(ZoneType type) {
@@ -37,7 +34,12 @@ public class Zone {
 
         this.type = type;
 
+        printPolygon();
+    }
+
+    private void printPolygon() {
         Field2d field = DriveSubsystem.getSwerveDrive().field;
+
         for (Pose2d point : polygon) {
             field.getObject((type.name() + id).replaceAll(" ", "")).setPose(point); // Hopefully unique
             id += 1;

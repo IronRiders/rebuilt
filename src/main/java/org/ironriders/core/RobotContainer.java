@@ -31,7 +31,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -79,9 +82,8 @@ public class RobotContainer {
 
     public final Double triggerThreshold = 0.75;
 
-    public final Zone passingZone = new Zone(FieldPositions.Zones.get(ZoneType.PASSING), ZoneType.PASSING); // TODO: Messy to have to
-    // specify the zone
-    public final Zone scoringZone = new Zone(FieldPositions.Zones.get(ZoneType.SCORING), ZoneType.SCORING);
+    public final Zone passingZone = new Zone(ZoneType.PASSING);
+    public final Zone scoringZone = new Zone(ZoneType.SCORING);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -116,13 +118,12 @@ public class RobotContainer {
     }
 
     public void periodic() {
-        if (scoringZone.inside()) { // Auto-target
-            launcherCommands.setTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP));
-        } else if (passingZone.inside()) {
-            launcherCommands.setTarget(BallisticsUtils.snapPoseToRange(Utils.expandPose2d(scoringZone.closestPoint())));
-        }
+        Translation2d distance = passingZone.distanceTo();
+    
+        launcherSubsystem.setTarget(Utils.expandPose2d(new Pose2d(-distance.getX(), -distance.getY(), new Rotation2d())));
 
-        DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?:" + String.valueOf(scoringZone.inside()));
+        DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?:"
+                + String.valueOf(scoringZone.inside()));
     }
 
     /**
