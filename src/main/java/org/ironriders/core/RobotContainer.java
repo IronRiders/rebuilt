@@ -118,7 +118,7 @@ public class RobotContainer {
     }
 
     public void periodic() {    
-        launcherSubsystem.setTarget(BallisticsUtils.snapPoseToRange(scoringZone.closestPoint()));
+        launcherSubsystem.setTarget(scoringZone.closestPoint());
 
         DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?: "
                 + String.valueOf(scoringZone.inside()));

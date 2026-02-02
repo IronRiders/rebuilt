@@ -103,8 +103,10 @@ public class Zone {
      * If no distance is found somehow, return Double.POSITIVE_INFINITY.
      */
     public Translation2d distanceTo(Pose2d point, Pose2d[] polygon) {
-        if (isPointInPolygon(point, polygon)) { // we're inside the polygon already.
-            return new Translation2d();
+        if (isPointInPolygon(point, polygon)) {
+            // If we're inside the polygon the closest point is the point itself,
+            // so the translation from the point to the closest point is zero.
+            return new Translation2d(0.0, 0.0);
         }
 
         Translation2d minDist = new Translation2d(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -128,6 +130,7 @@ public class Zone {
 
     public Pose2d closestPoint() {
         Translation2d distance = distanceTo();
+        DogLog.log("Zone-distance", distance.toString());
         return new Pose2d(distance.getX() + getPose().getX(), distance.getY() + getPose().getY(), new Rotation2d());
     }
 
