@@ -54,50 +54,54 @@ public class BallisticsUtils {
         return Utils.inRange(LauncherSubsystem.range[0], LauncherSubsystem.range[1], distance);
     }
 
-    /*
-     * Get the closest pose to @param inputPose that is in the @param range around the @param centerPoint.
-     */
-    public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range, Pose3d centerPoint) {
-        double dx = inputPose.getX() - centerPoint.getX();
-        double dy = inputPose.getY() - centerPoint.getY();
-
-        double distanceXY = Math.sqrt(dx * dx + dy * dy);
-
-        double targetDistance;
-        if (distanceXY > range[0]) {
-            targetDistance = range[0];
-        } else if (distanceXY < range[1]) {
-            targetDistance = range[1];
-        } else {
-            return inputPose;
-        }
-
-        double scale = targetDistance / distanceXY;
-
-        return new Pose3d(centerPoint.getX() + dx * scale, centerPoint.getY() + dy * scale, inputPose.getZ(),
-                inputPose.getRotation());
-    }
-
-    /*
-     * Get the closest pose to @param inputPose that is in @param range.
-     */
-    public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range) {
-        return snapPoseToRange(inputPose, range, get3dPosition());
-    }
-
-    /*
-     * Get the closest pose to @param inputPose that is in the LauncherSubsystem's range.
-     */
-    public static Pose3d snapPoseToRange(Pose3d inputPose) {
-        return snapPoseToRange(inputPose, LauncherSubsystem.range, get3dPosition());
-    }
-
-    /*
-     * Get the closest pose to @param inputPose that is in the LauncherSubsystem's range.
-     */
-    public static Pose2d snapPoseToRange(Pose2d inputPose) {
-        return Utils.flattenPose3d(snapPoseToRange(Utils.expandPose2d(inputPose), LauncherSubsystem.range, get3dPosition()));
-    }
+    // Currently broken
+    ///*
+    // * Get the closest pose to @param inputPose that is in the @param range around the @param centerPoint.
+    // */
+    //public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range, Pose3d centerPoint) {
+    //    double dx = inputPose.getX() - centerPoint.getX();
+    //    double dy = inputPose.getY() - centerPoint.getY();
+//
+    //    double distanceXY = Math.sqrt(dx * dx + dy * dy);
+//
+    //    double targetDistance;
+    //    if (distanceXY > range[0]) {
+    //        targetDistance = range[0];
+    //    } else if (distanceXY < range[1]) {
+    //        targetDistance = range[1];
+    //    } else {
+    //        return inputPose;
+    //    }
+//
+//
+    //    distanceXY = distanceXY == 0 ? 0.000001 : distanceXY;
+    //    double scale = targetDistance / distanceXY;
+//
+    //    return new Pose3d(centerPoint.getX() + dx * scale, centerPoint.getY() + dy * scale, inputPose.getZ(),
+    //            inputPose.getRotation());
+    //}
+//
+    ///*
+    // * Get the closest pose to @param inputPose that is in @param range.
+    // */
+    //public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range) {
+    //    return snapPoseToRange(inputPose, range, get3dPosition());
+    //}
+//
+    ///*
+    // * Get the closest pose to @param inputPose that is in the LauncherSubsystem's range.
+    // */
+    //public static Pose3d snapPoseToRange(Pose3d inputPose) {
+    //    return snapPoseToRange(inputPose, LauncherSubsystem.range, get3dPosition());
+    //}
+//
+    ///*
+    // * Get the closest pose to @param inputPose that is in the LauncherSubsystem's range.
+    // */
+    //public static Pose2d snapPoseToRange(Pose2d inputPose) {
+    //    DogLog.log("Range-test-inner", "Big: " + String.valueOf(LauncherSubsystem.range[0]) + " | Small: " + String.valueOf(LauncherSubsystem.range[1]));
+    //    return Utils.flattenPose3d(snapPoseToRange(Utils.expandPose2d(inputPose), LauncherSubsystem.range, get3dPosition()));
+    //}
 
     // --- Angle ---
     public static Angle calculateAngleToHub() {
@@ -136,7 +140,7 @@ public class BallisticsUtils {
         }
     }
 
-    public static Optional<double[]> estimateMinMaxRange() {
+    public static Optional<double[]> estimateMinMaxRange() { // TODO: broken
         double low = 0d;
         double high = 0d;
         double step = 1d;
@@ -163,8 +167,10 @@ public class BallisticsUtils {
             lastResult = result;
         }
 
-        if (loops > 25)
+        if (loops > 25) {
+            DogLog.log("exit early on range estimate", String.valueOf(true));
             return Optional.empty();
+        }
 
         for (int i = 0; i < 50; i++) {
             double mid = (low + high) / 2.0;
@@ -179,6 +185,7 @@ public class BallisticsUtils {
 
         DogLog.log("Range-test", "Big: " + String.valueOf(low) + " | Small: " + String.valueOf(min));
 
-        return Optional.of(new double[] { low, min });
+        DogLog.log("exit early on range estimate", String.valueOf(false));
+        return Optional.of(new double[] { 2, 10 });
     }
 }
