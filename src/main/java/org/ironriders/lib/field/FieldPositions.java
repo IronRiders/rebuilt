@@ -42,7 +42,7 @@ public class FieldPositions {
     }
 
     public static Pose3d preparePose(Pose3d pose) {
-        boolean blue = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue;
+        boolean blue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
         if (blue) {
             pose = Utils.inchesToMeters(pose);
@@ -78,6 +78,7 @@ public class FieldPositions {
 
     /* Measurements in INCHES! */
     public class Hub {
+        // Default red
         public static final Pose3d HUB_TOP = new Pose3d(new Translation3d(182.11, 158.84, 72.00),
                 new Rotation3d());
         public static final Pose3d HUB_CENTER = new Pose3d(new Translation3d(182.11, 158.84, 44.25),
@@ -85,6 +86,7 @@ public class FieldPositions {
     }
 
     public class Tower {
+        // Default red
         public static final Pose3d TOWER_CENTER = new Pose3d(new Translation3d(158.84 - 11.38, 47 + 155.05, 0),
                 new Rotation3d());
     }
@@ -115,34 +117,34 @@ public class FieldPositions {
         private static final double FIELD_WIDTH_METERS = Units.inchesToMeters(FieldPositions.Field.FIELD_WIDTH);
 
         // Center of the field
-        public static final Pose2d[] PASSING_ZONE = new FieldPositions().new Square(
+        public static final Pose2d[] PASSING_ZONE = new FieldPositions().new Rect(
                 new Pose2d(ZONE_BUFFER, 0, new Rotation2d()),
                 new Pose2d(PASSING_ZONE_HEIGHT + ZONE_BUFFER, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
         // Edge of the field
-        public static final Pose2d[] SCORING_ZONE = new FieldPositions().new Square(
+        public static final Pose2d[] SCORING_ZONE = new FieldPositions().new Rect(
                 new Pose2d(),
                 new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
     }
 
-    private class Square {
-        Pose2d[] square;
+    private class Rect {
+        Pose2d[] rect;
 
-        // point1 and point2 are opposite corners, and the square is not rotated
-        Square(Pose2d point1, Pose2d point2) {
-            square = new Pose2d[4];
+        // Assumes point1 and point2 are opposite corners, and the rect is not rotated
+        Rect(Pose2d point1, Pose2d point2) {
+            rect = new Pose2d[4];
 
-            square[0] = point1;
-            square[1] = new Pose2d(point1.getX(), point2.getY(), point1.getRotation());
-            square[2] = point2;
-            square[3] = new Pose2d(point2.getX(), point1.getY(), point2.getRotation());
+            rect[0] = point1;
+            rect[1] = new Pose2d(point1.getX(), point2.getY(), point1.getRotation());
+            rect[2] = point2;
+            rect[3] = new Pose2d(point2.getX(), point1.getY(), point2.getRotation());
         }
 
         public Pose2d[] getPoints() {
-            return square;
+            return rect;
         }
     }
 

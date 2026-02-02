@@ -89,7 +89,7 @@ public class Utils {
   }
 
   public static Pose3d inchesToMeters(Pose3d pose) {
-    return pose.times( 0.0254);
+    return new Pose3d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
 
   public static Pose3d expandPose2d(Pose2d pose) {

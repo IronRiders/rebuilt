@@ -4,11 +4,14 @@
 
 package org.ironriders.core;
 
+import javax.print.DocFlavor.STRING;
+
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
+import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
@@ -116,8 +119,10 @@ public class RobotContainer {
         if (scoringZone.inside()) { // Auto-target
             launcherCommands.setTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP));
         } else if (passingZone.inside()) {
-            launcherCommands.setTarget(Utils.expandPose2d(passingZone.closestPoint()));
+            launcherCommands.setTarget(BallisticsUtils.snapPoseToRange(Utils.expandPose2d(scoringZone.closestPoint())));
         }
+
+        DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?:" + String.valueOf(scoringZone.inside()));
     }
 
     /**

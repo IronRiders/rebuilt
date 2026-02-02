@@ -8,7 +8,7 @@ import static org.ironriders.lib.BallisticsUtils.calculateAngleToHub;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToTarget;
 import static org.ironriders.lib.BallisticsUtils.calculateDistanceToTarget;
-import static org.ironriders.lib.BallisticsUtils.estimateMaxRange;
+import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
 import static org.ironriders.lib.BallisticsUtils.getPosition;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_I;
@@ -20,7 +20,6 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HOOD_MAX_ACC;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HOOD_MAX_VEL;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_I;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_MAX_RANGE;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_STOW_POSITION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TOLERANCE;
@@ -50,8 +49,9 @@ public class LauncherSubsystem extends IronSubsystem {
     private LauncherCommands commands;
 
     public State currentState = State.STOW;
-    public static boolean inRange = false;
-    public static Pose3d currentTarget = new Pose3d();
+    public static Pose3d currentTarget = FieldPositions.get(ElementType.HUB);
+
+    public static double[] range;
 
     // Motors
     public final TalonFX flyWheelMotor = new TalonFX(999); // TODO set the actual CAN ID
@@ -100,13 +100,13 @@ public class LauncherSubsystem extends IronSubsystem {
         DogLog.log("Launcher-test-pose", FieldPositions.get(ElementType.HUB).toString());
         DogLog.log("Launcher-our-pose", getPosition().toString());
         DogLog.log("Launcher-real-test", String.valueOf(calculateAngleToHub().in(Degrees)));
-        DogLog.log("Launcher-max-range", String.valueOf(estimateMaxRange().get().doubleValue()));
+        DogLog.log("Launcher-range", String.valueOf(estimateMinMaxRange().get()[0]) + " | " + String.valueOf(estimateMinMaxRange().get()[1]));
 
         setCurrentState(State.IDLE);
 
-        Optional<Double> range = estimateMaxRange();
-        if (range.isPresent()) {
-            LAUNCHER_MAX_RANGE = range.get();
+        Optional<double[]> _range = estimateMinMaxRange();
+        if (_range.isPresent()) {
+            range = _range.get();
         }
     }
 
@@ -124,12 +124,6 @@ public class LauncherSubsystem extends IronSubsystem {
         }
 
         updatePID();
-
-        if (!inRange && calculateDistanceToTarget() < LAUNCHER_MAX_RANGE) {
-            inRange = true;
-        } else if (inRange && calculateDistanceToTarget() > LAUNCHER_MAX_RANGE) {
-            inRange = false;
-        }
     }
 
     public LauncherCommands getCommands() {
@@ -162,10 +156,6 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public boolean isReady() {
         return velocityPidController.atGoal() && anglePidController.atGoal();
-    }
-
-    public static boolean inRange() {
-        return inRange;
     }
 
     public void updatePID() {

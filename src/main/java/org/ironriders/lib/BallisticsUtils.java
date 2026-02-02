@@ -2,22 +2,23 @@ package org.ironriders.lib;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
-import static org.ironriders.manipulation.launcher.LauncherConstants.ESTIMATION_STARTING_DISTANCE;
 import static org.ironriders.manipulation.launcher.LauncherConstants.G;
+import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HIGHT;
 import static org.ironriders.manipulation.launcher.LauncherConstants.MAX_ROTATION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.MIN_ROTATION;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HIGHT;
 import static org.ironriders.manipulation.launcher.LauncherConstants.TARGET_BALL_VELOCITY;
 
 import java.util.Optional;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.field.FieldElement.ElementType;
-import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 
 public class BallisticsUtils {
@@ -25,8 +26,12 @@ public class BallisticsUtils {
         return DriveSubsystem.getSwerveDrive().getPose();
     }
 
+    public static Pose3d get3dPosition() {
+        return Utils.expandPose2d(getPosition());
+    }
+
     // --- Distance ---
-    public static double calculateDistanceToTarget() {
+    public static double calculateDistanceToInternalTarget() {
         return calculateDistanceToTarget(LauncherSubsystem.currentTarget);
     }
 
@@ -36,6 +41,56 @@ public class BallisticsUtils {
 
     public static double calculateDistanceToHub() {
         return calculateDistanceToTarget(FieldPositions.get(ElementType.HUB));
+    }
+
+    public static boolean inRange(Pose3d inputPose) {
+        return inRange(Utils.getPose3dDifference(inputPose, Utils.expandPose2d(getPosition())).getNorm());
+    }
+
+    /*
+     * Uses the internal range
+     */
+    public static boolean inRange(double distance) {
+        return Utils.inRange(LauncherSubsystem.range[0], LauncherSubsystem.range[1], distance);
+    }
+
+    /*
+     * Get the closest pose to @param inputPose that is in the @param range around the @param centerPoint.
+     */
+    public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range, Pose3d centerPoint) {
+        double dx = inputPose.getX() - centerPoint.getX();
+        double dy = inputPose.getY() - centerPoint.getY();
+
+        double distanceXY = Math.sqrt(dx * dx + dy * dy);
+
+        double targetDistance;
+        if (distanceXY > range[0]) {
+            targetDistance = range[0];
+        } else if (distanceXY < range[1]) {
+            targetDistance = range[1];
+        } else {
+            return inputPose;
+        }
+
+        double scale = targetDistance / distanceXY;
+
+        return new Pose3d(centerPoint.getX() + dx * scale, centerPoint.getY() + dy * scale, inputPose.getZ(),
+                inputPose.getRotation());
+    }
+
+
+    /*
+     * Get the closest pose to @param inputPose that is in @param range.
+     */
+    public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range) {
+        return snapPoseToRange(inputPose, range, get3dPosition());
+    }
+
+    /*
+     * Get the closest pose to @param inputPose that is in the LauncherSubsystem's range.
+     */
+    public static Pose3d snapPoseToRange(Pose3d inputPose) {
+        return snapPoseToRange(inputPose, LauncherSubsystem.range, get3dPosition());
     }
 
     // --- Angle ---
@@ -75,23 +130,31 @@ public class BallisticsUtils {
         }
     }
 
-    public static Optional<Double> estimateMaxRange() {
-        double low = ESTIMATION_STARTING_DISTANCE;
-        double high = ESTIMATION_STARTING_DISTANCE;
+    public static Optional<double[]> estimateMinMaxRange() {
+        double low = 0d;
+        double high = 0d;
         double step = 1d;
         double loops = 0d;
+        double lastResult = 0;
+        double min = 0d;
 
         while (loops <= 25) {
             Double result = calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), high)
                     .in(Radians);
 
-            if (result == -1)
+            if (result == -1) {
                 break;
+            }
+
+            if (lastResult == -2 && result != -2) {
+                min = result;
+            }
 
             low = high;
             high += step;
             step *= 2;
             loops += 1;
+            lastResult = result;
         }
 
         if (loops > 25)
@@ -99,7 +162,7 @@ public class BallisticsUtils {
 
         for (int i = 0; i < 50; i++) {
             double mid = (low + high) / 2.0;
-            Double result = calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), mid)
+            double result = calculateAngleToTarget(FieldPositions.preparePose(FieldPositions.Hub.HUB_TOP), mid)
                     .in(Radians);
 
             if (result == -1)
@@ -108,6 +171,8 @@ public class BallisticsUtils {
                 low = mid;
         }
 
-        return Optional.of(low);
+        DogLog.log("Range-test", "Big: " + String.valueOf(low) + " | Small: " + String.valueOf(min));
+
+        return Optional.of(new double[] { low, min });
     }
 }
