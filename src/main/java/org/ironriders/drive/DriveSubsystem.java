@@ -1,22 +1,34 @@
 package org.ironriders.drive;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_D;
+import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_I;
+import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_P;
+import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATION_CONSTRAINTS;
+
 import java.io.IOException;
 import java.util.Optional;
 
-import org.ironriders.drive.DriveConstants.Controller;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
+import org.ironriders.manipulation.launcher.LauncherSubsystem;
+import org.ironriders.manipulation.launcher.LauncherConstants.TargetingMode;
 import org.ironriders.vision.VisionSubsystem;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -33,13 +45,15 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  * modules need to turn and be angled.
  */
 public class DriveSubsystem extends IronSubsystem {
-    public static Controller controller = Controller.DRIVER;
     private final DriveCommands commands;
 
     private static SwerveDrive swerveDrive;
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
     private static Command pathfindCommand;
+
+    private static ProfiledPIDController rotationPid = new ProfiledPIDController(ROTATE_TO_TARGET_P, ROTATE_TO_TARGET_I,
+            ROTATE_TO_TARGET_D, ROTATION_CONSTRAINTS);
 
     public DriveSubsystem() throws RuntimeException {
         try {
@@ -77,12 +91,16 @@ public class DriveSubsystem extends IronSubsystem {
                     return false;
                 },
                 this);
+
+        rotationPid.reset(0);
+        setRotationGoal(180);
     }
 
     @Override
     public void periodic() {
-        publish("Controller", controller.name());
         swerveDrive.updateOdometry();
+
+        drive(new Translation2d(), rotationPid.calculate(getRotation().in(Degrees)), true);
     }
 
     /**
@@ -103,18 +121,8 @@ public class DriveSubsystem extends IronSubsystem {
                 false);
     }
 
-    public static int requestDriveMovement(Controller requester, Translation2d translation, double rotation,
-            boolean fieldRelative) {
-        if (controller == requester) {
-            drive(translation, rotation, fieldRelative);
-            return 0; // Succeeded.
-        } else {
-            return 1; // Failed.
-        }
-    }
-
-    public static int requestDriveStop(Controller requester) {
-        return requestDriveMovement(requester, new Translation2d(0, 0), 0, false);
+    public static Angle getRotation() {
+        return swerveDrive.getGyroRotation3d().toRotation2d().getMeasure();
     }
 
     public static Command pathfindToPose(Pose2d target, PathConstraints constraints) {
@@ -163,8 +171,8 @@ public class DriveSubsystem extends IronSubsystem {
         }
     }
 
-    public static void setController(Controller target) {
-        controller = target;
+    public void setRotationGoal(double goal) {
+        rotationPid.setGoal(goal);
     }
 
     /** Fetch the DriveCommands instance */

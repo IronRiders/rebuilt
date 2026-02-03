@@ -2,8 +2,10 @@ package org.ironriders.manipulation.launcher;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import org.ironriders.drive.DriveConstants;
 import org.ironriders.lib.field.FieldPositions;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 public class LauncherConstants {
@@ -38,11 +40,24 @@ public class LauncherConstants {
   public static final double MIN_ROTATION = Math.toRadians(15);
   public static final double MAX_ROTATION = Math.toRadians(45);
 
+  public static final double ROTATE_TO_TARGET_P = 6;
+  public static final double ROTATE_TO_TARGET_I = 0.0;
+  public static final double ROTATE_TO_TARGET_D = 0.1;
+
+  public static final Constraints ROTATION_CONSTRAINTS = new Constraints(
+      DriveConstants.SWERVE_MAX_ANGULAR_ACCEL_PATHFIND, DriveConstants.SWERVE_MAX_ANGULAR_PATHFIND);
+
   public static final double SPINDOWN_TIME = 2; // time to automatically go into idle mode after, currently TODO
 
   public enum State {
-    READY(),
-    IDLE(),
-    STOW();
+    READY,
+    IDLE,
+    STOW;
+  }
+
+  public enum TargetingMode {
+    OUT_OF_RANGE,
+    ROTATE_TOWARDS,
+    FULL_CONTROL;
   }
 }

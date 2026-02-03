@@ -4,9 +4,7 @@ import java.io.UncheckedIOException;
 import java.util.List;
 
 import org.ironriders.drive.DriveSubsystem;
-import org.ironriders.drive.DriveConstants.Controller;
 import org.ironriders.lib.IronSubsystem;
-import org.ironriders.lib.Utils;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -21,7 +19,6 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -29,7 +26,8 @@ public class VisionSubsystem extends IronSubsystem {
     private final VisionCommands commands = new VisionCommands(this);
 
     private PhotonCamera camera = new PhotonCamera(VisionConstants.VISION_CAMERA);
-    private PIDController visPidController = new PIDController(VisionConstants.VISION_P, VisionConstants.VISION_I, VisionConstants.VISION_D);
+    private PIDController visPidController = new PIDController(VisionConstants.VISION_P, VisionConstants.VISION_I,
+            VisionConstants.VISION_D);
     private final PhotonPoseEstimator poseEstimator;
 
     private List<PhotonTrackedTarget> targets;
@@ -161,7 +159,6 @@ public class VisionSubsystem extends IronSubsystem {
         publish("Sees target?", result.hasTargets());
 
         if (!result.hasTargets() || result == null) {
-            DriveSubsystem.requestDriveStop(Controller.VISION); // for testing, just stop if we don't see anything.
             return; // We don't see any tags, give up.
         }
 
@@ -169,34 +166,6 @@ public class VisionSubsystem extends IronSubsystem {
 
         if (result != null) {
             estimateRobotPose(result);
-        }
-
-        // Testing code.
-        visPidController.setSetpoint(0); // Assume we've rotated to face the target pose
-
-        for (var target : targets) {
-            switch (target.getFiducialId()) {
-                case -1: // Error, not a valid tag!
-                    reportWarning("Vision got an invalid tag!");
-                    return;
-                case -2: // disabled for now
-                    // We found our favorite toy! (tag #9)
-                    double requestedMovement = -Utils.clamp(-VisionConstants.VISION_ROTATION_MAX_SPEED,
-                            VisionConstants.VISION_ROTATION_MAX_SPEED,
-                            visPidController.calculate(target.getYaw()));
-
-                    // Skew is horizontal offset from cam
-                    publish("Yaw, Pitch, Skew", getTargetAngles(target).toString());
-                    publish("Requested movement", requestedMovement);
-
-                    DriveSubsystem.requestDriveMovement(Controller.VISION, new Translation2d(-0.4, 0),
-                            requestedMovement,
-                            false);
-                    break;
-
-                default:
-                    break;
-            }
         }
     }
 

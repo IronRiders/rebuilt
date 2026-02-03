@@ -10,14 +10,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 
 /** Constants for the drive subsystem. */
 public class DriveConstants {
-    public enum Controller {
-        DRIVER(),
-        VISION();
-
-        Controller() {
-        }
-    }
-
     public static final File SWERVE_JSON_DIRECTORY = new File(Filesystem.getDeployDirectory(), "swerve");
 
     public static final PPHolonomicDriveController HOLONOMIC_CONFIG = new PPHolonomicDriveController(
@@ -46,7 +38,6 @@ public class DriveConstants {
     public static final double DRIVE_OVERRIDE_THRESHOLD = 0.3; // Input threshold to override vision and drive
                                                                // anyway.
 
-    
     public static final int CONTROLLER_PRIMARY_PORT = 0;
     public static final int CONTROLLER_SECONDARY_PORT = 1;
 }

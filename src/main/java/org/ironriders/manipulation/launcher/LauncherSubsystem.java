@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToHub;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToTarget;
-import static org.ironriders.lib.BallisticsUtils.calculateDistanceToTarget;
 import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
 import static org.ironriders.lib.BallisticsUtils.getPosition;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_D;
@@ -32,6 +31,7 @@ import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
+import org.ironriders.manipulation.launcher.LauncherConstants.TargetingMode;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -49,7 +49,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 public class LauncherSubsystem extends IronSubsystem {
     private LauncherCommands commands;
 
-    public State currentState = State.STOW;
+    public static State currentState = State.STOW;
+
+    public static TargetingMode targetingMode = TargetingMode.OUT_OF_RANGE;
+
     public static Pose3d currentTarget = FieldPositions.get(ElementType.HUB);
 
     public static double[] range;
@@ -66,7 +69,8 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public final TrapezoidProfile.Constraints AngleConstraints = new TrapezoidProfile.Constraints(LAUNCHER_HOOD_MAX_VEL,
             LAUNCHER_HOOD_MAX_ACC);
-    public final ProfiledPIDController anglePidController = new ProfiledPIDController(LAUNCHER_P, LAUNCHER_I, LAUNCHER_D,
+    public final ProfiledPIDController anglePidController = new ProfiledPIDController(LAUNCHER_P, LAUNCHER_I,
+            LAUNCHER_D,
             AngleConstraints);
 
     public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
@@ -101,7 +105,8 @@ public class LauncherSubsystem extends IronSubsystem {
         DogLog.log("Launcher-test-pose", FieldPositions.get(ElementType.HUB).toString());
         DogLog.log("Launcher-our-pose", getPosition().toString());
         DogLog.log("Launcher-real-test", String.valueOf(calculateAngleToHub().in(Degrees)));
-        DogLog.log("Launcher-range", String.valueOf(estimateMinMaxRange().get()[0]) + " | " + String.valueOf(estimateMinMaxRange().get()[1]));
+        DogLog.log("Launcher-range", String.valueOf(estimateMinMaxRange().get()[0]) + " | "
+                + String.valueOf(estimateMinMaxRange().get()[1]));
 
         setCurrentState(State.IDLE);
 
