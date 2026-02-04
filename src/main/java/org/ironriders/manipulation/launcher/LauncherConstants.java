@@ -37,8 +37,8 @@ public class LauncherConstants {
 
   public static final double LAUNCHER_STOW_POSITION = 0.0;
 
-  public static final double MIN_ROTATION = Math.toRadians(15);
-  public static final double MAX_ROTATION = Math.toRadians(45);
+  public static final double MIN_ROTATION = Math.toRadians(10);
+  public static final double MAX_ROTATION = Math.toRadians(60);
 
   public static final double ROTATE_TO_TARGET_P = 6;
   public static final double ROTATE_TO_TARGET_I = 0.0;
