@@ -41,12 +41,14 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LauncherSubsystem extends IronSubsystem {
     private LauncherCommands commands;
@@ -64,10 +66,9 @@ public class LauncherSubsystem extends IronSubsystem {
     public final TalonFX launcherHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
 
     // PID Controllers
-    public final TrapezoidProfile.Constraints flyWheelConstraints = new TrapezoidProfile.Constraints(FLYWHEEL_MAX_VEL,
-            FLYWHEEL_MAX_ACC);
-    public final ProfiledPIDController velocityPidController = new ProfiledPIDController(FLYWHEEL_P, FLYWHEEL_I,
-            FLYWHEEL_D, flyWheelConstraints);
+
+    public final PIDController velocityPidController = new PIDController(FLYWHEEL_P, FLYWHEEL_I,
+            FLYWHEEL_D);
 
     public final TrapezoidProfile.Constraints AngleConstraints = new TrapezoidProfile.Constraints(LAUNCHER_HOOD_MAX_VEL,
             LAUNCHER_HOOD_MAX_ACC);
@@ -78,6 +79,9 @@ public class LauncherSubsystem extends IronSubsystem {
     public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(40);
 
+    public double manualAnglePosition = LAUNCHER_STOW_POSITION;
+    public double manualFlywheelVelocity = 0;
+
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
@@ -87,8 +91,8 @@ public class LauncherSubsystem extends IronSubsystem {
         launcherHoodMotor.getConfigurator().apply(currentLimitsConfigs);
         launcherHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
 
-        velocityPidController.reset(getFlywheelVelocity().in(DegreesPerSecond));
-        velocityPidController.setGoal(0);
+        velocityPidController.reset();
+        velocityPidController.setSetpoint(0);
         velocityPidController.setTolerance(FLYWHEEL_TOLERANCE);
 
         anglePidController.reset(getLauncherHoodAngle().in(Degrees));
@@ -171,7 +175,7 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public boolean isReady() {
-        return velocityPidController.atGoal() && anglePidController.atGoal();
+        return velocityPidController.atSetpoint() && anglePidController.atGoal();
     }
 
     public void updatePID() {
@@ -181,16 +185,15 @@ public class LauncherSubsystem extends IronSubsystem {
         flyWheelMotor.set(
                 Utils.clamp(0, 1,
                         velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond))));
-
         launcherHoodMotor.set(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)));
     }
 
-    public void setFlywheelGoal(double goal) {
-        velocityPidController.setGoal(goal);
+    public void setFlywheelGoal(double goalVelocity) {
+        velocityPidController.setSetpoint(goalVelocity);
     }
 
-    public void setLauncherGoal(double goal) {
-        anglePidController.setGoal(goal);
+    public void setLauncherGoal(double goalAngle) {
+        anglePidController.setGoal(goalAngle);
     }
 
     public AngularVelocity getFlywheelVelocity() {
@@ -199,6 +202,14 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public Angle getLauncherHoodAngle() {
         return launcherHoodMotor.getPosition().getValue();
+    }
+
+    public double getManualLauncherAngle(){
+        return SmartDashboard.getNumber("manualLauncherAngle", manualAnglePosition);
+    }
+
+    public double getmanualFlywheelyVelocity(){
+        return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
 
     public void homeLauncherHood() {
