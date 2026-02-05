@@ -1,7 +1,5 @@
 package org.ironriders.manipulation.launcher;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.lib.field.FieldPositions;
 
@@ -12,7 +10,8 @@ public class LauncherConstants {
   public static final double LAUNCHER_HIGHT = Units.inchesToMeters(20.0);
 
   public static final double G = 9.8; // m/s
-  public static final double HEIGHT_DIFFERENCE_HUB_TO_LAUNCHER = FieldPositions.Hub.HUB_TOP.getMeasureZ().in(Meters)
+
+  public static final double HEIGHT_DIFFERENCE_HUB_TO_LAUNCHER = Units.inchesToMeters(FieldPositions.Hub.HUB_TOP.getZ())
       - LAUNCHER_HIGHT; // m
 
   public static final double TARGET_BALL_VELOCITY = 11.4; // m/s (see https://www.reca.lc/flywheel)
@@ -35,14 +34,14 @@ public class LauncherConstants {
 
   public static final double LAUNCHER_TOLERANCE = 0.1;
 
-  public static final double LAUNCHER_STOW_POSITION = 0.0;
+  public static final double MIN_ROTATION = Math.toRadians(15);
+  public static final double MAX_ROTATION = Math.toRadians(75);
 
-  public static final double MIN_ROTATION = Math.toRadians(10);
-  public static final double MAX_ROTATION = Math.toRadians(60);
+  public static final double LAUNCHER_STOW_POSITION = MIN_ROTATION;
 
   public static final double ROTATE_TO_TARGET_P = 6;
   public static final double ROTATE_TO_TARGET_I = 0.0;
-  public static final double ROTATE_TO_TARGET_D = 0.1;
+  public static final double ROTATE_TO_TARGET_D = 0.1;  
 
   public static final Constraints ROTATION_CONSTRAINTS = new Constraints(
       DriveConstants.SWERVE_MAX_ANGULAR_ACCEL_PATHFIND, DriveConstants.SWERVE_MAX_ANGULAR_PATHFIND);

@@ -9,6 +9,8 @@ import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToTarget;
 import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
 import static org.ironriders.lib.BallisticsUtils.getPosition;
+import static org.ironriders.lib.BallisticsUtils.calculateOptimalAngles;
+
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_I;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_ACC;
@@ -93,9 +95,9 @@ public class LauncherSubsystem extends IronSubsystem {
         anglePidController.setGoal(LAUNCHER_STOW_POSITION);
         anglePidController.setTolerance(LAUNCHER_TOLERANCE);
 
-        for (double i = 0; i <= 15; i += 0.5) {
+        for (double i = 0; i <= 15; i += 1) {
             DogLog.log("Launcher-test",
-                    i + " | Rad: "
+                    String.valueOf(i) + " | Rad: "
                             + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Radians)
                             + " Deg: "
@@ -103,17 +105,21 @@ public class LauncherSubsystem extends IronSubsystem {
                                     .in(Degrees));
         }
         DogLog.log("Launcher-test-pose", FieldPositions.get(ElementType.HUB).toString());
+        DogLog.log("Pose-convert", FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP).toString());
         DogLog.log("Launcher-our-pose", getPosition().toString());
         DogLog.log("Launcher-real-test", String.valueOf(calculateAngleToHub().in(Degrees)));
         DogLog.log("Launcher-range", String.valueOf(estimateMinMaxRange().get()[0]) + " | "
                 + String.valueOf(estimateMinMaxRange().get()[1]));
 
+        double[] a = calculateOptimalAngles();
+        DogLog.log("Optimal", "Range: (" + String.valueOf(a[0]) + ", " + String.valueOf(a[1]) + ") Min: " + String.valueOf(a[2]) + " Max: " + String.valueOf(a[3]));
+
         setCurrentState(State.IDLE);
 
-        Optional<double[]> _range = estimateMinMaxRange();
-        if (_range.isPresent()) {
-            range = _range.get();
-        }
+        //Optional<double[]> _range = estimateMinMaxRange();
+        //if (_range.isPresent()) {
+          //  range = _range.get();
+       // }
     }
 
     @Override
