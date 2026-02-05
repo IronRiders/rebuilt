@@ -46,7 +46,7 @@ public class FieldPositions {
 
     public static Pose3d prepareInchesPose(Pose3d pose) {
         Pose2d flipped = preparePose(Utils.flattenPose3d(pose), false);
-        return new Pose3d(flipped.getX(), flipped.getY(), pose.getZ(), new Rotation3d(flipped.getRotation()));
+        return new Pose3d(flipped.getX(), flipped.getY(), Units.inchesToMeters(pose.getZ()), new Rotation3d(flipped.getRotation()));
     }
 
     public static Pose2d prepareMetersPose(Pose2d pose) {
