@@ -9,11 +9,8 @@ import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToTarget;
 import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
 import static org.ironriders.lib.BallisticsUtils.getPosition;
-import static org.ironriders.lib.BallisticsUtils.calculateOptimalAngles;
-
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_I;
-import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_ACC;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_VEL;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_TOLERANCE;
@@ -24,8 +21,6 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_I;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_STOW_POSITION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TOLERANCE;
-
-import java.util.Optional;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
@@ -115,15 +110,12 @@ public class LauncherSubsystem extends IronSubsystem {
         DogLog.log("Launcher-range", String.valueOf(estimateMinMaxRange().get()[0]) + " | "
                 + String.valueOf(estimateMinMaxRange().get()[1]));
 
-        double[] a = calculateOptimalAngles();
-        DogLog.log("Optimal", "Range: (" + String.valueOf(a[0]) + ", " + String.valueOf(a[1]) + ") Min: " + String.valueOf(a[2]) + " Max: " + String.valueOf(a[3]));
-
         setCurrentState(State.IDLE);
 
-        //Optional<double[]> _range = estimateMinMaxRange();
-        //if (_range.isPresent()) {
-          //  range = _range.get();
-       // }
+        // Optional<double[]> _range = estimateMinMaxRange();
+        // if (_range.isPresent()) {
+        // range = _range.get();
+        // }
     }
 
     @Override
@@ -204,11 +196,11 @@ public class LauncherSubsystem extends IronSubsystem {
         return launcherHoodMotor.getPosition().getValue();
     }
 
-    public double getManualLauncherAngle(){
+    public double getManualLauncherAngle() {
         return SmartDashboard.getNumber("manualLauncherAngle", manualAnglePosition);
     }
 
-    public double getmanualFlywheelyVelocity(){
+    public double getmanualFlywheelyVelocity() {
         return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
 
