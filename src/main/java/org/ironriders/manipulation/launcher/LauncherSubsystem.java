@@ -39,10 +39,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.InterpolatingMatrixTreeMap;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -80,7 +83,32 @@ public class LauncherSubsystem extends IronSubsystem {
     public double manualAnglePosition = LAUNCHER_STOW_POSITION;
     public double manualFlywheelVelocity = 0;
 
+
+
     public LauncherSubsystem() {
+
+            InterpolatingDoubleTreeMap interpolationMapAngle = new InterpolatingDoubleTreeMap();
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+            interpolationMapAngle.put(null, null);
+
+
+            InterpolatingDoubleTreeMap interpolationMapVelocity = new InterpolatingDoubleTreeMap();
+            interpolationMapVelocity.put(null, null);
+            interpolationMapVelocity.put(null, null);
+            interpolationMapVelocity.put(null, null);
+            interpolationMapVelocity.put(null, null);
+            interpolationMapVelocity.put(null, null);
+            interpolationMapVelocity.put(null, null);
+            interpolationMapVelocity.put(null, null);
+
+
+
         commands = new LauncherCommands(this);
 
         flyWheelMotor.getConfigurator().apply(currentLimitsConfigs);
@@ -210,6 +238,8 @@ public class LauncherSubsystem extends IronSubsystem {
     public double getmanualFlywheelyVelocity(){
         return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
+
+    
 
     public void homeLauncherHood() {
     }
