@@ -64,7 +64,7 @@ public class RobotCommands {
         return driveCommands.driveTeleop(inputTranslationX, inputTranslationY, inputRotation, true);
     }
 
-    public Command launch() {
+    public Command score() {
         return Commands.sequence(launcherCommands.set(LauncherConstants.State.READY),
                 indexerCommands.set(IndexerConstants.State.INDEX));
     }

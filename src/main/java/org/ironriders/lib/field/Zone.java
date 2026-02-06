@@ -5,6 +5,7 @@ import org.ironriders.lib.Utils;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -132,6 +133,10 @@ public class Zone {
         Translation2d distance = distanceTo();
         DogLog.log("Zone-distance", distance.toString());
         return new Pose2d(distance.getX() + getPose().getX(), distance.getY() + getPose().getY(), new Rotation2d());
+    }
+
+    public Pose3d closestPointAsPose3d() {
+        return Utils.expandPose2d(closestPoint());
     }
 
     // --- Internal Methods ---

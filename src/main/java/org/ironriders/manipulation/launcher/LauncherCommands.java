@@ -1,5 +1,8 @@
 package org.ironriders.manipulation.launcher;
 
+import org.ironriders.core.RobotContainer;
+import org.ironriders.lib.field.FieldElement.ElementType;
+import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -24,6 +27,14 @@ public class LauncherCommands {
 
     public Command setTarget(Pose3d target) {
         return Commands.runOnce(()->launcher.setTarget(target));
+    }
+
+    public Command targetPassing() {
+        return setTarget(RobotContainer.passingZone.closestPointAsPose3d());
+    }
+
+    public Command targetHub() {
+        return setTarget(FieldPositions.get(ElementType.HUB));
     }
 
     public Command set(State state) { // Will wait until we are ready

@@ -7,6 +7,7 @@ package org.ironriders.core;
 import javax.print.DocFlavor.STRING;
 
 import org.ironriders.climber.ClimberCommands;
+import org.ironriders.climber.ClimberConstants;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
@@ -83,8 +84,8 @@ public class RobotContainer {
 
     public final Double triggerThreshold = 0.75;
 
-    public final Zone passingZone = new Zone(ZoneType.PASSING);
-    public final Zone scoringZone = new Zone(ZoneType.SCORING);
+    public static final Zone passingZone = new Zone(ZoneType.PASSING);
+    public static final Zone scoringZone = new Zone(ZoneType.SCORING);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -117,7 +118,6 @@ public class RobotContainer {
     }
 
     public void periodic() {
-        /* Stub */
     }
 
     /**
@@ -158,6 +158,15 @@ public class RobotContainer {
         primaryController.rightTrigger(triggerThreshold).onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
+        primaryController.a().toggleOnTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
+
+        // TODO. primaryController.b().toggleOnTrue()
+
+        primaryController.x().toggleOnTrue(Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
+
+        primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
+
+        primaryController.povDown().onTrue(climberCommands.set(ClimberConstants.State.CLIMBED));
     }
 
     /**

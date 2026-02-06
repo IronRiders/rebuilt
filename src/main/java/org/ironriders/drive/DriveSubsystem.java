@@ -45,6 +45,9 @@ public class DriveSubsystem extends IronSubsystem {
     private static SwerveDrive swerveDrive;
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
+
+    public static boolean isFacingLauncher = false;
+
     private static Command pathfindCommand;
 
     private static ProfiledPIDController rotationPid = new ProfiledPIDController(ROTATE_TO_TARGET_P, ROTATE_TO_TARGET_I,
@@ -94,8 +97,6 @@ public class DriveSubsystem extends IronSubsystem {
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
-
-        drive(new Translation2d(), rotationPid.calculate(getRotation().in(Degrees)), true);
     }
 
     /**
@@ -109,6 +110,14 @@ public class DriveSubsystem extends IronSubsystem {
      *                      its own rotation.
      */
     public static void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+        if (isFacingLauncher) {
+            swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
+                    rotationPid.calculate(getRotation().in(Degrees)) * (rotationInvert ? -1 : 1),
+                    fieldRelative,
+                    true);
+            
+            return;
+        }
         swerveDrive.drive(
                 translation.times(driveInvert ? -1 : 1),
                 rotation * (rotationInvert ? -1 : 1),

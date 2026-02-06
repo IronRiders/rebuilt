@@ -1,7 +1,6 @@
 package org.ironriders.manipulation.wrist;
 
 import org.ironriders.lib.IronSubsystem;
-import org.ironriders.manipulation.wrist.WristConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -42,6 +41,9 @@ public class WristSubsystem extends IronSubsystem {
 
         wristMotor.getConfigurator()
                 .apply(configuration);
+
+
+        this.setGoal(WristConstants.State.UP);
 
         pid.reset(getPosition());
     }
