@@ -115,7 +115,7 @@ public class DriveSubsystem extends IronSubsystem {
                     rotationPid.calculate(getRotation().in(Degrees)) * (rotationInvert ? -1 : 1),
                     fieldRelative,
                     true);
-            
+
             return;
         }
         swerveDrive.drive(
@@ -189,9 +189,9 @@ public class DriveSubsystem extends IronSubsystem {
         return swerveDrive;
     }
 
-    //public static void setSpeedMax(double max) {
-      //  swerveDrive.setMaximumAllowableSpeeds(max, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
-    //}
+    public static void setSpeedMax(double max) {
+        swerveDrive.setMaximumAllowableSpeeds(max, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
+    }
 
     /** Where is the robot? */
     public Pose2d getPose() {

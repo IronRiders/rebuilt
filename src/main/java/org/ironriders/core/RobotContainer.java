@@ -82,10 +82,10 @@ public class RobotContainer {
     public final VisionSubsystem visionSubsystem = new VisionSubsystem();
     public final VisionCommands visionCommands = visionSubsystem.getCommands();
 
-    public final Double triggerThreshold = 0.75;
+    public static Zone passingZone = new Zone(ZoneType.PASSING);;
+    public static Zone scoringZone = new Zone(ZoneType.SCORING);;
 
-    public static final Zone passingZone = new Zone(ZoneType.PASSING);
-    public static final Zone scoringZone = new Zone(ZoneType.SCORING);
+    public final Double triggerThreshold = 0.75;
 
     private final SendableChooser<Command> autoChooser;
 
@@ -115,6 +115,9 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
+
+        passingZone = new Zone(ZoneType.PASSING);
+        scoringZone = new Zone(ZoneType.SCORING);
     }
 
     public void periodic() {
@@ -145,24 +148,29 @@ public class RobotContainer {
                         DriveConstants.ROTATION_CONTROL_DEADBAND)),
                 Commands.run(() -> periodic())));
 
-        //primaryController.rightBumper().onTrue(Commands.runOnce(
-          //      () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND + 3)))
-            //    .onFalse(Commands.runOnce(() -> DriveSubsystem
-//                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+        primaryController.rightBumper().onTrue(Commands.runOnce(
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND +
+                        3)))
+                .onFalse(Commands.runOnce(() -> DriveSubsystem
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
 
-        //primaryController.leftBumper().onTrue(Commands.runOnce(
-          //      () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND - 2)))
-            //    .onFalse(Commands.runOnce(() -> DriveSubsystem
-              //          .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+        primaryController.leftBumper().onTrue(Commands.runOnce(
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND -
+                        2)))
+                .onFalse(Commands.runOnce(() -> DriveSubsystem
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
 
-        primaryController.rightTrigger(triggerThreshold).onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
+        primaryController.rightTrigger(triggerThreshold)
+                .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-        primaryController.a().toggleOnTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
+        primaryController.a()
+                .toggleOnTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
 
         // TODO. primaryController.b().toggleOnTrue()
 
-        primaryController.x().toggleOnTrue(Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
+        primaryController.x().toggleOnTrue(
+                Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
 
         primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
 

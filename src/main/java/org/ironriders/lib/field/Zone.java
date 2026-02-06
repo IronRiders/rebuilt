@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import swervelib.SwerveDrive;
 
 public class Zone {
     public enum ZoneType {
@@ -39,7 +40,13 @@ public class Zone {
     }
 
     private void printPolygon() {
-        Field2d field = DriveSubsystem.getSwerveDrive().field;
+        SwerveDrive swerve = DriveSubsystem.getSwerveDrive();
+
+        if (swerve == null) {
+            return;
+        }
+
+        Field2d field = swerve.field;
 
         for (Pose2d point : polygon) {
             field.getObject((type.name() + id).replaceAll(" ", "")).setPose(point); // Hopefully unique
