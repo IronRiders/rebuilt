@@ -3,7 +3,6 @@ package org.ironriders.lib;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.manipulation.launcher.LauncherConstants.G;
-import static org.ironriders.manipulation.launcher.LauncherConstants.HEIGHT_DIFFERENCE_HUB_TO_LAUNCHER;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HIGHT;
 import static org.ironriders.manipulation.launcher.LauncherConstants.MAX_ROTATION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.MIN_ROTATION;

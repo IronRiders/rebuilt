@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 
 /** Utility class to encourage the robot's dangerous math addiction. */
 public class Utils {
@@ -40,8 +39,12 @@ public class Utils {
    * @param input The additional voltage.
    * @return The normalized voltage value within the range (0.0, 1.0).
    */
-  public static double percentOfMaxVoltage(double voltage, int maxVoltage) {
-    return (voltage / maxVoltage);
+  public static double percentOfMaxVoltage(double voltage, double maxVoltage) {
+    if (maxVoltage == 0) {
+      maxVoltage = 0.000001;
+    }
+
+    return voltage / maxVoltage;
   }
 
   public static Pose2d flattenPose3d(Pose3d pose) {
@@ -95,7 +98,6 @@ public class Utils {
   public static Pose2d inchesToMeters(Pose2d pose) {
     return new Pose2d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
-
 
   public static Pose3d expandPose2d(Pose2d pose) {
     return new Pose3d(pose.getX(), pose.getY(), 0d, new Rotation3d(pose.getRotation()));

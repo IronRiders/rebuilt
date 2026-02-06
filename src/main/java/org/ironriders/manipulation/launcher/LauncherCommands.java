@@ -1,6 +1,5 @@
 package org.ironriders.manipulation.launcher;
 
-import org.ironriders.lib.IronSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -20,7 +19,7 @@ public class LauncherCommands {
         launcher.publish("Set Launcher Stow State", set(State.STOW));
 
         launcher.publish("Set Launcher to Manual Angle", setAngleManually(launcher.getManualLauncherAngle()));
-        launcher.publish("Set Launcher to Flywheel Velocity", setFlyWheelVelocityManually(launcher.getmanualFlywheelyVelocity()));
+        launcher.publish("Set Launcher to Flywheel Velocity", setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
     }
 
     public Command setTarget(Pose3d target) {
