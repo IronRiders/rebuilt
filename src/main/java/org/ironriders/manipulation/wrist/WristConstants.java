@@ -3,7 +3,7 @@ package org.ironriders.manipulation.wrist;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 /**
- * Constants for {@linkplain org.ironriders.wrist.WristSubsystem WristSubsystem}
+ * Constants for {@link org.ironriders.wrist.WristSubsystem WristSubsystem}
  */
 public class WristConstants {
 
@@ -13,12 +13,13 @@ public class WristConstants {
     public static final double P = 0.5; // proportional gain
     public static final double I = 0.0; // Integral gain
     public static final double D = 0.1; // Derivative gain
-    public static final TrapezoidProfile.Constraints CONSTRAINTS = 
-        new TrapezoidProfile.Constraints(100, 100); // TODO: Test later
+    public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(100, 100); // TODO:
+                                                                                                               // Test
+                                                                                                               // later
 
     /**
      * Wrist positions (Up & Down) in degrees from horizontal (interchangeable with
-     * {@linkplain edu.wpi.first.math.trajectory.TrapezoidProfile TrapezoidProfiles}
+     * {@link edu.wpi.first.math.trajectory.TrapezoidProfile TrapezoidProfiles}
      * with a velocity of 0).
      */
     public enum State {

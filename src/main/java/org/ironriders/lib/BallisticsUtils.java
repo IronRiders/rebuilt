@@ -20,28 +20,56 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.measure.Angle;
 
+/** Utilities for ballistic calculations */
 public class BallisticsUtils {
+    /** @return current 2D position of the robot */
     public static Pose2d getPosition() {
         return DriveSubsystem.getSwerveDrive().getPose();
     }
 
+    /**
+     * @return current 3D position of the robot using
+     *         {@link expandPose2d(Pose2d) expandPose2d}
+     */
     public static Pose3d get3dPosition() {
         return Utils.expandPose2d(getPosition());
     }
 
     // --- Distance ---
+    /**
+     * Calculate the distance to the current target from the current position.
+     * 
+     * @return The distance to the current target.
+     */
     public static double calculateDistanceToInternalTarget() {
         return calculateDistanceToTarget(LauncherSubsystem.currentTarget);
     }
 
+    /**
+     * Calculate the distance to a given target from the current position.
+     * 
+     * @param pose The target pose.
+     * @return The distance to the target.
+     */
     public static double calculateDistanceToTarget(Pose3d pose) {
         return Utils.getPoseDifference(getPosition(), Utils.flattenPose3d(pose)).getNorm();
     }
 
+    /**
+     * Calculate the distance to the hub from the current position.
+     * 
+     * @return The distance to the hub.
+     */
     public static double calculateDistanceToHub() {
         return calculateDistanceToTarget(FieldPositions.get(ElementType.HUB));
     }
 
+    /**
+     * Check if a given pose is within range using {@link #inRange(Pose3d)}
+     * 
+     * @param inputPose The pose to check.
+     * @return True if the pose is within range, false otherwise.
+     */
     public static boolean inRange(Pose3d inputPose) {
         return inRange(Utils.getPose3dDifference(inputPose, Utils.expandPose2d(getPosition())).getNorm());
     }
@@ -111,20 +139,46 @@ public class BallisticsUtils {
     // }
 
     // --- Angle ---
+    /**
+     * Calculate the angle to the hub from the current position.
+     * 
+     * @return The angle to the hub, in radians.
+     */
     public static Angle calculateAngleToHub() {
         return calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP));
     }
 
+    /**
+     * Calculate the angle to the current target from the current position.
+     * 
+     * @return The angle to the current target, in radians. See
+     *         {@link #calculateAngleToTarget(Pose3d) calculateAngleToTarget} for
+     *         out-of-range values.
+     */
     public static Angle calculateAngleToInternalTarget() {
         return calculateAngleToTarget(LauncherSubsystem.currentTarget);
     }
 
+    /**
+     * Calculate the angle to the specified target from the current position.
+     * 
+     * @param target The target {@link Pose3d position}.
+     * @return The angle to the target, in radians.
+     */
     public static Angle calculateAngleToTarget(Pose3d target) {
         double distance = Utils.getPoseDifference(getPosition(), Utils.flattenPose3d(target)).getNorm();
         DogLog.log("distance", String.valueOf(distance));
         return calculateAngleToTarget(target, distance);
     }
 
+    /**
+     * Calculate the angle of shooter required to hit a target from a current
+     * position. Does some math magic thanks to @Amber-leaf
+     * 
+     * @param target   The target {@link Pose3d position}.
+     * @param distance The distance to the target.
+     * @return The angle of the shooter to hit the target.
+     */
     public static Angle calculateAngleToTarget(Pose3d target, double distance) {
         double v = TARGET_BALL_VELOCITY;
         double y = target.getZ() - LAUNCHER_HIGHT;
@@ -148,6 +202,11 @@ public class BallisticsUtils {
         }
     }
 
+    /**
+     * HORRIBLE CODE
+     * 
+     * @return ... PR: "horrible code"
+     */
     public static Optional<double[]> estimateMinMaxRange() {
         double low = 0d;
         double high = 0d;
@@ -159,7 +218,7 @@ public class BallisticsUtils {
         boolean foundMinRegion = false;
 
         while (loops <= 25) {
-            Double result = calculateAngleToTarget(
+            double result = calculateAngleToTarget(
                     FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP),
                     high).in(Radians);
 

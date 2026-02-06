@@ -141,20 +141,45 @@ public class DriveSubsystem extends IronSubsystem {
                 true);
     }
 
+    /**
+     * @return The robot's current rotation in radians.
+     */
     public static Angle getRotation() {
         return swerveDrive.getGyroRotation3d().toRotation2d().getMeasure();
     }
 
+    /**
+     * Pathfinds to a given pose using PathPlanner's pathfinding. See
+     * {@link #pathfindToPose()} for more information.
+     * 
+     * @param target      The {@link Pose2d} to pathfind to.
+     * @param constraints The {@link PathConstraints} to pathfind with.
+     */
     public static Command pathfindToPose(Pose2d target, PathConstraints constraints) {
         pathfindCommand = AutoBuilder.pathfindToPose(target, constraints);
         return pathfindCommand.withName("Pathfind to " + target.getX() + ", " + target.getY());
     }
 
+    /**
+     * Same as {@link #pathfindToPose(Pose2d, PathConstraints) pathfindToPose} but
+     * with default constraints.
+     * 
+     * @param target The {@link Pose2d} to pathfind to.
+     * @return A {@link Command} to do the above.
+     */
     public static Command pathfindToPose(Pose2d target) {
         pathfindCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS);
         return pathfindCommand.withName("Pathfind to " + target.getX() + ", " + target.getY());
     }
 
+    /**
+     * Pathfinds to a given path using PathPlanner's pathfinding.
+     * 
+     * @param path        The {@link PathPlannerPath} to pathfind with
+     * @param constraints The {@link PathConstraints} for pathfinding
+     * @return A {@link Command} to do the above with the name "Pathfind to " +
+     *         path.name
+     */
     public static Command pathfindThenFollowPath(PathPlannerPath path, PathConstraints constraints) {
         pathfindCommand = AutoBuilder.pathfindThenFollowPath(
                 path,
@@ -163,6 +188,14 @@ public class DriveSubsystem extends IronSubsystem {
         return pathfindCommand.withName("Pathfind to " + path.name);
     }
 
+    /**
+     * Same as {@link #pathfindThenFollowPath(PathPlannerPath, PathConstraints)
+     * pathfindThenFollowPath} but with default constraints.
+     * 
+     * @param path The {@link PathPlannerPath} to follow.
+     * @return A {@link Command} to do the above with the name "Pathfind to " +
+     *         path.name
+     */
     public static Command pathfindThenFollowPath(PathPlannerPath path) {
         pathfindCommand = AutoBuilder.pathfindThenFollowPath(
                 path, DriveConstants.PATHFIND_CONSTRAINTS);
@@ -170,6 +203,15 @@ public class DriveSubsystem extends IronSubsystem {
         return pathfindCommand.withName("Pathfind to " + path.name);
     }
 
+    /**
+     * Pathfinds to a given AprilTag using PathPlanner's pathfinding. Uses
+     * {@link #pathfindToPose(Pose2d) pathfindToPose} on the flattened
+     * {@link Pose3d} of the {@code tag id}.
+     * 
+     * @param id The ID of the AprilTag to pathfind to.
+     * @return An {@link Optional} containing a {@link Command} to do the above if
+     *         the tag exists, or an empty {@link Optional} if it does not.
+     */
     public static Optional<Command> pathfindToTag(int id) {
         var tag = VisionSubsystem.fieldLayout.getTagPose(id).orElse(null);
         if (tag == null) {
@@ -179,18 +221,27 @@ public class DriveSubsystem extends IronSubsystem {
         return Optional.of(pathfindToPose(Utils.flattenPose3d(tag)));
     }
 
+    /**
+     * Schedules the current pathfind command, if it exists.
+     */
     public static void startPathfind() {
         if (pathfindCommand != null) {
             CommandScheduler.getInstance().schedule(pathfindCommand);
         }
     }
 
+    /**
+     * Stops the currently running
+     */
     public static void cancelPathfind() {
         if (pathfindCommand != null) {
             pathfindCommand.cancel();
         }
     }
 
+    /***
+     * Sets the PID rotation goal.
+     */
     public void setRotationGoal(double goal) {
         rotationPid.setGoal(Math.toRadians(goal));
     }
@@ -205,6 +256,11 @@ public class DriveSubsystem extends IronSubsystem {
         return swerveDrive;
     }
 
+    /**
+     * Sets the maximum translation speed for the swerve drive.
+     * 
+     * @param max The maximum translation speed in meters per second.
+     */
     public static void setSpeedMax(double max) {
         swerveDrive.setMaximumAllowableSpeeds(max, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
     }
@@ -214,6 +270,10 @@ public class DriveSubsystem extends IronSubsystem {
         return DriveSubsystem.swerveDrive.getPose();
     }
 
+    /**
+     * Opens a {@link Pidgeon2} sensor and gets yaw, waits 1 second, then gets that
+     * value as double.
+     */
     public void resetRotation() {
         Pigeon2 pigeon2 = new Pigeon2(9);
         swerveDrive.resetOdometry(
@@ -224,14 +284,25 @@ public class DriveSubsystem extends IronSubsystem {
         pigeon2.close();
     }
 
+    /**
+     * Sets the robot's odometry to a given pose with rotation at 0.
+     * 
+     * @param pose2d The pose to reset the odometry to.
+     */
     public void resetOdometry(Pose2d pose2d) {
         swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(0)));
     }
 
+    /**
+     * Inverts the rotation controls.
+     */
     public void switchRotation() {
         rotationInvert = !rotationInvert;
     }
 
+    /**
+     * Inverts the drive controls.
+     */
     public void switchDrive() {
         driveInvert = !driveInvert;
     }

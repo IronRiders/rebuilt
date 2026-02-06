@@ -28,7 +28,7 @@ public abstract class IronSubsystem extends SubsystemBase {
     private final String messagePrefix = diagnosticName + ": ";
 
     private static long startupTime;
-    
+
     public IronSubsystem() {
         startupTime = System.nanoTime();
     }
@@ -236,7 +236,7 @@ public abstract class IronSubsystem extends SubsystemBase {
      * Reports a String warning message to
      * {@link DriverStation#reportWarning(String, boolean)
      * DriverStation} with the time and subsystem name; Sends a notification to
-     * {@linkplain org.ironriders.lib.Elastic#sendNotification(Notification)
+     * {@link org.ironriders.lib.Elastic#sendNotification(Notification)
      * Elastic} with level
      * {@link NotificationLevel#WARNING WARNING} with just the raw message.
      *

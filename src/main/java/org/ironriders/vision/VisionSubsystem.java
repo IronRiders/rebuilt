@@ -22,6 +22,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Subsystem for vision processing using PhotonVision and AprilTags.
+ */
 public class VisionSubsystem extends IronSubsystem {
     private final VisionCommands commands = new VisionCommands(this);
 
@@ -54,6 +57,15 @@ public class VisionSubsystem extends IronSubsystem {
         }
     }
 
+    /**
+     * Estimates the standard deviation of a given position based on the number of
+     * tags.
+     * 
+     * @param pose    The estimated {@link EstimatedRobotPose robot position}.
+     * @param targets The list of tracked targets used for the estimation.
+     * @return A vector representing the estimated standard deviation in the
+     *         position.
+     */
     public Vector<N3> estimateStdDevVector(EstimatedRobotPose pose, List<PhotonTrackedTarget> targets) {
         double xyStdDev;
         double thetaStdDev;
@@ -85,13 +97,19 @@ public class VisionSubsystem extends IronSubsystem {
         return VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev);
     }
 
+    /**
+     * Estimates the robot's pose using the given {@link PhotonPipelineResult
+     * PhotonVision result}.
+     * 
+     * @param result The PhotonVision pipeline result containing detected targets.
+     */
     public void estimateRobotPose(PhotonPipelineResult result) {
         EstimatedRobotPose newPose;
 
         if (result.getTargets().size() > 1) {
             newPose = poseEstimator.estimateCoprocMultiTagPose(result).orElse(null);
         } else {
-            newPose = poseEstimator.estimateLowestAmbiguityPose(result).orElse(null);
+            newPose = poseEstimator.estimateLowestAmbiguityPose(result).orElse(null); // Because a single tag is worse.
         }
 
         if (newPose == null) {
@@ -130,6 +148,13 @@ public class VisionSubsystem extends IronSubsystem {
                 Timer.getFPGATimestamp());
     }
 
+    /**
+     * Calculates the distance to a given target using the camera's pitch and the
+     * target's pitch.
+     * 
+     * @param target The tracked target for which to calculate the distance.
+     * @return The estimated distance to the target in meters.
+     */
     public double getDistance(PhotonTrackedTarget target) {
         // *2, as the offset is from the center of the robot, and this wants the
         // distance
@@ -142,6 +167,13 @@ public class VisionSubsystem extends IronSubsystem {
                 target.getPitch());
     }
 
+    /**
+     * Gets the target angles (yaw, pitch, and skew) for a given tracked target.
+     * 
+     * @param target The tracked target for which to get the angles.
+     * @return An array containing the yaw, pitch, and skew angles of the target (in
+     *         that order).
+     */
     public Double[] getTargetAngles(PhotonTrackedTarget target) {
         return new Double[] { target.getYaw(), target.getPitch(), target.getSkew() };
     }
@@ -169,6 +201,11 @@ public class VisionSubsystem extends IronSubsystem {
         }
     }
 
+    /**
+     * Gets the {@link VisionCommands commands} for this subsystem.
+     * 
+     * @return The VisionCommands instance associated with this subsystem.
+     */
     public VisionCommands getCommands() {
         return commands;
     }

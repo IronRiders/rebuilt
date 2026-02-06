@@ -6,6 +6,7 @@ import org.ironriders.lib.field.FieldPositions;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
+/** Constants for the {@link LauncherSubsystem} */
 public class LauncherConstants {
   public static final double LAUNCHER_HIGHT = Units.inchesToMeters(20.0);
 
@@ -41,7 +42,7 @@ public class LauncherConstants {
 
   public static final double ROTATE_TO_TARGET_P = 1;
   public static final double ROTATE_TO_TARGET_I = 0.0;
-  public static final double ROTATE_TO_TARGET_D = 0.1;  
+  public static final double ROTATE_TO_TARGET_D = 0.1;
 
   public static final Constraints ROTATION_CONSTRAINTS = new Constraints(
       DriveConstants.SWERVE_MAX_ANGULAR_ACCEL_PATHFIND / 3, DriveConstants.SWERVE_MAX_ANGULAR_PATHFIND / 3);

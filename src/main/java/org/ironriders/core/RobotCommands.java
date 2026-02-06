@@ -21,9 +21,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * These commands require more complex logic and are not directly tied to a
- * subsystem. They
- * generally interface w/ multiple subsystems via their commands and are
- * higher-level.
+ * subsystem. They generally interface with multiple subsystems via their
+ * commands and are higher-level.
  */
 
 public class RobotCommands {
@@ -64,6 +63,18 @@ public class RobotCommands {
         return driveCommands.driveTeleop(inputTranslationX, inputTranslationY, inputRotation, true);
     }
 
+    /**
+     * {@linkplain LauncherConstants.State#READY
+     * Readies} the
+     * {@linkplain org.ironriders.manipulation.launcher.LauncherCommands#set()
+     * Launcher} and sets the
+     * {@linkplain org.ironriders.manipulation.indexer.IndexerCommands#set()
+     * indexer} to
+     * {@linkplain org.ironriders.manipulation.indexer.IndexerConstants.State#INDEX
+     * INDEX}.
+     * 
+     * @return A command to do the above
+     */
     public Command score() {
         return Commands.sequence(launcherCommands.set(LauncherConstants.State.READY),
                 indexerCommands.set(IndexerConstants.State.INDEX));

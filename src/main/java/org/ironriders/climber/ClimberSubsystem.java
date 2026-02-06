@@ -9,6 +9,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
+/**
+ * Subsystem for controlling the climber.
+ */
 public class ClimberSubsystem extends IronSubsystem {
     private ClimberCommands commands = new ClimberCommands(this);
 
@@ -32,6 +35,11 @@ public class ClimberSubsystem extends IronSubsystem {
         pidController.reset(getPosition());
     }
 
+    /**
+     * Sets the speed of both climber motors.
+     * 
+     * @param speed The speed to set the motors to (between -1 & 1)
+     */
     public void setMotors(double speed) {
         primaryMotor.set(speed);
         secondaryMotor.set(speed);
@@ -42,18 +50,39 @@ public class ClimberSubsystem extends IronSubsystem {
         setMotors(pidController.calculate(getPosition()));
     }
 
+    /**
+     * @return The ClimberCommands object for the climber subsystem
+     */
     public ClimberCommands getCommands() {
         return commands;
     }
 
+    /**
+     * Sets the climber's {@link ProfiledPIDController PID}
+     * {@link ProfiledPIDController#getGoal() goal} to a given {@link State state}.
+     * 
+     * @param goal The target {@link State state} for the climber.
+     */
     public void setGoal(State goal) {
         pidController.setGoal(goal.position);
     }
 
+    /**
+     * Checks if the climber is at its {@link ProfiledPIDController PID}
+     * {@link ProfiledPIDController#getGoal() goal}.
+     * 
+     * @return {@link ProfiledPIDController#atGoal()}
+     */
     public boolean atGoal() {
         return pidController.atGoal();
     }
 
+    /**
+     * Gets the climber's current number of rotations from the primary motor's
+     * sensor.
+     * 
+     * @return The current position of the climber.
+     */
     public double getPosition() {
         return primaryMotor.getPosition().getValueAsDouble();
     }
