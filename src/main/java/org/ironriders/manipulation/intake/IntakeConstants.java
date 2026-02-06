@@ -7,7 +7,7 @@ public class IntakeConstants {
     public static final double CENTER_TIMEOUT = 1;
 
     public enum State {
-        INTAKE(-0.5),
+        INTAKE(-1),
         STOP(0),
         BACK(1);
         
