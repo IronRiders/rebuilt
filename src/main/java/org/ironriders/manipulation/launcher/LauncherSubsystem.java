@@ -166,7 +166,7 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     /**
-     * Sets the {@linkplain State state} of the launcher, which determines flywheel
+     * Sets the {@link State state} of the launcher, which determines flywheel
      * target.
      * 
      * @param state The state to set the launcher to.
@@ -192,7 +192,7 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     /**
-     * Sets the launcher's {@linkplain Pose3d target} for shooter angle
+     * Sets the launcher's {@link Pose3d target} for shooter angle
      * calculations.
      * 
      * @param target The target for targeting the shooter.
@@ -202,8 +202,8 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     /**
-     * Sets the launcher's {@linkplain Pose2d target} for shooter angle
-     * calculations. Will be converted to a {@linkplain Pose3d} with a z value of 0.
+     * Sets the launcher's {@link Pose2d target} for shooter angle
+     * calculations. Will be converted to a {@link Pose3d} with a z value of 0.
      * 
      * @param target The target for targeting the shooter.
      */
@@ -223,7 +223,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     /**
      * Updates the flywheel and launcher hood motor outputs using the PID
-     * controllers. Utility class for {@linkplain #periodic()}.
+     * controllers. Utility class for {@link #periodic()}.
      */
     public void updatePID() {
         publish("Launcher RPM", getFlywheelVelocity().in(RPM));
@@ -237,7 +237,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     /**
      * Sets the flywheel's target velocity for the PID controller. See
-     * {@linkplain PIDController#setSetpoint setSetpoint} for more information.
+     * {@link PIDController#setSetpoint setSetpoint} for more information.
      */
     public void setFlywheelGoal(double goalVelocity) {
         velocityPidController.setSetpoint(goalVelocity);
@@ -245,7 +245,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     /**
      * Sets the launcher's target angle for the PID controller. See
-     * {@linkplain PIDController#setGoal setGoal} for more information.
+     * {@link PIDController#setGoal setGoal} for more information.
      */
     public void setLauncherGoal(double goalAngle) {
         anglePidController.setGoal(goalAngle);
@@ -267,7 +267,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     /**
      * @return The current angle of the shooter manually set in
-     *         {@linkplain SmartDashboard#getNumber() SmartDashboard}.
+     *         {@link SmartDashboard#getNumber() SmartDashboard}.
      */
     public double getManualLauncherAngle() {
         return SmartDashboard.getNumber("manualLauncherAngle", manualAnglePosition);
@@ -275,7 +275,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     /**
      * @return The current flywheel velocity manually set in
-     *         {@linkplain SmartDashboard#getNumber() SmartDashboard}.
+     *         {@link SmartDashboard#getNumber() SmartDashboard}.
      */
     public double getManualFlywheelVelocity() {
         return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);

@@ -29,7 +29,7 @@ public class BallisticsUtils {
 
     /**
      * @return current 3D position of the robot using
-     *         {@linkplain expandPose2d(Pose2d) expandPose2d}
+     *         {@link expandPose2d(Pose2d) expandPose2d}
      */
     public static Pose3d get3dPosition() {
         return Utils.expandPose2d(getPosition());
@@ -65,7 +65,7 @@ public class BallisticsUtils {
     }
 
     /**
-     * Check if a given pose is within range using {@linkplain #inRange(Pose3d)}
+     * Check if a given pose is within range using {@link #inRange(Pose3d)}
      * 
      * @param inputPose The pose to check.
      * @return True if the pose is within range, false otherwise.
@@ -162,7 +162,7 @@ public class BallisticsUtils {
     /**
      * Calculate the angle to the specified target from the current position.
      * 
-     * @param target The target {@linkplain Pose3d position}.
+     * @param target The target {@link Pose3d position}.
      * @return The angle to the target, in radians.
      */
     public static Angle calculateAngleToTarget(Pose3d target) {
@@ -175,7 +175,7 @@ public class BallisticsUtils {
      * Calculate the angle of shooter required to hit a target from a current
      * position. Does some math magic thanks to @Amber-leaf
      * 
-     * @param target   The target {@linkplain Pose3d position}.
+     * @param target   The target {@link Pose3d position}.
      * @param distance The distance to the target.
      * @return The angle of the shooter to hit the target.
      */

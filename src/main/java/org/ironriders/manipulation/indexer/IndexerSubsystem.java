@@ -24,7 +24,7 @@ public class IndexerSubsystem extends IronSubsystem {
      * Sets the indexer motor to a value.
      * 
      * @param value The speed to
-     *              {@linkplain com.ctre.phoenix6.hardware.TalonFX#set(double speed)
+     *              {@link com.ctre.phoenix6.hardware.TalonFX#set(double speed)
      *              set} the motor to (between -1 & 1)
      */
     public void setMotor(double value) {
@@ -36,7 +36,7 @@ public class IndexerSubsystem extends IronSubsystem {
      * {@link IndexerCommands#set(State) IndexerCommands.set} for more details.
      * 
      * @param state The indexer's target
-     *              {@linkplain org.ironriders.manipulation.indexer.IndexerConstants.State
+     *              {@link org.ironriders.manipulation.indexer.IndexerConstants.State
      *              state}
      */
     public void setState(State state) {

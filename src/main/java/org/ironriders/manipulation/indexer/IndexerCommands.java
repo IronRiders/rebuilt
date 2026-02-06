@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * Commands for the {@link IndexerSubsystem indexer subsystem}. Has only one
- * method: {@linkplain IndexerCommands#set() set}, which sets the indexer's
+ * method: {@link IndexerCommands#set() set}, which sets the indexer's
  * target state.
  */
 public class IndexerCommands {
@@ -23,7 +23,7 @@ public class IndexerCommands {
      * {@link org.ironriders.manipulation.indexer.IndexerSubsystem#setState(State
      * state) IndexerSubsystem's setState}
      * 
-     * @param state {@linkplain org.ironriders.manipulation.indexer.IndexerSubsystem
+     * @param state {@link org.ironriders.manipulation.indexer.IndexerSubsystem
      *              Indexer } target
      *              {org.ironriders.manipulation.indexer.IndexerConstants.State
      *              state}.

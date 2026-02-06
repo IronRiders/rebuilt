@@ -23,7 +23,7 @@ public class IntakeSubsystem extends IronSubsystem {
      * Sets the intake's motor to a value.
      * 
      * @param value The speed to
-     *              {@linkplain com.ctre.phoenix6.hardware.TalonFX#set(double speed)
+     *              {@link com.ctre.phoenix6.hardware.TalonFX#set(double speed)
      *              set} the motor to (between -1 & 1)
      */
     public void setMotor(double value) {
@@ -35,7 +35,7 @@ public class IntakeSubsystem extends IronSubsystem {
      * {@link IntakeCommands#set(State) IntakeCommands.set} for more details.
      * 
      * @param state The intake's target
-     *              {@linkplain org.ironriders.manipulation.intake.IntakeConstants.State
+     *              {@link org.ironriders.manipulation.intake.IntakeConstants.State
      *              state}
      */
     public void setState(State state) {

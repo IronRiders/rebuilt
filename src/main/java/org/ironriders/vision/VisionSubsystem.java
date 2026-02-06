@@ -61,7 +61,7 @@ public class VisionSubsystem extends IronSubsystem {
      * Estimates the standard deviation of a given position based on the number of
      * tags.
      * 
-     * @param pose    The estimated {@linkplain EstimatedRobotPose robot position}.
+     * @param pose    The estimated {@link EstimatedRobotPose robot position}.
      * @param targets The list of tracked targets used for the estimation.
      * @return A vector representing the estimated standard deviation in the
      *         position.
@@ -98,7 +98,7 @@ public class VisionSubsystem extends IronSubsystem {
     }
 
     /**
-     * Estimates the robot's pose using the given {@linkplain PhotonPipelineResult
+     * Estimates the robot's pose using the given {@link PhotonPipelineResult
      * PhotonVision result}.
      * 
      * @param result The PhotonVision pipeline result containing detected targets.
@@ -202,7 +202,7 @@ public class VisionSubsystem extends IronSubsystem {
     }
 
     /**
-     * Gets the {@linkplain VisionCommands commands} for this subsystem.
+     * Gets the {@link VisionCommands commands} for this subsystem.
      * 
      * @return The VisionCommands instance associated with this subsystem.
      */

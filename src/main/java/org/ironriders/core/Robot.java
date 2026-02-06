@@ -14,10 +14,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * The methods in this class are called automatically corresponding to each
- * mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the
- * package after creating
- * this project, you must also update the Main.java file in the project.
+ * mode, as described in the TimedRobot documentation. If you change the name of
+ * this class or the package after creating this project, you must also update
+ * the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
 
@@ -99,10 +98,9 @@ public class Robot extends TimedRobot {
 
     /**
      * Initialization that applies to autonomous and teleop. Contains startup
-     * methods for various
-     * parts of the robot, not part of WPILib. Created because we were tired of
-     * trying to keep all
-     * the startup functions updated for both startup methods.
+     * methods for various parts of the robot, not part of WPILib. Created because
+     * we were tired of trying to keep all the startup functions updated for both
+     * startup methods.
      */
     private void generalInit() {
         if (autonomousCommand != null) {

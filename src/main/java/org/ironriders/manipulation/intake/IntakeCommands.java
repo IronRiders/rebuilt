@@ -33,7 +33,7 @@ public class IntakeCommands {
     /**
      * Ejects balls by setting the Intake's target state to {@link State#BACK BACK}
      * 
-     * @return A {@linkplain Command} which does the above
+     * @return A {@link Command} which does the above
      */
     public Command eject() {
         return set(State.BACK);
@@ -43,7 +43,7 @@ public class IntakeCommands {
      * Intakes balls by setting the Intake's target state to {@link State#INTAKE
      * INTAKE}
      * 
-     * @return A {@linkplain Command} which does the above
+     * @return A {@link Command} which does the above
      */
     public Command intake() {
         return set(State.INTAKE);

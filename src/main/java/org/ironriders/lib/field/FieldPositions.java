@@ -54,12 +54,12 @@ public class FieldPositions {
     /**
      * Prepares a Pose3d for use by the robot, calling
      * {@link #preparePose(Pose2d, boolean) preparePose} on the flattened
-     * {@linkplain Pose3d}.
+     * {@link Pose3d}.
      * 
-     * @param pose The {@linkplain Pose3d} to prepare, in inches (will be flattened
-     *             to a {@linkplain Pose2d} for alliance mirroring, but the z value
+     * @param pose The {@link Pose3d} to prepare, in inches (will be flattened
+     *             to a {@link Pose2d} for alliance mirroring, but the z value
      *             will be preserved and converted to meters)
-     * @return The prepared {@linkplain Pose3d}, in meters
+     * @return The prepared {@link Pose3d}, in meters
      */
     public static Pose3d prepareInchesPose(Pose3d pose) {
         Pose2d flipped = prepareInchesPose(Utils.flattenPose3d(pose));
@@ -81,11 +81,11 @@ public class FieldPositions {
     /**
      * Prepares a Pose3d for use by the robot, calling
      * {@link #preparePose(Pose2d, boolean) preparePose} on the flattened
-     * {@linkplain Pose3d}.
+     * {@link Pose3d}.
      * 
-     * @param pose The {@linkplain Pose3d} to prepare, in meters (will be flattened
-     *             to a {@linkplain Pose2d} for alliance mirroring)
-     * @return The prepared {@linkplain Pose3d}, in meters
+     * @param pose The {@link Pose3d} to prepare, in meters (will be flattened
+     *             to a {@link Pose2d} for alliance mirroring)
+     * @return The prepared {@link Pose3d}, in meters
      */
     public static Pose3d prepareMetersPose(Pose3d pose) {
         Pose2d flipped = prepareMetersPose(Utils.flattenPose3d(pose));
@@ -136,10 +136,10 @@ public class FieldPositions {
 
     /**
      * calls {@link #preparePose(Pose2d, boolean) preparePose} on each
-     * {@linkplain Pose2d} in {@code Pose2d[] input}
+     * {@link Pose2d} in {@code Pose2d[] input}
      * 
-     * @param input The array of {@linkplain Pose2d} to prepare, in meters
-     * @return The prepared array of {@linkplain Pose2d}, in meters
+     * @param input The array of {@link Pose2d} to prepare, in meters
+     * @return The prepared array of {@link Pose2d}, in meters
      */
     public static Pose2d[] preparePolygon(Pose2d[] input) {
         Pose2d[] out = input;
@@ -211,7 +211,7 @@ public class FieldPositions {
 
     /**
      * A rectangle defined by two opposite corners. Used for defining zones on the
-     * {@linkplain FieldPositions field}.
+     * {@link FieldPositions field}.
      */
     private class Rect {
         Pose2d[] rect;

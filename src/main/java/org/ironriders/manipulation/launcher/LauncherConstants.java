@@ -6,7 +6,7 @@ import org.ironriders.lib.field.FieldPositions;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
-/** Constants for the {@linkplain LauncherSubsystem} */
+/** Constants for the {@link LauncherSubsystem} */
 public class LauncherConstants {
   public static final double LAUNCHER_HIGHT = Units.inchesToMeters(20.0);
 
@@ -35,17 +35,17 @@ public class LauncherConstants {
 
   public static final double LAUNCHER_TOLERANCE = 0.1;
 
-  public static final double MIN_ROTATION = Math.toRadians(15 + 90);
-  public static final double MAX_ROTATION = Math.toRadians(75 + 90);
+  public static final double MIN_ROTATION = Math.toRadians(30);
+  public static final double MAX_ROTATION = Math.toRadians(90);
 
   public static final double LAUNCHER_STOW_POSITION = MIN_ROTATION;
 
-  public static final double ROTATE_TO_TARGET_P = 6;
+  public static final double ROTATE_TO_TARGET_P = 1;
   public static final double ROTATE_TO_TARGET_I = 0.0;
   public static final double ROTATE_TO_TARGET_D = 0.1;
 
   public static final Constraints ROTATION_CONSTRAINTS = new Constraints(
-      DriveConstants.SWERVE_MAX_ANGULAR_ACCEL_PATHFIND, DriveConstants.SWERVE_MAX_ANGULAR_PATHFIND);
+      DriveConstants.SWERVE_MAX_ANGULAR_ACCEL_PATHFIND / 3, DriveConstants.SWERVE_MAX_ANGULAR_PATHFIND / 3);
 
   public static final double SPINDOWN_TIME = 2; // time to automatically go into idle mode after, currently TODO
 

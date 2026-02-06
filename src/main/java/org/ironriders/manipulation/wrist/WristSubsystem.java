@@ -60,7 +60,7 @@ public class WristSubsystem extends IronSubsystem {
      * Currently this won't work with the proposed design with the dead shaft
      * <i>When this is swapped for the new design, MAKE SURE the encoder reads 0
      * degrees (or add offset make it) as horizontal,
-     * as {@linkplain edu.wpi.first.math.controller.ArmFeedforward#calculate
+     * as {@link edu.wpi.first.math.controller.ArmFeedforward#calculate
      * ArmFeedForward} requires.</i>
      * 
      * @return angle in degrees from horizontal
@@ -78,9 +78,9 @@ public class WristSubsystem extends IronSubsystem {
     }
 
     /**
-     * Sets the {@linkplain edu.wpi.first.math.trajectory.TrapezoidProfile Trapezoid
-     * Profile} goal for the {@linkplain com.ctre.phoenix6.hardware.TalonFX wrist
-     * motor's} {@linkplain edu.wpi.first.math.controller.ProfiledPIDController
+     * Sets the {@link edu.wpi.first.math.trajectory.TrapezoidProfile Trapezoid
+     * Profile} goal for the {@link com.ctre.phoenix6.hardware.TalonFX wrist
+     * motor's} {@link edu.wpi.first.math.controller.ProfiledPIDController
      * profiled pid}.
      * 
      * @param goal Up and down double positions (interchangeable with trapezoid
@@ -104,7 +104,7 @@ public class WristSubsystem extends IronSubsystem {
     }
 
     /**
-     * @return The {@linkplain WristCommands commands} for this subsystem.
+     * @return The {@link WristCommands commands} for this subsystem.
      */
     public WristCommands getCommands() {
         return commands;

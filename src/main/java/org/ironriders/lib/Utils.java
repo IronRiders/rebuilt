@@ -48,35 +48,35 @@ public class Utils {
   }
 
   /**
-   * Flattens a {@linkplain Pose3d} to a {@linkplain Pose2d} by dropping the z
-   * value and converting the rotation to a {@linkplain Rotation2d}.
+   * Flattens a {@link Pose3d} to a {@link Pose2d} by dropping the z
+   * value and converting the rotation to a {@link Rotation2d}.
    * 
-   * @param pose The {@linkplain Pose3d} to flatten.
-   * @return The flattened {@linkplain Pose2d}.
+   * @param pose The {@link Pose3d} to flatten.
+   * @return The flattened {@link Pose2d}.
    */
   public static Pose2d flattenPose3d(Pose3d pose) {
     return new Pose2d(new Translation2d(pose.getX(), pose.getY()), new Rotation2d(pose.getRotation().getAngle()));
   }
 
   /**
-   * Gets the difference between two poses as a {@linkplain Translation2d}. Does
+   * Gets the difference between two poses as a {@link Translation2d}. Does
    * not use rotation.
    * 
    * @param pose1 The first pose.
    * @param pose2 The second pose.
-   * @return The difference between the two poses as a {@linkplain Translation2d}.
+   * @return The difference between the two poses as a {@link Translation2d}.
    */
   public static Translation2d getPoseDifference(Pose2d pose1, Pose2d pose2) {
     return new Translation2d(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
   }
 
   /**
-   * Gets the difference between two poses as a {@linkplain Translation3d}. Does
+   * Gets the difference between two poses as a {@link Translation3d}. Does
    * not use rotation.
    * 
    * @param pose1 The first pose.
    * @param pose2 The second pose.
-   * @return The difference between the two poses as a {@linkplain Translation3d}.
+   * @return The difference between the two poses as a {@link Translation3d}.
    */
   public static Translation3d getPose3dDifference(Pose3d pose1, Pose3d pose2) {
     return new Translation3d(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY(), pose1.getZ() - pose2.getZ());
@@ -142,31 +142,31 @@ public class Utils {
   }
 
   /**
-   * Converts a {@linkplain Pose3d} from inches to meters (multiplies by 0.0254).
+   * Converts a {@link Pose3d} from inches to meters (multiplies by 0.0254).
    * 
-   * @param pose The {@linkplain Pose3d} to convert, in inches.
-   * @return The converted {@linkplain Pose3d} in meters.
+   * @param pose The {@link Pose3d} to convert, in inches.
+   * @return The converted {@link Pose3d} in meters.
    */
   public static Pose3d inchesToMeters(Pose3d pose) {
     return new Pose3d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
 
   /**
-   * Converts a {@linkplain Pose2d} from inches to meters (multiplies by 0.0254).
+   * Converts a {@link Pose2d} from inches to meters (multiplies by 0.0254).
    * 
-   * @param pose The {@linkplain Pose2d} to convert, in inches.
-   * @return The converted {@linkplain Pose2d} in meters.
+   * @param pose The {@link Pose2d} to convert, in inches.
+   * @return The converted {@link Pose2d} in meters.
    */
   public static Pose2d inchesToMeters(Pose2d pose) {
     return new Pose2d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
 
   /**
-   * Expands a {@linkplain Pose2d} to a {@linkplain Pose3d} by adding a z value of
-   * 0 and converting the rotation to a {@linkplain Rotation3d}.
+   * Expands a {@link Pose2d} to a {@link Pose3d} by adding a z value of
+   * 0 and converting the rotation to a {@link Rotation3d}.
    * 
-   * @param pose The {@linkplain Pose2d} to expand.
-   * @return The expanded {@linkplain Pose3d}.
+   * @param pose The {@link Pose2d} to expand.
+   * @return The expanded {@link Pose3d}.
    */
   public static Pose3d expandPose2d(Pose2d pose) {
     return new Pose3d(pose.getX(), pose.getY(), 0d, new Rotation3d(pose.getRotation()));

@@ -25,7 +25,7 @@ public class WristCommands {
      * {@link WristSubsystem#resetRelativeEncoderRotations()
      * resetRelativeEncoderRotations()} for more details.
      * 
-     * @return A {@linkplain Command} to do the above.
+     * @return A {@link Command} to do the above.
      */
     public Command resetRotations() {
         return wristSubsystem.runOnce(() -> {
@@ -34,11 +34,11 @@ public class WristCommands {
     }
 
     /**
-     * Sets the wrist's target to a given {@linkplain State state}. See
+     * Sets the wrist's target to a given {@link State state}. See
      * {@link WristSubsystem#setGoal(State) setGoal} for more details.
      * 
-     * @param goal The target {@linkplain State} for the wrist.
-     * @return A {@linkplain Command} to do the above.
+     * @param goal The target {@link State} for the wrist.
+     * @return A {@link Command} to do the above.
      */
     public Command set(WristConstants.State goal) {
         return wristSubsystem.runOnce(() -> {
@@ -47,9 +47,9 @@ public class WristCommands {
     }
 
     /**
-     * Jostles balls using the {@linkplain State.Jostle}.
+     * Jostles balls using the {@link State.Jostle}.
      * 
-     * @return A {@linkplain Command} to do the above.
+     * @return A {@link Command} to do the above.
      */
     public Command jostleBalls() {
         return Commands.sequence(

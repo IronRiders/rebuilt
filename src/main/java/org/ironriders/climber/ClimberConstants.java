@@ -1,5 +1,6 @@
 package org.ironriders.climber;
 
+/** Constants for the climber subsystem. */
 public class ClimberConstants {
     public static final int PRIMARY_ID = 6767;
     public static final int SECONDARY_ID = 676789989;
@@ -13,7 +14,7 @@ public class ClimberConstants {
     public static final double MAX_VEL = 180;
     public static final double MAX_ACC = 180;
 
-    public static final double GEAR_RATIO = 1/1; //TODO
+    public static final double GEAR_RATIO = 1 / 1; // TODO
 
     public enum State {
         CLIMBED(40),

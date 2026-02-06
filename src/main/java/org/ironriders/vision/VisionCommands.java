@@ -1,7 +1,7 @@
 package org.ironriders.vision;
 
 /**
- * Commands for the {@linkplain VisionSubsystem vision subsystem}. Currently
+ * Commands for the {@link VisionSubsystem vision subsystem}. Currently
  * empty.
  */
 public class VisionCommands {

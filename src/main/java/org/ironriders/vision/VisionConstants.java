@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
-/** Constants for the {@linkplain VisionSubsystem} */
+/** Constants for the {@link VisionSubsystem} */
 public class VisionConstants {
     public static final double VISION_P = 0.1;
     public static final double VISION_I = 0.05;

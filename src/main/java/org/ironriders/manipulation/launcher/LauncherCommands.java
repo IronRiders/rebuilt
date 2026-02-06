@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
-/** Commands for {@linkplain LauncherSubsystem} */
+/** Commands for {@link LauncherSubsystem} */
 public class LauncherCommands {
 
     public final LauncherSubsystem launcher;
@@ -41,7 +41,7 @@ public class LauncherCommands {
     /**
      * Sets the launcher's target to the closest point in the passing zone. See
      * {@link LauncherSubsystem#setTarget(Pose3d) setTarget} &
-     * {@linkplain RobotContainer.passingZone#closestPointAsPose3d()
+     * {@link RobotContainer.passingZone#closestPointAsPose3d()
      * RobotContainer's passingZone.closestPointAsPose3d} for more details.
      * 
      * @return A command that sets the launcher's target to the closest point in the
@@ -54,7 +54,7 @@ public class LauncherCommands {
     /**
      * Sets the launcher's target to the hub. See
      * {@link LauncherSubsystem#setTarget(Pose3d) setTarget} &
-     * {@linkplain FieldPositions#get(ElementType) FieldPositions' get} for more
+     * {@link FieldPositions#get(ElementType) FieldPositions' get} for more
      * details.
      * 
      * @return A command that sets the launcher's target to the hub.
@@ -87,7 +87,7 @@ public class LauncherCommands {
 
     /**
      * Sets the launcher's angle to a given value. See
-     * {@linkplain LauncherSubsystem#setLauncherGoal(double) LauncherSubsystem's
+     * {@link LauncherSubsystem#setLauncherGoal(double) LauncherSubsystem's
      * setLauncherGoal} for more details.
      * 
      * @param angle The target angle to set for the launcher.
@@ -99,7 +99,7 @@ public class LauncherCommands {
 
     /**
      * Sets the launcher's flywheel velocity to a given value. See
-     * {@linkplain LauncherSubsystem#setFlywheelGoal(double) setFlywheelGoal} for
+     * {@link LauncherSubsystem#setFlywheelGoal(double) setFlywheelGoal} for
      * more details.
      * 
      * @param velocity The target flywheel velocity to set for the launcher.
