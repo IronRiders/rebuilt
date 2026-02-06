@@ -39,7 +39,7 @@ public class LauncherConstants {
 
   public static final double LAUNCHER_STOW_POSITION = MIN_ROTATION;
 
-  public static final double ROTATE_TO_TARGET_P = 6;
+  public static final double ROTATE_TO_TARGET_P = 0.9;
   public static final double ROTATE_TO_TARGET_I = 0.0;
   public static final double ROTATE_TO_TARGET_D = 0.1;  
 
