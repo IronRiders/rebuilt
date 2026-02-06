@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 enum Config {
-        PRIMARY_DRIVER, PRIMARY_DRIVER_WITH_BOOST, SECONDARY_DRIVER_WITH_BOOST;
+    PRIMARY_DRIVER, PRIMARY_DRIVER_WITH_BOOST, SECONDARY_DRIVER_WITH_BOOST;
 }
 
 /**
@@ -61,125 +61,125 @@ enum Config {
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        public final DriveSubsystem driveSubsystem = new DriveSubsystem();
-        public final DriveCommands driveCommands = driveSubsystem.getCommands();
+    public final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    public final DriveCommands driveCommands = driveSubsystem.getCommands();
 
-        public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
-        public final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
+    public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
+    public final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
 
-        public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-        public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
+    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
 
-        public final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
-        public final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
+    public final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
+    public final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
 
-        public final WristSubsystem wristSubsystem = new WristSubsystem();
-        public final WristCommands wristCommands = wristSubsystem.getCommands();
+    public final WristSubsystem wristSubsystem = new WristSubsystem();
+    public final WristCommands wristCommands = wristSubsystem.getCommands();
 
-        public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-        public final ClimberCommands climberCommands = climberSubsystem.getCommands();
+    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    public final ClimberCommands climberCommands = climberSubsystem.getCommands();
 
-        public final VisionSubsystem visionSubsystem = new VisionSubsystem();
-        public final VisionCommands visionCommands = visionSubsystem.getCommands();
+    public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public final VisionCommands visionCommands = visionSubsystem.getCommands();
 
-        public static Zone passingZone = new Zone(ZoneType.PASSING);;
-        public static Zone scoringZone = new Zone(ZoneType.SCORING);;
+    public static Zone passingZone = new Zone(ZoneType.PASSING);;
+    public static Zone scoringZone = new Zone(ZoneType.SCORING);;
 
-        public final Double triggerThreshold = 0.75;
+    public final Double triggerThreshold = 0.75;
 
-        private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
 
-        private final CommandXboxController primaryController = new CommandXboxController(
-                        DriveConstants.CONTROLLER_PRIMARY_PORT);
-        private final CommandGenericHID secondaryController = new CommandJoystick(
-                        DriveConstants.CONTROLLER_SECONDARY_PORT);
+    private final CommandXboxController primaryController = new CommandXboxController(
+            DriveConstants.CONTROLLER_PRIMARY_PORT);
+    private final CommandGenericHID secondaryController = new CommandJoystick(
+            DriveConstants.CONTROLLER_SECONDARY_PORT);
 
-        public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
-                        launcherCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
+    public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
+            launcherCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
 
-        /**
-         * The container for the robot. Contains subsystems, IO devices, and commands.
-         * <hr />
-         * builds the autos using
-         * {@link com.pathplanner.lib.auto.AutoBuilder#buildAutoChooser()
-         * buildAutoChooser()}, posts the auto selection to
-         * {@link SmartDashboard#putData(String, SendableChooser) SmartDashboard}.
-         */
-        public RobotContainer() {
-                // Configure the trigger bindings
-                configureBindings();
+    /**
+     * The container for the robot. Contains subsystems, IO devices, and commands.
+     * <hr />
+     * builds the autos using
+     * {@link com.pathplanner.lib.auto.AutoBuilder#buildAutoChooser()
+     * buildAutoChooser()}, posts the auto selection to
+     * {@link SmartDashboard#putData(String, SendableChooser) SmartDashboard}.
+     */
+    public RobotContainer() {
+        // Configure the trigger bindings
+        configureBindings();
 
-                DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
-                DogLog.setPdh(new PowerDistribution());
+        DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
+        DogLog.setPdh(new PowerDistribution());
 
-                autoChooser = AutoBuilder.buildAutoChooser();
-                SmartDashboard.putData("Auto Select", autoChooser);
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Select", autoChooser);
 
-                passingZone = new Zone(ZoneType.PASSING);
-                scoringZone = new Zone(ZoneType.SCORING);
-        }
+        passingZone = new Zone(ZoneType.PASSING);
+        scoringZone = new Zone(ZoneType.SCORING);
+    }
 
-        public void periodic() {
-        }
+    public void periodic() {
+    }
 
-        /**
-         * Configures primary & secondary {@linkplain CommandGenericHID controllers}
-         * bindings to commands. This also configures the default driving (controller
-         * sticks)
-         */
-        private void configureBindings() {
-                DriverStation.silenceJoystickConnectionWarning(true);
+    /**
+     * Configures primary & secondary {@linkplain CommandGenericHID controllers}
+     * bindings to commands. This also configures the default driving (controller
+     * sticks)
+     */
+    private void configureBindings() {
+        DriverStation.silenceJoystickConnectionWarning(true);
 
-                // See: https://tinyurl.com/yua72bn2
+        // See: https://tinyurl.com/yua72bn2
 
-                // --- DRIVE CONTROLS ---
-                driveSubsystem.setDefaultCommand(Commands.parallel(robotCommands.driveTeleop(
-                                () -> Utils.controlCurve(primaryController.getLeftY(),
-                                                DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                () -> Utils.controlCurve(primaryController.getLeftX(),
-                                                DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                () -> Utils.controlCurve(primaryController.getRightX(),
-                                                DriveConstants.ROTATION_CONTROL_EXPONENT,
-                                                DriveConstants.ROTATION_CONTROL_DEADBAND)),
-                                Commands.run(() -> periodic())));
+        // --- DRIVE CONTROLS ---
+        driveSubsystem.setDefaultCommand(Commands.parallel(robotCommands.driveTeleop(
+                () -> Utils.controlCurve(primaryController.getLeftY(),
+                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                () -> Utils.controlCurve(primaryController.getLeftX(),
+                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                () -> Utils.controlCurve(primaryController.getRightX(),
+                        DriveConstants.ROTATION_CONTROL_EXPONENT,
+                        DriveConstants.ROTATION_CONTROL_DEADBAND)),
+                Commands.run(() -> periodic())));
 
-                primaryController.rightBumper().onTrue(Commands.runOnce(
-                                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND +
-                                                3)))
-                                .onFalse(Commands.runOnce(() -> DriveSubsystem
-                                                .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+        primaryController.rightBumper().onTrue(Commands.runOnce(
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND +
+                        3)))
+                .onFalse(Commands.runOnce(() -> DriveSubsystem
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
 
-                primaryController.leftBumper().onTrue(Commands.runOnce(
-                                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND -
-                                                2)))
-                                .onFalse(Commands.runOnce(() -> DriveSubsystem
-                                                .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+        primaryController.leftBumper().onTrue(Commands.runOnce(
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND -
+                        2)))
+                .onFalse(Commands.runOnce(() -> DriveSubsystem
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
 
-                primaryController.rightTrigger(triggerThreshold)
-                                .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
-                                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+        primaryController.rightTrigger(triggerThreshold)
+                .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
+                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-                primaryController.a()
-                                .toggleOnTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
+        primaryController.a()
+                .toggleOnTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
 
-                // TODO. primaryController.b().toggleOnTrue()
+        // TODO. primaryController.b().toggleOnTrue()
 
-                primaryController.x().toggleOnTrue(
-                                Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
+        primaryController.x().toggleOnTrue(
+                Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
 
-                primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
+        primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
 
-                primaryController.povDown().onTrue(climberCommands.set(ClimberConstants.State.CLIMBED));
-        }
+        primaryController.povDown().onTrue(climberCommands.set(ClimberConstants.State.CLIMBED));
+    }
 
-        /**
-         * Get command configured in auto chooser.
-         *
-         * @return the command to run in autonomous
-         */
-        public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
-        }
+    /**
+     * Get command configured in auto chooser.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
+    }
 }
