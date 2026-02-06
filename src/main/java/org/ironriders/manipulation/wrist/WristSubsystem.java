@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.RobotController;
 public class WristSubsystem extends IronSubsystem {
 
     /* MOTOR COMPONENTS */
-    private final com.ctre.phoenix6.hardware.TalonFX wristMotor = new TalonFX(
+    private final TalonFX wristMotor = new TalonFX(
             WristConstants.MOTOR_ID);
 
     private final ArmFeedforward armFeedforward = new ArmFeedforward(

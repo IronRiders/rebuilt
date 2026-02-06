@@ -220,7 +220,7 @@ public class LauncherSubsystem extends IronSubsystem {
         return SmartDashboard.getNumber("manualLauncherAngle", manualAnglePosition);
     }
 
-    public double getmanualFlywheelyVelocity() {
+    public double getManualFlywheelVelocity() {
         return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
 
