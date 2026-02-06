@@ -145,15 +145,15 @@ public class RobotContainer {
                         DriveConstants.ROTATION_CONTROL_DEADBAND)),
                 Commands.run(() -> periodic())));
 
-        primaryController.rightBumper().onTrue(Commands.runOnce(
-                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND + 3)))
-                .onFalse(Commands.runOnce(() -> DriveSubsystem
-                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+        //primaryController.rightBumper().onTrue(Commands.runOnce(
+          //      () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND + 3)))
+            //    .onFalse(Commands.runOnce(() -> DriveSubsystem
+//                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
 
-        primaryController.leftBumper().onTrue(Commands.runOnce(
-                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND - 2)))
-                .onFalse(Commands.runOnce(() -> DriveSubsystem
-                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+        //primaryController.leftBumper().onTrue(Commands.runOnce(
+          //      () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND - 2)))
+            //    .onFalse(Commands.runOnce(() -> DriveSubsystem
+              //          .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
 
         primaryController.rightTrigger(triggerThreshold).onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
