@@ -119,7 +119,7 @@ public class LauncherSubsystem extends IronSubsystem {
         anglePidController.setTolerance(LAUNCHER_TOLERANCE);
 
         for (double i = 0; i <= 15; i += 1) {
-            DogLog.log("Launcher-test",
+            DogLog.log("Launcher/Launcher-test",
                     String.valueOf(i) + " | Rad: "
                             + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Radians)
