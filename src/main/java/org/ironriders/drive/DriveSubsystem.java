@@ -96,6 +96,7 @@ public class DriveSubsystem extends IronSubsystem {
                 this);
 
         rotationPid.reset(0);
+        rotationPid.enableContinuousInput(0, Math.PI * 2);
         setRotationGoal(180);
     }
 
@@ -135,7 +136,7 @@ public class DriveSubsystem extends IronSubsystem {
 
     public static void driveRotate(Translation2d translation) {
         swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
-                rotationPid.calculate(getRotation().in(Degrees)) * (rotationInvert ? -1 : 1),
+                rotationPid.calculate(getRotation().in(Radians)) * (rotationInvert ? -1 : 1),
                 false,
                 true);
     }
@@ -191,7 +192,7 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     public void setRotationGoal(double goal) {
-        rotationPid.setGoal(goal);
+        rotationPid.setGoal(Math.toRadians(goal));
     }
 
     /** Fetch the DriveCommands instance */
