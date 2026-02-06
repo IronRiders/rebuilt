@@ -5,6 +5,7 @@ import org.ironriders.manipulation.intake.IntakeConstants.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
+/** Public-facing methods which return commands for the Intake */
 public class IntakeCommands {
 
     private IntakeSubsystem intake;
@@ -19,14 +20,31 @@ public class IntakeCommands {
         intake.publish("Eject", this.eject());
     }
 
+    /**
+     * Sets the intake's motor to a target {@link State state}.
+     * 
+     * @param state The intake's target {@link State state}
+     * @return A command to set the intake's target State
+     */
     public Command set(State state) {
         return Commands.runOnce(() -> intake.setState(state));
     }
 
+    /**
+     * Ejects balls by setting the Intake's target state to {@link State#BACK BACK}
+     * 
+     * @return A {@linkplain Command} which does the above
+     */
     public Command eject() {
         return set(State.BACK);
     }
 
+    /**
+     * Intakes balls by setting the Intake's target state to {@link State#INTAKE
+     * INTAKE}
+     * 
+     * @return A {@linkplain Command} which does the above
+     */
     public Command intake() {
         return set(State.INTAKE);
     }

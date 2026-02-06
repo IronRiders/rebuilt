@@ -11,6 +11,7 @@ public class IntakeSubsystem extends IronSubsystem {
 
     private final TalonFX motor = new TalonFX(IntakeConstants.ID);
     private TalonFXConfiguration configuration;
+
     public IntakeSubsystem() {
         configuration = new TalonFXConfiguration();
 
@@ -18,14 +19,32 @@ public class IntakeSubsystem extends IronSubsystem {
         motor.getConfigurator().apply(configuration);
     }
 
+    /**
+     * Sets the intake's motor to a value.
+     * 
+     * @param value The speed to
+     *              {@linkplain com.ctre.phoenix6.hardware.TalonFX#set(double speed)
+     *              set} the motor to (between -1 & 1)
+     */
     public void setMotor(double value) {
         motor.set(value);
     }
 
+    /**
+     * Sets the intake's motor to a target state; see
+     * {@link IntakeCommands#set(State) IntakeCommands.set} for more details.
+     * 
+     * @param state The intake's target
+     *              {@linkplain org.ironriders.manipulation.intake.IntakeConstants.State
+     *              state}
+     */
     public void setState(State state) {
         setMotor(state.speed);
     }
 
+    /**
+     * @return The IntakeCommands object for the intake subsystem
+     */
     public IntakeCommands getCommands() {
         return commands;
     }
