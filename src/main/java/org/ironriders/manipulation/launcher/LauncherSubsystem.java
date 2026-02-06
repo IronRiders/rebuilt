@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToTarget;
 import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
@@ -20,7 +21,9 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_STOW_POSITION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TOLERANCE;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
@@ -30,19 +33,18 @@ import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherConstants.TargetingMode;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
-import edu.wpi.first.math.InterpolatingMatrixTreeMap;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -61,7 +63,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public static double[] range;
 
     // Motors
-    public final TalonFX flyWheelMotor = new TalonFX(999); // TODO set the actual CAN ID
+    public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(9990), new TalonFX(9991), new TalonFX(9992)); // IDs
     public final TalonFX launcherHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
 
     // PID Controllers
@@ -76,6 +78,9 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(40);
+
+    public final TalonFXConfiguration configuration = new TalonFXConfiguration()
+            .withCurrentLimits(currentLimitsConfigs);
 
     public double manualAnglePosition = LAUNCHER_STOW_POSITION;
     public double manualFlywheelVelocity = 0;
@@ -106,8 +111,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
         commands = new LauncherCommands(this);
 
-        flyWheelMotor.getConfigurator().apply(currentLimitsConfigs);
-        flyWheelMotor.setNeutralMode(NeutralModeValue.Coast);
+        flyWheelMotors.stream().forEach(this::configureFlywheelMotor);
 
         launcherHoodMotor.getConfigurator().apply(currentLimitsConfigs);
         launcherHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
@@ -138,6 +142,11 @@ public class LauncherSubsystem extends IronSubsystem {
         }
 
         DogLog.log("Launcher/Range", "(" + String.valueOf(range[0]) + " : " + String.valueOf(range[1] + ")"));
+    }
+
+    public void configureFlywheelMotor(TalonFX motor) {
+        motor.getConfigurator().apply(configuration);
+        motor.setNeutralMode(NeutralModeValue.Coast);
     }
 
     @Override
@@ -227,9 +236,14 @@ public class LauncherSubsystem extends IronSubsystem {
      */
     public void updatePID() {
         publish("Launcher RPM", getFlywheelVelocity().in(RPM));
-        publish("Launcher Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
+        publish("Launcher Differential RPM", flyWheelMotors.stream().map(TalonFX::getDifferentialAverageVelocity)
+                .map(StatusSignal::getValueAsDouble).collect(Collectors.toList()).toString());
 
-        flyWheelMotor.set(
+        flyWheelMotors.stream().forEach(this::setFlywheelMotors);
+    }
+
+    public void setFlywheelMotors(TalonFX motor) {
+        motor.set(
                 Utils.clamp(0, 1,
                         velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond))));
         launcherHoodMotor.set(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)));
@@ -251,11 +265,12 @@ public class LauncherSubsystem extends IronSubsystem {
         anglePidController.setGoal(goalAngle);
     }
 
-    /**
-     * @return The current flywheel velocity.
+    /*
+     * @return *AVERAGE* velocity!!
      */
     public AngularVelocity getFlywheelVelocity() {
-        return flyWheelMotor.getVelocity().getValue();
+        return AngularVelocity.ofBaseUnits(flyWheelMotors.stream().map(TalonFX::getVelocity)
+                .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble)), RotationsPerSecond);
     }
 
     /**

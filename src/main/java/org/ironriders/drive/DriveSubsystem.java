@@ -1,6 +1,8 @@
 package org.ironriders.drive;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radian;
+import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_I;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_P;
@@ -8,6 +10,7 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATION_CO
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
@@ -46,7 +49,9 @@ public class DriveSubsystem extends IronSubsystem {
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
 
-    public static boolean isFacingLauncher = false;
+    public static boolean isFacingLauncher = true;
+
+    public static AtomicBoolean isDriving = new AtomicBoolean(false);
 
     private static Command pathfindCommand;
 
@@ -91,12 +96,17 @@ public class DriveSubsystem extends IronSubsystem {
                 this);
 
         rotationPid.reset(0);
+        rotationPid.enableContinuousInput(0, Math.PI * 2);
         setRotationGoal(180);
     }
 
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
+
+        if (!isDriving.get() && isFacingLauncher) {
+            driveRotate(new Translation2d());
+        }
     }
 
     /**
@@ -110,19 +120,25 @@ public class DriveSubsystem extends IronSubsystem {
      *                      its own rotation.
      */
     public static void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+        isDriving.getAndSet(true);
         if (isFacingLauncher) {
-            swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
-                    rotationPid.calculate(getRotation().in(Degrees)) * (rotationInvert ? -1 : 1),
+            driveRotate(translation);
+        } else {
+            swerveDrive.drive(
+                    translation.times(driveInvert ? -1 : 1),
+                    rotation * (rotationInvert ? -1 : 1),
                     fieldRelative,
-                    true);
-
-            return;
+                    false);
         }
-        swerveDrive.drive(
-                translation.times(driveInvert ? -1 : 1),
-                rotation * (rotationInvert ? -1 : 1),
-                fieldRelative,
-                false);
+
+        isDriving.getAndSet(false);
+    }
+
+    public static void driveRotate(Translation2d translation) {
+        swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
+                rotationPid.calculate(getRotation().in(Radians)) * (rotationInvert ? -1 : 1),
+                false,
+                true);
     }
 
     public static Angle getRotation() {
@@ -176,7 +192,7 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     public void setRotationGoal(double goal) {
-        rotationPid.setGoal(goal);
+        rotationPid.setGoal(Math.toRadians(goal));
     }
 
     /** Fetch the DriveCommands instance */
