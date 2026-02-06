@@ -34,8 +34,8 @@ public class LauncherConstants {
 
   public static final double LAUNCHER_TOLERANCE = 0.1;
 
-  public static final double MIN_ROTATION = Math.toRadians(15+90);
-  public static final double MAX_ROTATION = Math.toRadians(75+90);
+  public static final double MIN_ROTATION = Math.toRadians(30);
+  public static final double MAX_ROTATION = Math.toRadians(90);
 
   public static final double LAUNCHER_STOW_POSITION = MIN_ROTATION;
 
