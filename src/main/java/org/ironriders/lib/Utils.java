@@ -47,18 +47,49 @@ public class Utils {
     return voltage / maxVoltage;
   }
 
+  /**
+   * Flattens a {@linkplain Pose3d} to a {@linkplain Pose2d} by dropping the z
+   * value and converting the rotation to a {@linkplain Rotation2d}.
+   * 
+   * @param pose The {@linkplain Pose3d} to flatten.
+   * @return The flattened {@linkplain Pose2d}.
+   */
   public static Pose2d flattenPose3d(Pose3d pose) {
     return new Pose2d(new Translation2d(pose.getX(), pose.getY()), new Rotation2d(pose.getRotation().getAngle()));
   }
 
+  /**
+   * Gets the difference between two poses as a {@linkplain Translation2d}. Does
+   * not use rotation.
+   * 
+   * @param pose1 The first pose.
+   * @param pose2 The second pose.
+   * @return The difference between the two poses as a {@linkplain Translation2d}.
+   */
   public static Translation2d getPoseDifference(Pose2d pose1, Pose2d pose2) {
     return new Translation2d(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY());
   }
 
+  /**
+   * Gets the difference between two poses as a {@linkplain Translation3d}. Does
+   * not use rotation.
+   * 
+   * @param pose1 The first pose.
+   * @param pose2 The second pose.
+   * @return The difference between the two poses as a {@linkplain Translation3d}.
+   */
   public static Translation3d getPose3dDifference(Pose3d pose1, Pose3d pose2) {
     return new Translation3d(pose1.getX() - pose2.getX(), pose1.getY() - pose2.getY(), pose1.getZ() - pose2.getZ());
   }
 
+  /**
+   * Clamps a value between a minimum and maximum range.
+   * 
+   * @param min The minimum value.
+   * @param max The maximum value.
+   * @param in  The input value to clamp.
+   * @return The clamped value.
+   */
   public static double clamp(double min, double max, double in) {
     if (in > max) {
       in = max;
@@ -69,6 +100,14 @@ public class Utils {
     return in;
   }
 
+  /**
+   * Checks if a value is within a specified range.
+   * 
+   * @param min The minimum value.
+   * @param max The maximum value.
+   * @param in  The input value to check.
+   * @return True if the input value is within the range, false otherwise.
+   */
   public static boolean inRange(double min, double max, double in) {
     if (in > max) {
       return false;
@@ -79,6 +118,17 @@ public class Utils {
     }
   }
 
+  /**
+   * Generates an array of all integers within a specified range, inclusive.
+   * 
+   * Can this be replaced by
+   * {@code IntStream.range(Math.min(a, b), Math.max(a, b) + 1).toArray()}?
+   * 
+   * @param a The start of the range.
+   * @param b The end of the range.
+   * @return An array containing all integers from the smaller of a and b to the
+   *         larger of a and b.
+   */
   public static int[] everyIntInRange(int a, int b) {
     int start = Math.min(a, b);
     int end = Math.max(a, b);
@@ -91,14 +141,33 @@ public class Utils {
     return result;
   }
 
+  /**
+   * Converts a {@linkplain Pose3d} from inches to meters (multiplies by 0.0254).
+   * 
+   * @param pose The {@linkplain Pose3d} to convert, in inches.
+   * @return The converted {@linkplain Pose3d} in meters.
+   */
   public static Pose3d inchesToMeters(Pose3d pose) {
     return new Pose3d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
 
+  /**
+   * Converts a {@linkplain Pose2d} from inches to meters (multiplies by 0.0254).
+   * 
+   * @param pose The {@linkplain Pose2d} to convert, in inches.
+   * @return The converted {@linkplain Pose2d} in meters.
+   */
   public static Pose2d inchesToMeters(Pose2d pose) {
     return new Pose2d(pose.getTranslation().times(0.0254), pose.getRotation());
   }
 
+  /**
+   * Expands a {@linkplain Pose2d} to a {@linkplain Pose3d} by adding a z value of
+   * 0 and converting the rotation to a {@linkplain Rotation3d}.
+   * 
+   * @param pose The {@linkplain Pose2d} to expand.
+   * @return The expanded {@linkplain Pose3d}.
+   */
   public static Pose3d expandPose2d(Pose2d pose) {
     return new Pose3d(pose.getX(), pose.getY(), 0d, new Rotation3d(pose.getRotation()));
   }

@@ -13,9 +13,8 @@ import org.ironriders.lib.Utils;
 import org.ironriders.vision.VisionSubsystem;
 
 /**
- * Representation of an element on the field.
- *
- * <p>Includes pose, function, and various utility routines for retrieving.
+ * Representation of an element on the field. Includes pose, function, and
+ * various utility routines for retrieving.
  */
 public class FieldElement {
 
@@ -63,17 +62,13 @@ public class FieldElement {
   public final String name;
 
   private static int[] BLUE_TAGS = Utils.everyIntInRange(17, 32);
- // private static int[] BLUE_TAGS = {0};
-
+  // private static int[] BLUE_TAGS = {0};
 
   private static int[] RED_TAGS = Utils.everyIntInRange(1, 16);
- // private static int[] RED_TAGS = {1};
+  // private static int[] RED_TAGS = {1};
 
-
-  private static List<FieldElement> BLUE_ELEMENTS =
-      loadElements(DriverStation.Alliance.Blue, BLUE_TAGS);
-  private static List<FieldElement> RED_ELEMENTS =
-      loadElements(DriverStation.Alliance.Red, RED_TAGS);
+  private static List<FieldElement> BLUE_ELEMENTS = loadElements(DriverStation.Alliance.Blue, BLUE_TAGS);
+  private static List<FieldElement> RED_ELEMENTS = loadElements(DriverStation.Alliance.Red, RED_TAGS);
 
   private FieldElement(Position element, Pose3d pose) {
     this.position = element;
@@ -130,6 +125,14 @@ public class FieldElement {
         .toList();
   }
 
+  /**
+   * Find the nearest alliance element of a desired type.
+   * 
+   * @param pose the pose to find the nearest element to
+   * @param type the type of element to find. If empty, finds the nearest element
+   *             of any type.
+   * @return the nearest element of the specified type
+   */
   private static Optional<FieldElement> findNearest(Pose2d pose, Optional<ElementType> type) {
     double distance = -1;
     Optional<FieldElement> found = Optional.empty();
@@ -139,8 +142,7 @@ public class FieldElement {
         continue;
       }
 
-      double thisDistance =
-          pose.getTranslation().getDistance(element.pose.toPose2d().getTranslation());
+      double thisDistance = pose.getTranslation().getDistance(element.pose.toPose2d().getTranslation());
       if (found.isEmpty() || distance > thisDistance) {
         distance = thisDistance;
         found = Optional.of(element);

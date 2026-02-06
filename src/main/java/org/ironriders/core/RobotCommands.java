@@ -67,7 +67,11 @@ public class RobotCommands {
      * {@linkplain LauncherConstants.State#READY
      * Readies} the
      * {@linkplain org.ironriders.manipulation.launcher.LauncherCommands#set()
-     * Launcher} and
+     * Launcher} and sets the
+     * {@linkplain org.ironriders.manipulation.indexer.IndexerCommands#set()
+     * indexer} to
+     * {@linkplain org.ironriders.manipulation.indexer.IndexerConstants.State#INDEX
+     * INDEX}.
      * 
      * @return A command to do the above
      */

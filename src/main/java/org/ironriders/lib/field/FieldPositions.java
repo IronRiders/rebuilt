@@ -21,7 +21,7 @@ public class FieldPositions {
     /*
      * Gets the position in meters of the specified element type. Automatically does
      * alliance mirroring.
-     * 
+     * <hr />
      * !Currently only HUB and TOWER are implemented, all other types will return a
      * blank Pose3d()!
      */
@@ -40,24 +40,67 @@ public class FieldPositions {
         return new Pose3d();
     }
 
+    /**
+     * Prepares a Pose2d for use by the robot, calling
+     * {@link #preparePose(Pose2d, boolean) preparePose} with isMeters = false.
+     * 
+     * @param pose The pose to prepare, in inches
+     * @return The prepared pose, in inches
+     */
     public static Pose2d prepareInchesPose(Pose2d pose) {
         return preparePose(pose, false);
     }
 
+    /**
+     * Prepares a Pose3d for use by the robot, calling
+     * {@link #preparePose(Pose2d, boolean) preparePose} on the flattened
+     * {@linkplain Pose3d}.
+     * 
+     * @param pose The {@linkplain Pose3d} to prepare, in inches (will be flattened
+     *             to a {@linkplain Pose2d} for alliance mirroring, but the z value
+     *             will be preserved and converted to meters)
+     * @return The prepared {@linkplain Pose3d}, in meters
+     */
     public static Pose3d prepareInchesPose(Pose3d pose) {
-        Pose2d flipped = preparePose(Utils.flattenPose3d(pose), false);
-        return new Pose3d(flipped.getX(), flipped.getY(), Units.inchesToMeters(pose.getZ()), new Rotation3d(flipped.getRotation()));
+        Pose2d flipped = prepareInchesPose(Utils.flattenPose3d(pose));
+        return new Pose3d(flipped.getX(), flipped.getY(), Units.inchesToMeters(pose.getZ()),
+                new Rotation3d(flipped.getRotation()));
     }
 
+    /**
+     * Prepares a Pose2d for use by the robot, calling
+     * {@link #preparePose(Pose2d, boolean) preparePose}.
+     * 
+     * @param pose The pose to prepare, in meters
+     * @return The prepared pose, in meters
+     */
     public static Pose2d prepareMetersPose(Pose2d pose) {
         return preparePose(pose, true);
     }
 
+    /**
+     * Prepares a Pose3d for use by the robot, calling
+     * {@link #preparePose(Pose2d, boolean) preparePose} on the flattened
+     * {@linkplain Pose3d}.
+     * 
+     * @param pose The {@linkplain Pose3d} to prepare, in meters (will be flattened
+     *             to a {@linkplain Pose2d} for alliance mirroring)
+     * @return The prepared {@linkplain Pose3d}, in meters
+     */
     public static Pose3d prepareMetersPose(Pose3d pose) {
-        Pose2d flipped = preparePose(Utils.flattenPose3d(pose), true);
+        Pose2d flipped = prepareMetersPose(Utils.flattenPose3d(pose));
         return new Pose3d(flipped.getX(), flipped.getY(), pose.getZ(), new Rotation3d(flipped.getRotation()));
     }
 
+    /**
+     * Prepares a Pose2d for use by the robot, doing alliance mirroring and unit
+     * conversion as necessary.
+     * 
+     * @param pose     The pose to prepare, in either inches or meters depending on
+     *                 the value of isMeters
+     * @param isMeters Whether the pose is in meters
+     * @return The prepared pose, in meters
+     */
     private static Pose2d preparePose(Pose2d pose, boolean isMeters) {
         boolean blue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
@@ -91,6 +134,13 @@ public class FieldPositions {
         return new Pose2d(flippedTranslation, flippedRotation);
     }
 
+    /**
+     * calls {@link #preparePose(Pose2d, boolean) preparePose} on each
+     * {@linkplain Pose2d} in {@code Pose2d[] input}
+     * 
+     * @param input The array of {@linkplain Pose2d} to prepare, in meters
+     * @return The prepared array of {@linkplain Pose2d}, in meters
+     */
     public static Pose2d[] preparePolygon(Pose2d[] input) {
         Pose2d[] out = input;
 
@@ -103,7 +153,7 @@ public class FieldPositions {
         return out;
     }
 
-    /* Measurements in INCHES! */
+    /** A position for the hub, Measurements in INCHES! */
     public class Hub {
         // Default red
         public static final Pose3d HUB_TOP = new Pose3d(new Translation3d(182.11, 158.84, 72.00),
@@ -112,17 +162,20 @@ public class FieldPositions {
                 new Rotation3d());
     }
 
+    /** A position for the tower, Measurements in inches? @Amber-leaf */
     public class Tower {
         // Default red
         public static final Pose3d TOWER_CENTER = new Pose3d(new Translation3d(158.84 - 11.38, 47 + 155.05, 0),
                 new Rotation3d());
     }
 
+    /** Length and width of the field, measurements in inches? @Amber-leaf */
     public class Field {
         public static final double FIELD_LENGTH = 651.22;
         public static final double FIELD_WIDTH = 317.69;
     }
 
+    /** Zones on the field, measurements in meters? @Amber-leaf */
     public class Zones {
         public static Pose2d[] get(ZoneType type) {
             // TODO: This limits to only having one zone per type, fine for now
@@ -156,6 +209,10 @@ public class FieldPositions {
                 .getPoints();
     }
 
+    /**
+     * A rectangle defined by two opposite corners. Used for defining zones on the
+     * {@linkplain FieldPositions field}.
+     */
     private class Rect {
         Pose2d[] rect;
 
@@ -174,6 +231,12 @@ public class FieldPositions {
             rect[3] = new Pose2d(minX, maxY, rotation);
         }
 
+        /**
+         * Gets the four corners of the rectangle, starting with the bottom left corner
+         * and going clockwise.
+         * 
+         * @return An array of the four corners.
+         */
         public Pose2d[] getPoints() {
             return rect;
         }
