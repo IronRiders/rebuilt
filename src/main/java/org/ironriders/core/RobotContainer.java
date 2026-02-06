@@ -19,6 +19,7 @@ import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
+import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
@@ -113,15 +114,10 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
-
-        DogLog.log("Zone Distance test", String.valueOf(passingZone.distanceTo().getNorm()));
     }
 
-    public void periodic() {    
-        launcherSubsystem.setTarget(scoringZone.closestPoint());
-
-        DogLog.log("Spam-zone-position", "In passing?: " + String.valueOf(passingZone.inside()) + " | In Scoring?: "
-                + String.valueOf(scoringZone.inside()));
+    public void periodic() {
+        /* Stub */
     }
 
     /**
@@ -133,6 +129,8 @@ public class RobotContainer {
      */
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        // See: https://tinyurl.com/yua72bn2
 
         // --- DRIVE CONTROLS ---
         driveSubsystem.setDefaultCommand(Commands.parallel(robotCommands.driveTeleop(
@@ -147,8 +145,19 @@ public class RobotContainer {
                         DriveConstants.ROTATION_CONTROL_DEADBAND)),
                 Commands.run(() -> periodic())));
 
-        // --- OTHER CONTROLS ---
-        // TODO: Schedule a meeting to talk to drive about this once we have the design.
+        primaryController.rightBumper().onTrue(Commands.runOnce(
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND + 3)))
+                .onFalse(Commands.runOnce(() -> DriveSubsystem
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+
+        primaryController.leftBumper().onTrue(Commands.runOnce(
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND - 2)))
+                .onFalse(Commands.runOnce(() -> DriveSubsystem
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+
+        primaryController.rightTrigger(triggerThreshold).onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
+                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+
     }
 
     /**
