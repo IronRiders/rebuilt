@@ -42,7 +42,6 @@ public class WristSubsystem extends IronSubsystem {
         wristMotor.getConfigurator()
                 .apply(configuration);
 
-
         this.setGoal(WristConstants.State.UP);
 
         pid.reset(getPosition());
@@ -92,13 +91,21 @@ public class WristSubsystem extends IronSubsystem {
         pid.setGoal(goal.position);
     }
 
+    /**
+     * Checks if the wrist is at its goal (within 1 degree).
+     * 
+     * @return true if the wrist is at its goal, false otherwise.
+     */
     public boolean atGoal() {
-        if (Math.abs(pid.getSetpoint().position-pid.getGoal().position) < 1){
+        if (Math.abs(pid.getSetpoint().position - pid.getGoal().position) < 1) {
             return true;
         }
         return false;
     }
 
+    /**
+     * @return The {@linkplain WristCommands commands} for this subsystem.
+     */
     public WristCommands getCommands() {
         return commands;
     }

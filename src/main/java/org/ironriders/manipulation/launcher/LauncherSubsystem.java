@@ -48,6 +48,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/** Subsystem for targeting & shooting */
 public class LauncherSubsystem extends IronSubsystem {
     private LauncherCommands commands;
 
@@ -64,7 +65,6 @@ public class LauncherSubsystem extends IronSubsystem {
     public final TalonFX launcherHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
 
     // PID Controllers
-
     public final PIDController velocityPidController = new PIDController(FLYWHEEL_P, FLYWHEEL_I,
             FLYWHEEL_D);
 
@@ -81,24 +81,28 @@ public class LauncherSubsystem extends IronSubsystem {
     public double manualFlywheelVelocity = 0;
 
     public LauncherSubsystem() {
-        /*InterpolatingDoubleTreeMap interpolationMapAngle = new InterpolatingDoubleTreeMap();
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-        interpolationMapAngle.put(null, null);
-
-        InterpolatingDoubleTreeMap interpolationMapVelocity = new InterpolatingDoubleTreeMap();
-        interpolationMapVelocity.put(null, null);
-        interpolationMapVelocity.put(null, null);
-        interpolationMapVelocity.put(null, null);
-        interpolationMapVelocity.put(null, null);
-        interpolationMapVelocity.put(null, null);
-        interpolationMapVelocity.put(null, null);
-        interpolationMapVelocity.put(null, null);*/
+        /*
+         * InterpolatingDoubleTreeMap interpolationMapAngle = new
+         * InterpolatingDoubleTreeMap();
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * interpolationMapAngle.put(null, null);
+         * 
+         * InterpolatingDoubleTreeMap interpolationMapVelocity = new
+         * InterpolatingDoubleTreeMap();
+         * interpolationMapVelocity.put(null, null);
+         * interpolationMapVelocity.put(null, null);
+         * interpolationMapVelocity.put(null, null);
+         * interpolationMapVelocity.put(null, null);
+         * interpolationMapVelocity.put(null, null);
+         * interpolationMapVelocity.put(null, null);
+         * interpolationMapVelocity.put(null, null);
+         */
 
         commands = new LauncherCommands(this);
 
@@ -118,10 +122,10 @@ public class LauncherSubsystem extends IronSubsystem {
 
         for (double i = 0; i <= 15; i += 1) {
             DogLog.log("Launcher/Launcher-test",
-                    String.valueOf(i) + " | Rad: "
+                    String.valueOf(i) + " | Radius: "
                             + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Radians)
-                            + " Deg: "
+                            + " Degrees: "
                             + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Degrees));
         }
@@ -152,10 +156,21 @@ public class LauncherSubsystem extends IronSubsystem {
         updatePID();
     }
 
+    /**
+     * Get the commands for the launcher subsystem.
+     * 
+     * @return The commands for the launcher subsystem.
+     */
     public LauncherCommands getCommands() {
         return commands;
     }
 
+    /**
+     * Sets the {@linkplain State state} of the launcher, which determines flywheel
+     * target.
+     * 
+     * @param state The state to set the launcher to.
+     */
     public void setCurrentState(State state) {
         currentState = state;
 
@@ -176,18 +191,40 @@ public class LauncherSubsystem extends IronSubsystem {
         setLauncherGoal(calculateAngleToInternalTarget().in(Degrees));
     }
 
+    /**
+     * Sets the launcher's {@linkplain Pose3d target} for shooter angle
+     * calculations.
+     * 
+     * @param target The target for targeting the shooter.
+     */
     public void setTarget(Pose3d target) {
         currentTarget = target;
     }
 
+    /**
+     * Sets the launcher's {@linkplain Pose2d target} for shooter angle
+     * calculations. Will be converted to a {@linkplain Pose3d} with a z value of 0.
+     * 
+     * @param target The target for targeting the shooter.
+     */
     public void setTarget(Pose2d target) {
         currentTarget = Utils.expandPose2d(target);
     }
 
+    /**
+     * Checks if the launcher is ready to shoot (if shooter & flywheel are at their
+     * target and setpoint, respectively).
+     * 
+     * @return True if the launcher is ready, false otherwise.
+     */
     public boolean isReady() {
         return velocityPidController.atSetpoint() && anglePidController.atGoal();
     }
 
+    /**
+     * Updates the flywheel and launcher hood motor outputs using the PID
+     * controllers. Utility class for {@linkplain #periodic()}.
+     */
     public void updatePID() {
         publish("Launcher RPM", getFlywheelVelocity().in(RPM));
         publish("Launcher Differential RPM", flyWheelMotor.getDifferentialAverageVelocity().getValue().in(RPM));
@@ -198,30 +235,56 @@ public class LauncherSubsystem extends IronSubsystem {
         launcherHoodMotor.set(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)));
     }
 
+    /**
+     * Sets the flywheel's target velocity for the PID controller. See
+     * {@linkplain PIDController#setSetpoint setSetpoint} for more information.
+     */
     public void setFlywheelGoal(double goalVelocity) {
         velocityPidController.setSetpoint(goalVelocity);
     }
 
+    /**
+     * Sets the launcher's target angle for the PID controller. See
+     * {@linkplain PIDController#setGoal setGoal} for more information.
+     */
     public void setLauncherGoal(double goalAngle) {
         anglePidController.setGoal(goalAngle);
     }
 
+    /**
+     * @return The current flywheel velocity.
+     */
     public AngularVelocity getFlywheelVelocity() {
         return flyWheelMotor.getVelocity().getValue();
     }
 
+    /**
+     * @return The current angle of the launcher hood.
+     */
     public Angle getLauncherHoodAngle() {
         return launcherHoodMotor.getPosition().getValue();
     }
 
+    /**
+     * @return The current angle of the shooter manually set in
+     *         {@linkplain SmartDashboard#getNumber() SmartDashboard}.
+     */
     public double getManualLauncherAngle() {
         return SmartDashboard.getNumber("manualLauncherAngle", manualAnglePosition);
     }
 
+    /**
+     * @return The current flywheel velocity manually set in
+     *         {@linkplain SmartDashboard#getNumber() SmartDashboard}.
+     */
     public double getManualFlywheelVelocity() {
         return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
 
+    /**
+     * Homes the launcher hood to its default position.
+     */
     public void homeLauncherHood() {
+        // TODO: implement
     }
 }
