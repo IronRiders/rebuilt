@@ -1,7 +1,6 @@
 package org.ironriders.drive;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_I;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_P;
@@ -12,12 +11,9 @@ import java.util.Optional;
 
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
-import org.ironriders.manipulation.launcher.LauncherSubsystem;
-import org.ironriders.manipulation.launcher.LauncherConstants.TargetingMode;
 import org.ironriders.vision.VisionSubsystem;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
@@ -28,7 +24,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -183,6 +178,10 @@ public class DriveSubsystem extends IronSubsystem {
     /** Fetch the SwerveDrive instance */
     public static SwerveDrive getSwerveDrive() {
         return swerveDrive;
+    }
+
+    public static void setSpeedMax(double max) {
+        swerveDrive.setMaximumAllowableSpeeds(max, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
     }
 
     /** Where is the robot? */
