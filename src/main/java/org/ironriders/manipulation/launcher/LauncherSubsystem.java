@@ -22,6 +22,8 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_STOW_POSITION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TOLERANCE;
 
+import java.util.Optional;
+
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
@@ -80,31 +82,25 @@ public class LauncherSubsystem extends IronSubsystem {
     public double manualAnglePosition = LAUNCHER_STOW_POSITION;
     public double manualFlywheelVelocity = 0;
 
-
-
     public LauncherSubsystem() {
+        /*InterpolatingDoubleTreeMap interpolationMapAngle = new InterpolatingDoubleTreeMap();
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
+        interpolationMapAngle.put(null, null);
 
-            InterpolatingDoubleTreeMap interpolationMapAngle = new InterpolatingDoubleTreeMap();
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-            interpolationMapAngle.put(null, null);
-
-
-            InterpolatingDoubleTreeMap interpolationMapVelocity = new InterpolatingDoubleTreeMap();
-            interpolationMapVelocity.put(null, null);
-            interpolationMapVelocity.put(null, null);
-            interpolationMapVelocity.put(null, null);
-            interpolationMapVelocity.put(null, null);
-            interpolationMapVelocity.put(null, null);
-            interpolationMapVelocity.put(null, null);
-            interpolationMapVelocity.put(null, null);
-
-
+        InterpolatingDoubleTreeMap interpolationMapVelocity = new InterpolatingDoubleTreeMap();
+        interpolationMapVelocity.put(null, null);
+        interpolationMapVelocity.put(null, null);
+        interpolationMapVelocity.put(null, null);
+        interpolationMapVelocity.put(null, null);
+        interpolationMapVelocity.put(null, null);
+        interpolationMapVelocity.put(null, null);
+        interpolationMapVelocity.put(null, null);*/
 
         commands = new LauncherCommands(this);
 
@@ -131,19 +127,15 @@ public class LauncherSubsystem extends IronSubsystem {
                             + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Degrees));
         }
-        DogLog.log("Launcher-test-pose", FieldPositions.get(ElementType.HUB).toString());
-        DogLog.log("Pose-convert", FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP).toString());
-        DogLog.log("Launcher-our-pose", getPosition().toString());
-        DogLog.log("Launcher-real-test", String.valueOf(calculateAngleToHub().in(Degrees)));
-        DogLog.log("Launcher-range", String.valueOf(estimateMinMaxRange().get()[0]) + " | "
-                + String.valueOf(estimateMinMaxRange().get()[1]));
 
         setCurrentState(State.IDLE);
 
-        // Optional<double[]> _range = estimateMinMaxRange();
-        // if (_range.isPresent()) {
-        // range = _range.get();
-        // }
+        Optional<double[]> _range = estimateMinMaxRange();
+        if (_range.isPresent()) {
+            range = _range.get();
+        }
+
+        DogLog.log("Launcher/Range", "(" + String.valueOf(range[0]) + " : " + String.valueOf(range[1] + ")"));
     }
 
     @Override
@@ -231,8 +223,6 @@ public class LauncherSubsystem extends IronSubsystem {
     public double getmanualFlywheelyVelocity() {
         return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
-
-    
 
     public void homeLauncherHood() {
     }
