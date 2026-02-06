@@ -1,6 +1,7 @@
 package org.ironriders.manipulation.wrist;
 
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.manipulation.wrist.WristConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -85,8 +86,15 @@ public class WristSubsystem extends IronSubsystem {
      *             profile's with a velocity goal of zero), currently both set to
      *             0.0. Should be set in degrees from horizontal.
      */
-    public void setGoal(double goal) {
-        pid.setGoal(goal);
+    public void setGoal(WristConstants.State goal) {
+        pid.setGoal(goal.position);
+    }
+
+    public boolean atGoal() {
+        if (Math.abs(pid.getSetpoint().position-pid.getGoal().position) < 1){
+            return true;
+        }
+        return false;
     }
 
     public WristCommands getCommands() {

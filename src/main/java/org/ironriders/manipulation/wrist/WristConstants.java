@@ -23,7 +23,8 @@ public class WristConstants {
      */
     public enum State {
         UP(90.0),
-        DOWN(0.0);
+        DOWN(0.0),
+        JOSTLE(30.0);
 
         public final double position;
 
