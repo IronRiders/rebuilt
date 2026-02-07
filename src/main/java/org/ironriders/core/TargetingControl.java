@@ -15,12 +15,12 @@ public class TargetingControl {
         ALIGN_PRIORITY();
     }
 
-    enum alignTargets {
-        BUMP(1d);
+    enum alignDegreesTargets {
+        NORMAL(0d),
+        BUMP(45d);
 
-        private double rotation;
-
-        alignTargets(double rotation) {
+        public double rotation;
+        alignDegreesTargets(double rotation) {
             this.rotation = rotation;
         }
     }
@@ -31,6 +31,8 @@ public class TargetingControl {
     }
 
     private static Pose3d launcherTarget = new Pose3d();
+
+    private static targetingMode currentMode = targetingMode.DRIVER_PRIORITY;
 
     private static Pose3d getPoseForTarget(launcherTarget target) {
         switch (target) {
@@ -45,7 +47,9 @@ public class TargetingControl {
         }
     }
 
-    //public static setMode()
+    public static void setMode(targetingMode mode) {
+        currentMode = mode;
+    }
 
     public static Pose3d getLauncherTarget() {
         return launcherTarget;
