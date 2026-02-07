@@ -35,7 +35,6 @@ import org.ironriders.manipulation.launcher.LauncherConstants.TargetingMode;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -48,6 +47,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Subsystem for targeting & shooting */
@@ -64,7 +64,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     // Motors
     public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(9990), new TalonFX(9991), new TalonFX(9992)); // IDs
-    public final TalonFX launcherHoodMotor = new TalonFX(898); // TODO set the actual CAN ID
+    public final Servo launcherHoodActuator = new Servo(0);
 
     // PID Controllers
     public final PIDController velocityPidController = new PIDController(FLYWHEEL_P, FLYWHEEL_I,
@@ -86,35 +86,15 @@ public class LauncherSubsystem extends IronSubsystem {
     public double manualFlywheelVelocity = 0;
 
     public LauncherSubsystem() {
-        /*
-         * InterpolatingDoubleTreeMap interpolationMapAngle = new
-         * InterpolatingDoubleTreeMap();
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * interpolationMapAngle.put(null, null);
-         * 
-         * InterpolatingDoubleTreeMap interpolationMapVelocity = new
-         * InterpolatingDoubleTreeMap();
-         * interpolationMapVelocity.put(null, null);
-         * interpolationMapVelocity.put(null, null);
-         * interpolationMapVelocity.put(null, null);
-         * interpolationMapVelocity.put(null, null);
-         * interpolationMapVelocity.put(null, null);
-         * interpolationMapVelocity.put(null, null);
-         * interpolationMapVelocity.put(null, null);
-         */
-
         commands = new LauncherCommands(this);
 
         flyWheelMotors.stream().forEach(this::configureFlywheelMotor);
 
-        launcherHoodMotor.getConfigurator().apply(currentLimitsConfigs);
-        launcherHoodMotor.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1));
+        // launcherHoodMotor.getConfigurator().apply(currentLimitsConfigs);
+        // launcherHoodMotor.getConfigurator().apply(new
+        // FeedbackConfigs().withSensorToMechanismRatio(1));
+
+        launcherHoodActuator.enableDeadbandElimination(true);
 
         velocityPidController.reset();
         velocityPidController.setSetpoint(0);
@@ -246,7 +226,7 @@ public class LauncherSubsystem extends IronSubsystem {
         motor.set(
                 Utils.clamp(0, 1,
                         velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond))));
-        launcherHoodMotor.set(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)));
+        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)), Degrees));
     }
 
     /**
@@ -277,7 +257,12 @@ public class LauncherSubsystem extends IronSubsystem {
      * @return The current angle of the launcher hood.
      */
     public Angle getLauncherHoodAngle() {
-        return launcherHoodMotor.getPosition().getValue();
+        return Angle.ofBaseUnits(LauncherMaps.AngleToExtensionMap.getAngleForExtension(launcherHoodActuator.get()),
+                Degrees);
+    }
+
+    public void setHoodAngle(Angle angle) {
+        launcherHoodActuator.set(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(angle.in(Degrees)));
     }
 
     /**

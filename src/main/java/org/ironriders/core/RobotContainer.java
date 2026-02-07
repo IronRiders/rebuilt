@@ -23,6 +23,7 @@ import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
+import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristSubsystem;
@@ -81,6 +82,8 @@ public class RobotContainer {
 
     public final VisionSubsystem visionSubsystem = new VisionSubsystem();
     public final VisionCommands visionCommands = visionSubsystem.getCommands();
+
+    public static LauncherMaps launcherMaps = new LauncherMaps();
 
     public static Zone passingZone = new Zone(ZoneType.PASSING);;
     public static Zone scoringZone = new Zone(ZoneType.SCORING);;
