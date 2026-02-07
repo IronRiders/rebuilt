@@ -2,6 +2,8 @@ package org.ironriders.manipulation.launcher;
 
 import org.ironriders.lib.InterpolatingDoubleMap;
 
+import dev.doglog.DogLog;
+
 public class LauncherMaps {
     public AngleToExtensionMap angleToExtensionMap;
 
@@ -23,7 +25,10 @@ public class LauncherMaps {
         AngleToExtensionMap() {
             /* Key: Angle, Value: Extension Amount (mm) */
             // Values currently from CAD. TODO
-            angleToExtensionMap.put(0d, 5d);
+            angleToExtensionMap.put(-1d, 0d);
+            angleToExtensionMap.put(0d, 113.8d);
+            angleToExtensionMap.put(1d, 105.4d);
+            angleToExtensionMap.put(90d, maxExtension);
         }
 
         /*
@@ -34,8 +39,12 @@ public class LauncherMaps {
             return angleToExtensionMap.get(angle) / maxExtension;
         }
 
+        /*
+         * Get the angle for the given extension (0-1).
+         */
         public static double getAngleForExtension(double extension) {
-            return angleToExtensionMap.getKeysByValue(extension).orElseThrow().get(0);
+            DogLog.log("get key", String.valueOf(extension * maxExtension));
+            return angleToExtensionMap.getKeysByValue(extension * maxExtension).orElseThrow().get(0);
         }
     }
 }

@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
+import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.vision.VisionSubsystem;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -103,6 +104,9 @@ public class DriveSubsystem extends IronSubsystem {
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
+        if (isFacingLauncher) {
+            setRotationGoal(Utils.getAngleToPoint(getPose(), Utils.flattenPose3d(LauncherSubsystem.currentTarget)));
+        }
 
         if (!isDriving.get() && isFacingLauncher) {
             driveRotate(new Translation2d());

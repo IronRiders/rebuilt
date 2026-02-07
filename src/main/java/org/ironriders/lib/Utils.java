@@ -171,4 +171,14 @@ public class Utils {
   public static Pose3d expandPose2d(Pose2d pose) {
     return new Pose3d(pose.getX(), pose.getY(), 0d, new Rotation3d(pose.getRotation()));
   }
+
+  public static double getAngleToPointRadians(Pose2d p1, Pose2d p2) {
+    double deltaX = p2.getX() - p1.getX();
+    double deltaY = p2.getY() - p1.getY();
+    return Math.atan2(deltaY, deltaX);
+  }
+
+  public static double getAngleToPoint(Pose2d p1, Pose2d p2) {
+    return Math.toDegrees(getAngleToPointRadians(p1, p2));
+  }
 }

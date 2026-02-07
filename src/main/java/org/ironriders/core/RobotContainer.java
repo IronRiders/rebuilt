@@ -4,17 +4,13 @@
 
 package org.ironriders.core;
 
-import javax.print.DocFlavor.STRING;
-
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberConstants;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
-import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.Utils;
-import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
 import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
@@ -34,10 +30,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -165,11 +157,11 @@ public class RobotContainer {
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
         primaryController.a()
-                .toggleOnTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
+                .onTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
 
         // TODO. primaryController.b().toggleOnTrue()
 
-        primaryController.x().toggleOnTrue(
+        primaryController.x().onTrue(
                 Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
 
         primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));

@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.interpolation.Interpolator;
@@ -128,11 +130,16 @@ public class InterpolatingMap<K extends Number, V extends Number> {
             }
         }).toList();
 
+        DogLog.log("Entries", entriesList.stream().map(Object::toString).collect(Collectors.joining(" | ")));
+
         List<K> keysList = entriesList.stream().filter(new Predicate<Entry<K, V>>() {
             public boolean test(Entry<K, V> entry) {
-                return Objects.equals(entry.getValue(), value);
+                DogLog.log("Checks", String.valueOf(entry.getValue().doubleValue()) + " ==? " + String.valueOf(value.doubleValue()));
+                return entry.getValue().doubleValue() == value.doubleValue();
             };
         }).map((Entry<K, V> e) -> e.getKey()).toList();
+
+        DogLog.log("Keys", keysList.stream().map(Object::toString).collect(Collectors.joining(" | ")));
 
         switch (keysList.size()) {
             case 0: // Zero keys, interpolate.
