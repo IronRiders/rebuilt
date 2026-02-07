@@ -12,29 +12,6 @@ public class LauncherMaps {
         this.angleToExtensionMap = new AngleToExtensionMap();
     }
 
-    /*
-     * InterpolatingDoubleTreeMap interpolationMapAngle = new
-     * InterpolatingDoubleTreeMap();
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * interpolationMapAngle.put(null, null);
-     * 
-     * InterpolatingDoubleTreeMap interpolationMapVelocity = new
-     * InterpolatingDoubleTreeMap();
-     * interpolationMapVelocity.put(null, null);
-     * interpolationMapVelocity.put(null, null);
-     * interpolationMapVelocity.put(null, null);
-     * interpolationMapVelocity.put(null, null);
-     * interpolationMapVelocity.put(null, null);
-     * interpolationMapVelocity.put(null, null);
-     * interpolationMapVelocity.put(null, null);
-     */
-
     public class AngleToExtensionMap {
         public static InterpolatingDoubleMap angleToExtensionMap = new InterpolatingDoubleMap();
 
@@ -47,7 +24,6 @@ public class LauncherMaps {
             /* Key: Angle, Value: Extension Amount (mm) */
             // Values currently from CAD. TODO
             angleToExtensionMap.put(0d, 5d);
-
         }
 
         /*

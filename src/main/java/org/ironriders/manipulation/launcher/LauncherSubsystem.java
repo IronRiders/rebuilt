@@ -64,7 +64,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     // Motors
     public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(9990), new TalonFX(9991), new TalonFX(9992)); // IDs
-    public final Servo launcherHoodActuator = new Servo(0);
+    public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
 
     // PID Controllers
     public final PIDController velocityPidController = new PIDController(FLYWHEEL_P, FLYWHEEL_I,
@@ -90,11 +90,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
         flyWheelMotors.stream().forEach(this::configureFlywheelMotor);
 
-        // launcherHoodMotor.getConfigurator().apply(currentLimitsConfigs);
-        // launcherHoodMotor.getConfigurator().apply(new
-        // FeedbackConfigs().withSensorToMechanismRatio(1));
-
-        launcherHoodActuator.enableDeadbandElimination(true);
+        launcherHoodActuators.stream().forEach(this::configureServo);
 
         velocityPidController.reset();
         velocityPidController.setSetpoint(0);
@@ -127,6 +123,10 @@ public class LauncherSubsystem extends IronSubsystem {
     public void configureFlywheelMotor(TalonFX motor) {
         motor.getConfigurator().apply(configuration);
         motor.setNeutralMode(NeutralModeValue.Coast);
+    }
+
+    public void configureServo(Servo servo) {
+        servo.enableDeadbandElimination(true);
     }
 
     @Override
@@ -220,13 +220,13 @@ public class LauncherSubsystem extends IronSubsystem {
                 .map(StatusSignal::getValueAsDouble).collect(Collectors.toList()).toString());
 
         flyWheelMotors.stream().forEach(this::setFlywheelMotors);
+        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)), Degrees));
     }
 
     public void setFlywheelMotors(TalonFX motor) {
         motor.set(
                 Utils.clamp(0, 1,
                         velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond))));
-        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)), Degrees));
     }
 
     /**
@@ -257,12 +257,20 @@ public class LauncherSubsystem extends IronSubsystem {
      * @return The current angle of the launcher hood.
      */
     public Angle getLauncherHoodAngle() {
-        return Angle.ofBaseUnits(LauncherMaps.AngleToExtensionMap.getAngleForExtension(launcherHoodActuator.get()),
+        return Angle.ofBaseUnits(
+                LauncherMaps.AngleToExtensionMap.getAngleForExtension(launcherHoodActuators.stream().map(Servo::get)
+                        .collect(Collectors.averagingDouble(num -> Double.valueOf(num)))),
                 Degrees);
     }
 
     public void setHoodAngle(Angle angle) {
-        launcherHoodActuator.set(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(angle.in(Degrees)));
+        setServos(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(angle.in(Degrees)));
+    }
+
+    public void setServos(double amount) {
+        launcherHoodActuators.stream().forEach((Servo servo) -> {
+            servo.set(amount);
+        });
     }
 
     /**
