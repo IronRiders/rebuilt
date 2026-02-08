@@ -59,6 +59,9 @@
   ],
   "java.dependency.enableDependencyCheckup": false,
   "cSpell.words": [
-    "lerp"
-  ]
+    "lerp",
+    "Pathfind",
+    "pathfinding",
+    "Pathfinds"
+]
 }

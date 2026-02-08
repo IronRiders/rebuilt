@@ -1,7 +1,5 @@
 package org.ironriders.drive;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_D;
 import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_I;
@@ -14,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
-import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.vision.VisionSubsystem;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -25,6 +22,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -50,7 +48,7 @@ public class DriveSubsystem extends IronSubsystem {
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
 
-    public static boolean isFacingLauncher = true;
+    public static boolean PIDAlign = true;
 
     public static AtomicBoolean isDriving = new AtomicBoolean(false);
 
@@ -98,18 +96,16 @@ public class DriveSubsystem extends IronSubsystem {
 
         rotationPid.reset(0);
         rotationPid.enableContinuousInput(0, Math.PI * 2);
-        setRotationGoal(180);
+
+        // debug setRotationGoal(180);
     }
 
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
-        if (isFacingLauncher) {
-            setRotationGoal(Utils.getAngleToPoint(getPose(), Utils.flattenPose3d(LauncherSubsystem.currentTarget)));
-        }
 
-        if (!isDriving.get() && isFacingLauncher) {
-            driveRotate(new Translation2d());
+        if (!isDriving.get() && PIDAlign) {
+            drivePID(new Translation2d());
         }
     }
 
@@ -125,8 +121,9 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public static void drive(Translation2d translation, double rotation, boolean fieldRelative) {
         isDriving.getAndSet(true);
-        if (isFacingLauncher) {
-            driveRotate(translation);
+
+        if (PIDAlign) {
+            drivePID(translation);
         } else {
             swerveDrive.drive(
                     translation.times(driveInvert ? -1 : 1),
@@ -138,7 +135,7 @@ public class DriveSubsystem extends IronSubsystem {
         isDriving.getAndSet(false);
     }
 
-    public static void driveRotate(Translation2d translation) {
+    public static void drivePID(Translation2d translation) {
         swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
                 rotationPid.calculate(getRotation().in(Radians)) * (rotationInvert ? -1 : 1),
                 false,
@@ -146,10 +143,36 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     /**
-     * @return The robot's current rotation in radians.
+     * @return The robot's current rotation.
      */
     public static Angle getRotation() {
         return swerveDrive.getGyroRotation3d().toRotation2d().getMeasure();
+    }
+
+    /** Where is the robot? */
+    public static Pose2d getPose() {
+        return DriveSubsystem.swerveDrive.getPose();
+    }
+
+    /*
+     * Enable and disable PID rotation control. Set goal using {@link #setRotationGoal()}
+     */
+    public static void setPIDControl(boolean PIDControl) {
+        PIDAlign = PIDControl;
+    }
+
+    /**
+     * Sets the PID rotation goal in degrees.
+     */
+    public static void setRotationGoal(double goal) {
+        rotationPid.setGoal(Math.toRadians(goal));
+    }
+
+    /**
+     * Sets the PID rotation goal in radians.
+     */
+    public static void setRotationGoalRad(double goal) {
+        rotationPid.setGoal(goal);
     }
 
     /**
@@ -235,19 +258,12 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     /**
-     * Stops the currently running
+     * Stops the currently running pathfind.
      */
     public static void cancelPathfind() {
         if (pathfindCommand != null) {
             pathfindCommand.cancel();
         }
-    }
-
-    /***
-     * Sets the PID rotation goal.
-     */
-    public void setRotationGoal(double goal) {
-        rotationPid.setGoal(Math.toRadians(goal));
     }
 
     /** Fetch the DriveCommands instance */
@@ -267,11 +283,6 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public static void setSpeedMax(double max) {
         swerveDrive.setMaximumAllowableSpeeds(max, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
-    }
-
-    /** Where is the robot? */
-    public Pose2d getPose() {
-        return DriveSubsystem.swerveDrive.getPose();
     }
 
     /**

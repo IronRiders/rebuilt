@@ -9,10 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 
@@ -116,8 +113,6 @@ public class InterpolatingMap<K extends Number, V extends Number> {
      * the least, will return an Optional.empty().
      */
     public Optional<List<K>> getKeysByValue(V value) {
-        DogLog.log("Value", String.valueOf(value.doubleValue()));
-
         List<Entry<K, V>> entriesList = map.entrySet().stream().sorted(new Comparator<Entry<K, V>>() {
             @Override
             // Sort by values.
@@ -130,16 +125,11 @@ public class InterpolatingMap<K extends Number, V extends Number> {
             }
         }).toList();
 
-        DogLog.log("Entries", entriesList.stream().map(Object::toString).collect(Collectors.joining(" | ")));
-
         List<K> keysList = entriesList.stream().filter(new Predicate<Entry<K, V>>() {
             public boolean test(Entry<K, V> entry) {
-                DogLog.log("Checks", String.valueOf(entry.getValue().doubleValue()) + " ==? " + String.valueOf(value.doubleValue()));
                 return entry.getValue().doubleValue() == value.doubleValue();
             };
         }).map((Entry<K, V> e) -> e.getKey()).toList();
-
-        DogLog.log("Keys", keysList.stream().map(Object::toString).collect(Collectors.joining(" | ")));
 
         switch (keysList.size()) {
             case 0: // Zero keys, interpolate.
@@ -149,25 +139,23 @@ public class InterpolatingMap<K extends Number, V extends Number> {
                     Entry<K, V> a = entriesList.get(i);
                     Entry<K, V> b = entriesList.get(i + 1);
 
-                    DogLog.log("Ceiling", a.toString());
-                    DogLog.log("Floor", a.toString());
-
                     double va = a.getValue().doubleValue();
                     double vb = b.getValue().doubleValue();
+
                     double ka = a.getKey().doubleValue();
                     double kb = b.getKey().doubleValue();
 
-                    DogLog.log("Values and Keys",
-                            "Values: Ceiling: " + String.valueOf(va) + " Floor: " + String.valueOf(vb)
-                                    + " Keys: Ceiling: " + String.valueOf(ka) + " Floor: " + String.valueOf(kb));
-
                     if (Utils.inRange(va, vb, value.doubleValue())) {
                         double t = (value.doubleValue() - va) / (vb - va);
-                        double interpolatedKey = lerp(ka, kb, t);
-                        DogLog.log("interpolated key", String.valueOf(interpolatedKey));
 
                         @SuppressWarnings("unchecked")
-                        K resultKey = fromDouble(interpolatedKey, (Class<K>) a.getKey().getClass());
+                        double interpolatedKey = (double) interpolator.interpolate(
+                                VfromDouble(ka, (Class<V>) a.getValue().getClass()),
+                                VfromDouble(kb, (Class<V>) a.getValue().getClass()), t);
+
+                        @SuppressWarnings("unchecked")
+                        K resultKey = KfromDouble(interpolatedKey, (Class<K>) a.getKey().getClass());
+
                         return Optional.of(List.of(resultKey));
                     }
                 }
@@ -184,12 +172,8 @@ public class InterpolatingMap<K extends Number, V extends Number> {
         map.clear();
     }
 
-    private double lerp(double start, double end, double t) {
-        return start + t * (end - start);
-    }
-
     @SuppressWarnings("unchecked")
-    public K fromDouble(double value, Class<K> type) {
+    public K KfromDouble(double value, Class<K> type) {
         if (type == Double.class) {
             return (K) Double.valueOf(value);
         } else if (type == Float.class) {
@@ -202,6 +186,24 @@ public class InterpolatingMap<K extends Number, V extends Number> {
             return (K) Short.valueOf((short) value);
         } else if (type == Byte.class) {
             return (K) Byte.valueOf((byte) value);
+        }
+        throw new IllegalArgumentException("Unsupported numeric type: " + type);
+    }
+
+    @SuppressWarnings("unchecked")
+    public V VfromDouble(double value, Class<V> type) {
+        if (type == Double.class) {
+            return (V) Double.valueOf(value);
+        } else if (type == Float.class) {
+            return (V) Float.valueOf((float) value);
+        } else if (type == Integer.class) {
+            return (V) Integer.valueOf((int) value);
+        } else if (type == Long.class) {
+            return (V) Long.valueOf((long) value);
+        } else if (type == Short.class) {
+            return (V) Short.valueOf((short) value);
+        } else if (type == Byte.class) {
+            return (V) Byte.valueOf((byte) value);
         }
         throw new IllegalArgumentException("Unsupported numeric type: " + type);
     }

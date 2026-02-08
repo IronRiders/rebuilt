@@ -31,7 +31,6 @@ import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
-import org.ironriders.manipulation.launcher.LauncherConstants.TargetingMode;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -55,9 +54,6 @@ public class LauncherSubsystem extends IronSubsystem {
     private LauncherCommands commands;
 
     public static State currentState = State.STOW;
-
-    public static TargetingMode targetingMode = TargetingMode.OUT_OF_RANGE;
-
     public static Pose3d currentTarget = FieldPositions.get(ElementType.HUB);
 
     public static double[] range;
@@ -72,6 +68,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public final TrapezoidProfile.Constraints AngleConstraints = new TrapezoidProfile.Constraints(LAUNCHER_HOOD_MAX_VEL,
             LAUNCHER_HOOD_MAX_ACC);
+
     public final ProfiledPIDController anglePidController = new ProfiledPIDController(LAUNCHER_P, LAUNCHER_I,
             LAUNCHER_D,
             AngleConstraints);
@@ -90,7 +87,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
         flyWheelMotors.stream().forEach(this::configureFlywheelMotor);
 
-        launcherHoodActuators.stream().forEach(this::configureServo);
+        launcherHoodActuators.stream().forEach((Servo s) -> s.enableDeadbandElimination(true));
 
         velocityPidController.reset();
         velocityPidController.setSetpoint(0);
@@ -123,10 +120,6 @@ public class LauncherSubsystem extends IronSubsystem {
     public void configureFlywheelMotor(TalonFX motor) {
         motor.getConfigurator().apply(configuration);
         motor.setNeutralMode(NeutralModeValue.Coast);
-    }
-
-    public void configureServo(Servo servo) {
-        servo.enableDeadbandElimination(true);
     }
 
     @Override
@@ -258,7 +251,7 @@ public class LauncherSubsystem extends IronSubsystem {
      */
     public Angle getLauncherHoodAngle() {
         return Angle.ofBaseUnits(
-                LauncherMaps.AngleToExtensionMap.getAngleForExtension(launcherHoodActuators.stream().map(Servo::get)
+                LauncherMaps.AngleToExtensionMap.getAngleForExtensionPercent(launcherHoodActuators.stream().map(Servo::get)
                         .collect(Collectors.averagingDouble(num -> Double.valueOf(num)))),
                 Degrees);
     }

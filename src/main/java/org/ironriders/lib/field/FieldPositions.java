@@ -33,6 +33,9 @@ public class FieldPositions {
             case TOWER:
                 return prepareInchesPose(Tower.TOWER_CENTER);
 
+            case OUTPOST:
+                return prepareInchesPose(Outpost.OUTPOST_CENTER);
+
             default:
                 break;
         }
@@ -162,20 +165,26 @@ public class FieldPositions {
                 new Rotation3d());
     }
 
-    /** A position for the tower, Measurements in inches? @Amber-leaf */
+    /** A position for the tower, Measurements in inches */
     public class Tower {
         // Default red
         public static final Pose3d TOWER_CENTER = new Pose3d(new Translation3d(158.84 - 11.38, 47 + 155.05, 0),
                 new Rotation3d());
     }
 
-    /** Length and width of the field, measurements in inches? @Amber-leaf */
+    public class Outpost {
+        // Default red
+        public static final Pose3d OUTPOST_CENTER = new Pose3d();
+
+    }
+
+    /** Length and width of the field, measurements in inches */
     public class Field {
         public static final double FIELD_LENGTH = 651.22;
         public static final double FIELD_WIDTH = 317.69;
     }
 
-    /** Zones on the field, measurements in meters? @Amber-leaf */
+    /** Zones on the field, measurements in meters */
     public class Zones {
         public static Pose2d[] get(ZoneType type) {
             // TODO: This limits to only having one zone per type, fine for now

@@ -7,6 +7,8 @@ package org.ironriders.core;
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberConstants;
 import org.ironriders.climber.ClimberSubsystem;
+import org.ironriders.core.DriverRequest.AlignTargetingMode;
+import org.ironriders.core.DriverRequest.PriorityMode;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
@@ -54,31 +56,31 @@ enum Config {
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    public final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    public final DriveCommands driveCommands = driveSubsystem.getCommands();
-
-    public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
-    public final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
-
-    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    public final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
-
-    public final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
-    public final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
-
-    public final WristSubsystem wristSubsystem = new WristSubsystem();
-    public final WristCommands wristCommands = wristSubsystem.getCommands();
-
-    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-    public final ClimberCommands climberCommands = climberSubsystem.getCommands();
-
-    public final VisionSubsystem visionSubsystem = new VisionSubsystem();
-    public final VisionCommands visionCommands = visionSubsystem.getCommands();
-
     public static LauncherMaps launcherMaps = new LauncherMaps();
 
-    public static Zone passingZone = new Zone(ZoneType.PASSING);;
-    public static Zone scoringZone = new Zone(ZoneType.SCORING);;
+    public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    public static final DriveCommands driveCommands = driveSubsystem.getCommands();
+
+    public static final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
+    public static final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
+
+    public static final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public static final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
+
+    public static final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
+    public static final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
+
+    public static final WristSubsystem wristSubsystem = new WristSubsystem();
+    public static final WristCommands wristCommands = wristSubsystem.getCommands();
+
+    public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    public static final ClimberCommands climberCommands = climberSubsystem.getCommands();
+
+    public static final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public static final VisionCommands visionCommands = visionSubsystem.getCommands();
+
+    public static Zone passingZone = new Zone(ZoneType.PASSING);
+    public static Zone scoringZone = new Zone(ZoneType.SCORING);
 
     public final Double triggerThreshold = 0.75;
 
@@ -112,9 +114,12 @@ public class RobotContainer {
 
         passingZone = new Zone(ZoneType.PASSING);
         scoringZone = new Zone(ZoneType.SCORING);
+
+        LauncherMaps.AngleToExtensionMap.getAngleForExtension(226d);
     }
 
     public void periodic() {
+        TargetingControl.update();
     }
 
     /**
@@ -156,13 +161,19 @@ public class RobotContainer {
                 .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-        primaryController.a()
-                .onTrue(Commands.sequence(launcherCommands.targetHub(), robotCommands.score()));
+        primaryController.a().onTrue(Commands.sequence(TargetingControl.targetHub(), robotCommands.score()));
 
-        // TODO. primaryController.b().toggleOnTrue()
+        primaryController.b()
+                .onTrue(Commands
+                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP).send()))
+                .onFalse(Commands.runOnce(() -> new DriverRequest(PriorityMode.DRIVER_PRIORITY).send()));
 
-        primaryController.x().onTrue(
-                Commands.sequence(launcherCommands.targetPassing(), robotCommands.score()));
+        primaryController.x().onTrue(Commands.sequence(TargetingControl.targetPassing(), robotCommands.score()));
+
+        primaryController.y()
+                .onTrue(Commands
+                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST).send()))
+                .onFalse(Commands.runOnce(() -> new DriverRequest(PriorityMode.DRIVER_PRIORITY).send()));
 
         primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
 
