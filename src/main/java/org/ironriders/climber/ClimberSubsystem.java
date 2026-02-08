@@ -1,8 +1,12 @@
 package org.ironriders.climber;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.ironriders.climber.ClimberConstants.State;
 import org.ironriders.lib.IronSubsystem;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -15,10 +19,16 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 public class ClimberSubsystem extends IronSubsystem {
     private ClimberCommands commands = new ClimberCommands(this);
 
-    private final TalonFX primaryMotor = new TalonFX(ClimberConstants.PRIMARY_ID);
-    private final TalonFX secondaryMotor = new TalonFX(ClimberConstants.SECONDARY_ID);
+    public boolean isHomed = false;
 
     private TalonFXConfiguration configuration;
+
+    public List<TalonFX> motors = List.of(new TalonFX(ClimberConstants.PRIMARY_ID),
+            new TalonFX(ClimberConstants.SECONDARY_ID));
+
+    public List<Double> rollingAverageDoubles;
+
+    public Double rollingAverage = Double.POSITIVE_INFINITY;
 
     private ProfiledPIDController pidController = new ProfiledPIDController(ClimberConstants.P, ClimberConstants.I,
             ClimberConstants.D, new Constraints(ClimberConstants.MAX_VEL, ClimberConstants.MAX_ACC));
@@ -27,10 +37,8 @@ public class ClimberSubsystem extends IronSubsystem {
         configuration = new TalonFXConfiguration();
 
         configuration.CurrentLimits.withSupplyCurrentLimit(ClimberConstants.STALL_LIMIT);
-        configuration.Feedback.withSensorToMechanismRatio(ClimberConstants.GEAR_RATIO);
 
-        primaryMotor.getConfigurator().apply(configuration);
-        secondaryMotor.getConfigurator().apply(configuration);
+        motors.stream().forEach((TalonFX motor) -> motor.getConfigurator().apply(configuration));
 
         pidController.reset(getPosition());
     }
@@ -41,13 +49,33 @@ public class ClimberSubsystem extends IronSubsystem {
      * @param speed The speed to set the motors to (between -1 & 1)
      */
     public void setMotors(double speed) {
-        primaryMotor.set(speed);
-        secondaryMotor.set(speed);
+        motors.stream().forEach((TalonFX motor) -> motor.set(speed));
     }
 
     @Override
     public void periodic() {
-        setMotors(pidController.calculate(getPosition()));
+        if (!isHomed) {
+            setMotors(-ClimberConstants.HOME_SPEED);
+
+            isHomed = currentCheckSpike();
+            updateRollingAverage();
+        } else {
+            setMotors(pidController.calculate(getPosition()));
+        }
+    }
+
+    public void updateRollingAverage() {
+        if (rollingAverageDoubles.size() < 20) {
+            rollingAverageDoubles.add(getTorqueCurrent());
+        } else {
+            rollingAverageDoubles.remove(0);
+            rollingAverageDoubles.add(getTorqueCurrent());
+        }
+        rollingAverage = rollingAverageDoubles.stream().collect(Collectors.averagingDouble(num -> Double.valueOf(num)));
+    }
+
+    public boolean currentCheckSpike() {
+        return Math.abs(rollingAverage - getTorqueCurrent()) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
     }
 
     /**
@@ -78,12 +106,20 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     /**
-     * Gets the climber's current number of rotations from the primary motor's
-     * sensor.
+     * Gets the climber's current number of rotations.
      * 
      * @return The current position of the climber.
      */
     public double getPosition() {
-        return primaryMotor.getPosition().getValueAsDouble();
+        return motors.stream().map(TalonFX::getPosition)
+                .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
+    }
+
+    /*
+     * Gets the average torque current going to the motors. Used for homing
+     */
+    public double getTorqueCurrent() {
+        return motors.stream().map(TalonFX::getTorqueCurrent)
+                .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
     }
 }

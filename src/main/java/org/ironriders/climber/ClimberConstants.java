@@ -14,7 +14,9 @@ public class ClimberConstants {
     public static final double MAX_VEL = 180;
     public static final double MAX_ACC = 180;
 
-    public static final double GEAR_RATIO = 1 / 1; // TODO
+    public static final double TORQUE_CURRENT_SPIKE_THRESHOLD = 10; //amps
+
+    public static final double HOME_SPEED = 0.4;
 
     public enum State {
         CLIMBED(40),
