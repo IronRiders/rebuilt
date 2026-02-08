@@ -1,5 +1,7 @@
 package org.ironriders.core;
 
+import dev.doglog.DogLog;
+
 public class DriverRequest {
     public enum PriorityMode {
         DRIVER_PRIORITY(),
@@ -18,9 +20,9 @@ public class DriverRequest {
         PASSING();
     }
 
-    PriorityMode r_priorityMode;
-    AlignTargetingMode r_alignTargetingMode;
-    LauncherTargetingMode r_launcherTargetingMode;
+    PriorityMode r_priorityMode = PriorityMode.DRIVER_PRIORITY;
+    AlignTargetingMode r_alignTargetingMode = AlignTargetingMode.LAUNCHER;
+    LauncherTargetingMode r_launcherTargetingMode = LauncherTargetingMode.HUB;
 
     public DriverRequest(PriorityMode priorityMode) {
         this.r_priorityMode = priorityMode;
@@ -43,7 +45,9 @@ public class DriverRequest {
         this.r_launcherTargetingMode = launcherTargetingMode;
     }
 
-    public void send() {
+    public void send(String debugName) {
         TargetingControl.receiveRequest(this);
+        DogLog.log("Sent", "Name: " + debugName + "TargetingMode: " + this.r_alignTargetingMode.toString() + " LauncherMode: "
+                + this.r_launcherTargetingMode.toString() + " AlignMode: " + this.r_alignTargetingMode.toString());
     }
 }

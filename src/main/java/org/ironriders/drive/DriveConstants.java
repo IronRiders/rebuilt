@@ -6,6 +6,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Filesystem;
 
 /** Constants for the drive subsystem. */
@@ -16,6 +17,13 @@ public class DriveConstants {
             new PIDConstants(1.0, 0.0, 0.0), // Translation PID
             new PIDConstants(1.0, 0.0, 0.0) // Rotation PID
     );
+
+    public static final double ROTATE_TO_TARGET_P = 3;
+    public static final double ROTATE_TO_TARGET_I = 0.0;
+    public static final double ROTATE_TO_TARGET_D = 0.1;
+
+    public static final Constraints ROTATION_CONSTRAINTS = new Constraints(
+            DriveConstants.SWERVE_MAX_ANGULAR_TELEOP, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
 
     public static final double TRANSLATION_CONTROL_EXPONENT = 3.0;
     public static final double TRANSLATION_CONTROL_DEADBAND = 0.8;

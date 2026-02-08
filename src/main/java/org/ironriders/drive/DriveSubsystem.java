@@ -1,10 +1,6 @@
 package org.ironriders.drive;
 
 import static edu.wpi.first.units.Units.Radians;
-import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_D;
-import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_I;
-import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATE_TO_TARGET_P;
-import static org.ironriders.manipulation.launcher.LauncherConstants.ROTATION_CONSTRAINTS;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -54,8 +50,8 @@ public class DriveSubsystem extends IronSubsystem {
 
     private static Command pathfindCommand;
 
-    private static ProfiledPIDController rotationPid = new ProfiledPIDController(ROTATE_TO_TARGET_P, ROTATE_TO_TARGET_I,
-            ROTATE_TO_TARGET_D, ROTATION_CONSTRAINTS);
+    private static ProfiledPIDController rotationPid = new ProfiledPIDController(DriveConstants.ROTATE_TO_TARGET_P, DriveConstants.ROTATE_TO_TARGET_I,
+            DriveConstants.ROTATE_TO_TARGET_D, DriveConstants.ROTATION_CONSTRAINTS);
 
     public DriveSubsystem() throws RuntimeException {
         try {
@@ -96,6 +92,7 @@ public class DriveSubsystem extends IronSubsystem {
 
         rotationPid.reset(0);
         rotationPid.enableContinuousInput(0, Math.PI * 2);
+        rotationPid.setTolerance(5);
 
         // debug setRotationGoal(180);
     }

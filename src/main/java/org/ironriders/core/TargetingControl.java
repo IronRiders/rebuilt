@@ -8,6 +8,9 @@ import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
+
+import dev.doglog.DogLog;
+
 import org.ironriders.lib.field.FieldPositions;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -24,26 +27,39 @@ public class TargetingControl {
     private static DriverRequest request = new DriverRequest(PriorityMode.DRIVER_PRIORITY,
             AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
 
+    private static DriverRequest lastDriverRequest = request;
+
     public static void receiveRequest(DriverRequest driverRequest) {
-        TargetingControl.request = driverRequest;
+        lastDriverRequest = request;
+        request = driverRequest;
+    }
+
+    public static void revert() {
+        request = lastDriverRequest;
+        update();
+    }
+
+    public static void revertToSafeDefaults() {
+        request = new DriverRequest(PriorityMode.DRIVER_PRIORITY,
+                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
     }
 
     public static void targetHubInternal() {
         new DriverRequest(PriorityMode.LAUNCHER_PRIORITY,
-                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB).send();
+                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB).send("target hub internal");
     }
 
     public static Command targetHub() {
-        return Commands.runOnce(()->targetHubInternal());
+        return Commands.runOnce(() -> targetHubInternal());
     }
 
     public static void targetPassingInternal() {
         new DriverRequest(PriorityMode.LAUNCHER_PRIORITY,
-                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.PASSING).send();
+                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.PASSING).send("target passing internal");
     }
 
     public static Command targetPassing() {
-        return Commands.runOnce(()->targetPassingInternal());
+        return Commands.runOnce(() -> targetPassingInternal());
     }
 
     /*
@@ -83,15 +99,22 @@ public class TargetingControl {
                 DriveSubsystem.setPIDControl(false);
                 LauncherSubsystem.currentState = State.IDLE;
 
-                return;
+                break;
+            // return;
 
             case ALIGN_PRIORITY:
             case LAUNCHER_PRIORITY:
                 DriveSubsystem.setPIDControl(true);
                 LauncherSubsystem.currentState = State.READY;
 
-                return;
+                break;
+            // return;
         }
+
+        DogLog.log("TargetingValues",
+                "PID Control: " + String.valueOf(DriveSubsystem.PIDAlign) + " LauncherTargetMode: "
+                        + request.r_launcherTargetingMode.toString() + " AlignTargetMode: "
+                        + String.valueOf(request.r_alignTargetingMode));
     }
 
     private static double getAlignTarget() {

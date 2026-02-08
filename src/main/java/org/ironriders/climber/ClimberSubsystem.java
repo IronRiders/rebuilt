@@ -1,5 +1,6 @@
 package org.ironriders.climber;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,8 @@ public class ClimberSubsystem extends IronSubsystem {
         motors.stream().forEach((TalonFX motor) -> motor.getConfigurator().apply(configuration));
 
         pidController.reset(getPosition());
+
+        rollingAverageDoubles = new ArrayList<Double>();
     }
 
     /**

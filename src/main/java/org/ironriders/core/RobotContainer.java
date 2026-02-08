@@ -161,19 +161,23 @@ public class RobotContainer {
                 .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-        primaryController.a().onTrue(Commands.sequence(TargetingControl.targetHub(), robotCommands.score()));
+        primaryController.a().onTrue(Commands.sequence(TargetingControl.targetHub()/* , robotCommands.score() */))
+                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
 
         primaryController.b()
                 .onTrue(Commands
-                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP).send()))
-                .onFalse(Commands.runOnce(() -> new DriverRequest(PriorityMode.DRIVER_PRIORITY).send()));
+                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP)
+                                .send("target bump")))
+                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
 
-        primaryController.x().onTrue(Commands.sequence(TargetingControl.targetPassing(), robotCommands.score()));
+        primaryController.x().onTrue(Commands.sequence(TargetingControl.targetPassing()/* , robotCommands.score() */))
+                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
 
         primaryController.y()
                 .onTrue(Commands
-                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST).send()))
-                .onFalse(Commands.runOnce(() -> new DriverRequest(PriorityMode.DRIVER_PRIORITY).send()));
+                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST)
+                                .send("target outpost")))
+                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
 
         primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
 
