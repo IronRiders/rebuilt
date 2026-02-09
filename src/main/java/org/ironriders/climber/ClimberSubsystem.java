@@ -2,6 +2,8 @@ package org.ironriders.climber;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.ironriders.climber.ClimberConstants.State;
@@ -20,16 +22,16 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 public class ClimberSubsystem extends IronSubsystem {
     private ClimberCommands commands = new ClimberCommands(this);
 
-    public boolean isHomed = false;
-
     private TalonFXConfiguration configuration;
 
     public List<TalonFX> motors = List.of(new TalonFX(ClimberConstants.PRIMARY_ID),
             new TalonFX(ClimberConstants.SECONDARY_ID));
 
-    public List<Double> rollingAverageDoubles;
+    public Map<TalonFX, List<Double>> rollingAverageMap;
 
-    public Double rollingAverage = Double.POSITIVE_INFINITY;
+    public Map<TalonFX, Double> averageMap;
+
+    public Map<TalonFX, Boolean> homedMap;
 
     private ProfiledPIDController pidController = new ProfiledPIDController(ClimberConstants.P, ClimberConstants.I,
             ClimberConstants.D, new Constraints(ClimberConstants.MAX_VEL, ClimberConstants.MAX_ACC));
@@ -39,11 +41,11 @@ public class ClimberSubsystem extends IronSubsystem {
 
         configuration.CurrentLimits.withSupplyCurrentLimit(ClimberConstants.STALL_LIMIT);
 
-        motors.stream().forEach((TalonFX motor) -> motor.getConfigurator().apply(configuration));
+        motors.parallelStream().forEach((TalonFX motor) -> motor.getConfigurator().apply(configuration));
+
+        motors.parallelStream().map((TalonFX motor) -> rollingAverageMap.put(motor, new ArrayList<Double>()));
 
         pidController.reset(getPosition());
-
-        rollingAverageDoubles = new ArrayList<Double>();
     }
 
     /**
@@ -52,15 +54,20 @@ public class ClimberSubsystem extends IronSubsystem {
      * @param speed The speed to set the motors to (between -1 & 1)
      */
     public void setMotors(double speed) {
-        motors.stream().forEach((TalonFX motor) -> motor.set(speed));
+        motors.parallelStream().forEach((TalonFX motor) -> motor.set(speed));
     }
 
     @Override
     public void periodic() {
-        if (!isHomed) {
+        if (motors.parallelStream().map((TalonFX motor) -> homedMap.get(motor)).allMatch(new Predicate<Boolean>() {
+            public boolean test(Boolean t) {
+                return t == false;
+            };
+        })) {
             setMotors(-ClimberConstants.HOME_SPEED);
 
-            isHomed = currentCheckSpike();
+            motors.parallelStream().forEach((TalonFX motor) -> homedMap.put(motor, currentCheckSpike(motor)));
+
             updateRollingAverage();
         } else {
             setMotors(pidController.calculate(getPosition()));
@@ -68,17 +75,23 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     public void updateRollingAverage() {
-        if (rollingAverageDoubles.size() < 20) {
-            rollingAverageDoubles.add(getTorqueCurrent());
-        } else {
-            rollingAverageDoubles.remove(0);
-            rollingAverageDoubles.add(getTorqueCurrent());
-        }
-        rollingAverage = rollingAverageDoubles.stream().collect(Collectors.averagingDouble(num -> Double.valueOf(num)));
+        motors.parallelStream().forEach((TalonFX motor) -> {
+            List<Double> list = rollingAverageMap.get(motor);
+
+            if (list.size() < 20) {
+                list.add(getTorqueCurrent(motor));
+            } else {
+                list.remove(0);
+                list.add(getTorqueCurrent(motor));
+            }
+
+            averageMap.put(motor, list.stream().collect(Collectors.averagingDouble(num -> Double.valueOf(num))));
+        });
     }
 
-    public boolean currentCheckSpike() {
-        return Math.abs(rollingAverage - getTorqueCurrent()) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
+    public boolean currentCheckSpike(TalonFX motor) {
+        return Math
+                .abs(averageMap.get(motor) - getTorqueCurrent(motor)) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
     }
 
     /**
@@ -124,5 +137,12 @@ public class ClimberSubsystem extends IronSubsystem {
     public double getTorqueCurrent() {
         return motors.stream().map(TalonFX::getTorqueCurrent)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
+    }
+
+    /*
+     * Gets the average torque current going to provided motor. Used for homing
+     */
+    public double getTorqueCurrent(TalonFX motor) {
+        return motor.getTorqueCurrent().getValueAsDouble();
     }
 }
