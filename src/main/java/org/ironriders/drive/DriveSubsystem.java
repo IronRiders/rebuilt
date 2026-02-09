@@ -156,6 +156,10 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public static void setPIDControl(boolean PIDControl) {
         PIDAlign = PIDControl;
+
+        if (!PIDControl) {
+            rotationPid.reset(getRotation().in(Radians));
+        }
     }
 
     /**

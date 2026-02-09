@@ -11,9 +11,9 @@ import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.DriverRequest;
-import org.ironriders.lib.Utils;
 import org.ironriders.lib.DriverRequest.AlignTargetingMode;
 import org.ironriders.lib.DriverRequest.PriorityMode;
+import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.Zone;
 import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -95,6 +96,10 @@ public class RobotContainer {
     public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
             launcherCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
 
+    private boolean targetingHub = false;
+    private boolean targetingPassing = false;
+    private boolean aligning = false;
+
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
      * <hr />
@@ -115,12 +120,16 @@ public class RobotContainer {
 
         passingZone = new Zone(ZoneType.PASSING);
         scoringZone = new Zone(ZoneType.SCORING);
-
-        DogLog.log("Map test", String.valueOf(LauncherMaps.AngleToExtensionMap.getAngleForExtension(226d)));
     }
 
     public void periodic() {
         TargetingControl.update();
+
+        if (Math.abs(primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
+            targetingHub = false;
+            targetingPassing = false;
+            TargetingControl.revertToSafeDefaults();
+        }
     }
 
     /**
@@ -147,42 +156,68 @@ public class RobotContainer {
                 Commands.run(() -> periodic())));
 
         primaryController.rightBumper().onTrue(Commands.runOnce(
-                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND +
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP +
                         3)))
                 .onFalse(Commands.runOnce(() -> DriveSubsystem
-                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP)));
 
         primaryController.leftBumper().onTrue(Commands.runOnce(
-                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND -
+                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP -
                         2)))
                 .onFalse(Commands.runOnce(() -> DriveSubsystem
-                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_PATHFIND)));
+                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP)));
 
         primaryController.rightTrigger(triggerThreshold)
                 .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-        primaryController.a().onTrue(Commands.sequence(TargetingControl.targetHub()/* , robotCommands.score() */))
+        // TODO: do this in a better way
+        primaryController.a().onTrue(
+                new InstantCommand(() -> {
+                    targetingHub = !targetingHub;
+                    if (targetingHub) {
+                        targetingPassing = false;
+                        TargetingControl.targetHubInternal();
+                    } else {
+                        TargetingControl.revertToSafeDefaults();
+                    }
+                }));
+
+        primaryController.x().onTrue(
+                new InstantCommand(() -> {
+                    targetingPassing = !targetingPassing;
+                    if (targetingPassing) {
+                        targetingHub = false;
+                        TargetingControl.targetPassingInternal();
+                    } else {
+                        TargetingControl.revertToSafeDefaults();
+                    }
+                }));
+
+        // --- Align ---
+        primaryController.y()
+                .onTrue(Commands
+                        .runOnce(() -> {
+                            new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST)
+                                    .send("align outpost");
+                            targetingHub = false;
+                            targetingPassing = false;
+                        }))
                 .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
 
         primaryController.b()
                 .onTrue(Commands
-                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP)
-                                .send("target bump")))
-                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
-
-        primaryController.x().onTrue(Commands.sequence(TargetingControl.targetPassing()/* , robotCommands.score() */))
-                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
-
-        primaryController.y()
-                .onTrue(Commands
-                        .runOnce(() -> new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST)
-                                .send("target outpost")))
+                        .runOnce(() -> {
+                            new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP).send("align bump");
+                            targetingHub = false;
+                            targetingPassing = false;
+                        }))
                 .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
 
         primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
 
         primaryController.povDown().onTrue(climberCommands.set(ClimberConstants.State.CLIMBED));
+
     }
 
     /**

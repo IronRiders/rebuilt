@@ -41,6 +41,7 @@ public class TargetingControl {
     }
 
     public static void revertToSafeDefaults() {
+        lastDriverRequest = request;
         request = new DriverRequest(PriorityMode.DRIVER_PRIORITY,
                 AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
     }
