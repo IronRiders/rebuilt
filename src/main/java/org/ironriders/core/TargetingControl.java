@@ -1,10 +1,11 @@
 package org.ironriders.core;
 
-import org.ironriders.core.DriverRequest.AlignTargetingMode;
-import org.ironriders.core.DriverRequest.LauncherTargetingMode;
-import org.ironriders.core.DriverRequest.PriorityMode;
 import org.ironriders.drive.DriveSubsystem;
+import org.ironriders.lib.DriverRequest;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.DriverRequest.AlignTargetingMode;
+import org.ironriders.lib.DriverRequest.LauncherTargetingMode;
+import org.ironriders.lib.DriverRequest.PriorityMode;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;

@@ -1,4 +1,6 @@
-package org.ironriders.core;
+package org.ironriders.lib;
+
+import org.ironriders.core.TargetingControl;
 
 import dev.doglog.DogLog;
 
@@ -20,9 +22,9 @@ public class DriverRequest {
         PASSING();
     }
 
-    PriorityMode r_priorityMode = PriorityMode.DRIVER_PRIORITY;
-    AlignTargetingMode r_alignTargetingMode = AlignTargetingMode.LAUNCHER;
-    LauncherTargetingMode r_launcherTargetingMode = LauncherTargetingMode.HUB;
+    public PriorityMode r_priorityMode = PriorityMode.DRIVER_PRIORITY;
+    public AlignTargetingMode r_alignTargetingMode = AlignTargetingMode.LAUNCHER;
+    public LauncherTargetingMode r_launcherTargetingMode = LauncherTargetingMode.HUB;
 
     public DriverRequest(PriorityMode priorityMode) {
         this.r_priorityMode = priorityMode;
