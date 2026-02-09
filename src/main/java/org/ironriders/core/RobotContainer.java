@@ -116,7 +116,7 @@ public class RobotContainer {
         passingZone = new Zone(ZoneType.PASSING);
         scoringZone = new Zone(ZoneType.SCORING);
 
-        LauncherMaps.AngleToExtensionMap.getAngleForExtension(226d);
+        DogLog.log("Map test", String.valueOf(LauncherMaps.AngleToExtensionMap.getAngleForExtension(226d)));
     }
 
     public void periodic() {

@@ -44,7 +44,7 @@ public class DriveSubsystem extends IronSubsystem {
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
 
-    public static boolean PIDAlign = true;
+    public static boolean PIDAlign = false;
 
     public static AtomicBoolean isDriving = new AtomicBoolean(false);
 
@@ -134,8 +134,8 @@ public class DriveSubsystem extends IronSubsystem {
 
     public static void drivePID(Translation2d translation) {
         swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
-                rotationPid.calculate(getRotation().in(Radians)) * (rotationInvert ? -1 : 1),
-                false,
+                rotationPid.calculate(getRotation().in(Radians)),
+                true,
                 true);
     }
 
