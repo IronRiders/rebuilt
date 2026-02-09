@@ -18,7 +18,7 @@ public class DriveConstants {
             new PIDConstants(1.0, 0.0, 0.0) // Rotation PID
     );
 
-    public static final double ROTATE_TO_TARGET_P = 3;
+    public static final double ROTATE_TO_TARGET_P = 6;
     public static final double ROTATE_TO_TARGET_I = 0.0;
     public static final double ROTATE_TO_TARGET_D = 0.1;
 
