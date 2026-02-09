@@ -70,7 +70,7 @@ public class VisionSubsystem extends IronSubsystem {
         double xyStdDev;
         double thetaStdDev;
 
-        double avgDistance = pose.targetsUsed.stream()
+        double avgDistance = pose.targetsUsed.parallelStream()
                 .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
                 .average()
                 .orElse(-1);
@@ -84,7 +84,7 @@ public class VisionSubsystem extends IronSubsystem {
             thetaStdDev = Math.toRadians(10 + avgDistance * 5); // Really don't trust single tag rotation
         }
 
-        double ambiguity = targets.stream()
+        double ambiguity = targets.parallelStream()
                 .mapToDouble(t -> t.getPoseAmbiguity())
                 .average()
                 .orElse(Double.POSITIVE_INFINITY) + 1d; // Make sure we really don't like this pose if the optional is

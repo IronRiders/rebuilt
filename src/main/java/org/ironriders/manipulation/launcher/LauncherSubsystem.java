@@ -91,7 +91,7 @@ public class LauncherSubsystem extends IronSubsystem {
                 .forEach(m -> velocityPidMap.put(m, new PIDController(FLYWHEEL_P, FLYWHEEL_I,
                         FLYWHEEL_D)));
 
-        launcherHoodActuators.stream().forEach(s -> s.enableDeadbandElimination(true));
+        launcherHoodActuators.parallelStream().forEach(s -> s.enableDeadbandElimination(true));
 
         flyWheelMotors.parallelStream().forEach(m -> {
             PIDController v = velocityPidMap.get(m);
@@ -219,7 +219,7 @@ public class LauncherSubsystem extends IronSubsystem {
      */
     public void updatePID() {
         publish("Launcher RPM", getFlywheelVelocity().in(RPM));
-        publish("Launcher Differential RPM", flyWheelMotors.stream().map(TalonFX::getDifferentialAverageVelocity)
+        publish("Launcher Differential RPM", flyWheelMotors.parallelStream().map(TalonFX::getDifferentialAverageVelocity)
                 .map(StatusSignal::getValueAsDouble).collect(Collectors.toList()).toString());
 
         flyWheelMotors.parallelStream().forEach(this::setFlywheelMotors);
@@ -252,7 +252,7 @@ public class LauncherSubsystem extends IronSubsystem {
      * @return *AVERAGE* velocity!!
      */
     public AngularVelocity getFlywheelVelocity() {
-        return AngularVelocity.ofBaseUnits(flyWheelMotors.stream().map(TalonFX::getVelocity)
+        return AngularVelocity.ofBaseUnits(flyWheelMotors.parallelStream().map(TalonFX::getVelocity)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble)), RotationsPerSecond);
     }
 
@@ -262,7 +262,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public Angle getLauncherHoodAngle() {
         return Angle.ofBaseUnits(
                 LauncherMaps.AngleToExtensionMap
-                        .getAngleForExtensionPercent(launcherHoodActuators.stream().map(Servo::get)
+                        .getAngleForExtensionPercent(launcherHoodActuators.parallelStream().map(Servo::get)
                                 .collect(Collectors.averagingDouble(num -> Double.valueOf(num)))),
                 Degrees);
     }
@@ -272,7 +272,7 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public void setServos(double amount) {
-        launcherHoodActuators.stream().forEach((Servo servo) -> {
+        launcherHoodActuators.parallelStream().forEach((Servo servo) -> {
             servo.set(amount);
         });
     }
@@ -294,9 +294,9 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     /**
-     * Homes the launcher hood to its default position.
+     * Homes the launcher hood to it's default position.
      */
     public void homeLauncherHood() {
-        // TODO: implement
+        setServos(0d);
     }
 }

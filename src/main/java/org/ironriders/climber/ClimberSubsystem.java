@@ -84,7 +84,7 @@ public class ClimberSubsystem extends IronSubsystem {
                 list.add(getTorqueCurrent(motor));
             }
 
-            averageMap.put(motor, list.stream().collect(Collectors.averagingDouble(num -> Double.valueOf(num))));
+            averageMap.put(motor, list.parallelStream().collect(Collectors.averagingDouble(num -> Double.valueOf(num))));
         });
     }
 
@@ -126,7 +126,7 @@ public class ClimberSubsystem extends IronSubsystem {
      * @return The current position of the climber.
      */
     public double getPosition() {
-        return motors.stream().map(TalonFX::getPosition)
+        return motors.parallelStream().map(TalonFX::getPosition)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
     }
 
@@ -134,7 +134,7 @@ public class ClimberSubsystem extends IronSubsystem {
      * Gets the average torque current going to the motors. Used for homing
      */
     public double getTorqueCurrent() {
-        return motors.stream().map(TalonFX::getTorqueCurrent)
+        return motors.parallelStream().map(TalonFX::getTorqueCurrent)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
     }
 
