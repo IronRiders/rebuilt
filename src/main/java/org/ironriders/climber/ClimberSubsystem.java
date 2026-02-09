@@ -1,8 +1,10 @@
 package org.ironriders.climber;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -27,11 +29,11 @@ public class ClimberSubsystem extends IronSubsystem {
     public List<TalonFX> motors = List.of(new TalonFX(ClimberConstants.PRIMARY_ID),
             new TalonFX(ClimberConstants.SECONDARY_ID));
 
-    public Map<TalonFX, List<Double>> rollingAverageMap;
+    public Map<TalonFX, List<Double>> rollingAverageMap = new HashMap<TalonFX, List<Double>>();
 
-    public Map<TalonFX, Double> averageMap;
+    public Map<TalonFX, Double> averageMap = new HashMap<TalonFX, Double>();
 
-    public Map<TalonFX, Boolean> homedMap;
+    public Map<TalonFX, Boolean> homedMap = new HashMap<TalonFX, Boolean>();
 
     private ProfiledPIDController pidController = new ProfiledPIDController(ClimberConstants.P, ClimberConstants.I,
             ClimberConstants.D, new Constraints(ClimberConstants.MAX_VEL, ClimberConstants.MAX_ACC));
@@ -54,19 +56,18 @@ public class ClimberSubsystem extends IronSubsystem {
      * @param speed The speed to set the motors to (between -1 & 1)
      */
     public void setMotors(double speed) {
-        motors.parallelStream().forEach((TalonFX motor) -> motor.set(speed));
+        motors.parallelStream().forEach(motor -> motor.set(speed));
     }
 
     @Override
     public void periodic() {
-        if (motors.parallelStream().map((TalonFX motor) -> homedMap.get(motor)).allMatch(new Predicate<Boolean>() {
-            public boolean test(Boolean t) {
-                return t == false;
-            };
-        })) {
+        if (motors.parallelStream()
+                .map(motor -> homedMap.get(motor))
+                .allMatch(homed -> Boolean.FALSE.equals(homed))) {
+
             setMotors(-ClimberConstants.HOME_SPEED);
 
-            motors.parallelStream().forEach((TalonFX motor) -> homedMap.put(motor, currentCheckSpike(motor)));
+            motors.parallelStream().forEach(motor -> homedMap.put(motor, currentCheckSpike(motor)));
 
             updateRollingAverage();
         } else {
@@ -75,7 +76,7 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     public void updateRollingAverage() {
-        motors.parallelStream().forEach((TalonFX motor) -> {
+        motors.parallelStream().forEach(motor -> {
             List<Double> list = rollingAverageMap.get(motor);
 
             if (list.size() < 20) {

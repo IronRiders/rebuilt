@@ -22,7 +22,7 @@ public class FieldPositions {
      * Gets the position in meters of the specified element type. Automatically does
      * alliance mirroring.
      * <hr />
-     * !Currently only HUB and TOWER are implemented, all other types will return a
+     * !Currently only HUB, TOWER and OUTPOST are implemented, all other types will return a
      * blank Pose3d()!
      */
     public static Pose3d get(ElementType element) {
@@ -105,7 +105,7 @@ public class FieldPositions {
      * @return The prepared pose, in meters
      */
     private static Pose2d preparePose(Pose2d pose, boolean isMeters) {
-        boolean blue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+        boolean blue = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue;
 
         if (blue) {
             if (!isMeters) {
