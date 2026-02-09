@@ -21,7 +21,9 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_STOW_POSITION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TOLERANCE;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -63,8 +65,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
 
     // PID Controllers
-    public final PIDController velocityPidController = new PIDController(FLYWHEEL_P, FLYWHEEL_I,
-            FLYWHEEL_D);
+    public Map<TalonFX, PIDController> velocityPidMap = new HashMap<TalonFX, PIDController>();
 
     public final TrapezoidProfile.Constraints AngleConstraints = new TrapezoidProfile.Constraints(LAUNCHER_HOOD_MAX_VEL,
             LAUNCHER_HOOD_MAX_ACC);
@@ -85,13 +86,18 @@ public class LauncherSubsystem extends IronSubsystem {
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
-        flyWheelMotors.stream().forEach(this::configureFlywheelMotor);
+        flyWheelMotors.parallelStream().map(this::configureFlywheelMotor)
+                .forEach(m -> velocityPidMap.put(m, new PIDController(FLYWHEEL_P, FLYWHEEL_I,
+                        FLYWHEEL_D)));
 
-        launcherHoodActuators.stream().forEach((Servo s) -> s.enableDeadbandElimination(true));
+        launcherHoodActuators.stream().forEach(s -> s.enableDeadbandElimination(true));
 
-        velocityPidController.reset();
-        velocityPidController.setSetpoint(0);
-        velocityPidController.setTolerance(FLYWHEEL_TOLERANCE);
+        flyWheelMotors.parallelStream().forEach(m -> {
+            PIDController v = velocityPidMap.get(m);
+            v.reset();
+            v.setSetpoint(0);
+            v.setTolerance(FLYWHEEL_TOLERANCE);
+        });
 
         anglePidController.reset(getLauncherHoodAngle().in(Degrees));
         anglePidController.setGoal(LAUNCHER_STOW_POSITION);
@@ -117,9 +123,11 @@ public class LauncherSubsystem extends IronSubsystem {
         DogLog.log("Launcher/Range", "(" + String.valueOf(range[0]) + " : " + String.valueOf(range[1] + ")"));
     }
 
-    public void configureFlywheelMotor(TalonFX motor) {
+    public TalonFX configureFlywheelMotor(TalonFX motor) {
         motor.getConfigurator().apply(configuration);
         motor.setNeutralMode(NeutralModeValue.Coast);
+
+        return motor;
     }
 
     @Override
@@ -200,7 +208,8 @@ public class LauncherSubsystem extends IronSubsystem {
      * @return True if the launcher is ready, false otherwise.
      */
     public boolean isReady() {
-        return velocityPidController.atSetpoint() && anglePidController.atGoal();
+        return flyWheelMotors.parallelStream().map(m -> velocityPidMap.get(m).atSetpoint())
+                .allMatch(b -> Boolean.TRUE.equals(b)) && anglePidController.atGoal();
     }
 
     /**
@@ -212,14 +221,14 @@ public class LauncherSubsystem extends IronSubsystem {
         publish("Launcher Differential RPM", flyWheelMotors.stream().map(TalonFX::getDifferentialAverageVelocity)
                 .map(StatusSignal::getValueAsDouble).collect(Collectors.toList()).toString());
 
-        flyWheelMotors.stream().forEach(this::setFlywheelMotors);
+        flyWheelMotors.parallelStream().forEach(this::setFlywheelMotors);
         setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)), Degrees));
     }
 
     public void setFlywheelMotors(TalonFX motor) {
         motor.set(
-                Utils.clamp(0, 1,
-                        velocityPidController.calculate(getFlywheelVelocity().in(DegreesPerSecond))));
+                Utils.clamp(0d, 1d,
+                        velocityPidMap.get(motor).calculate(getFlywheelVelocity().in(DegreesPerSecond))));
     }
 
     /**
@@ -227,7 +236,7 @@ public class LauncherSubsystem extends IronSubsystem {
      * {@link PIDController#setSetpoint setSetpoint} for more information.
      */
     public void setFlywheelGoal(double goalVelocity) {
-        velocityPidController.setSetpoint(goalVelocity);
+        flyWheelMotors.parallelStream().forEach(m -> velocityPidMap.get(m).setSetpoint(goalVelocity));
     }
 
     /**
@@ -251,8 +260,9 @@ public class LauncherSubsystem extends IronSubsystem {
      */
     public Angle getLauncherHoodAngle() {
         return Angle.ofBaseUnits(
-                LauncherMaps.AngleToExtensionMap.getAngleForExtensionPercent(launcherHoodActuators.stream().map(Servo::get)
-                        .collect(Collectors.averagingDouble(num -> Double.valueOf(num)))),
+                LauncherMaps.AngleToExtensionMap
+                        .getAngleForExtensionPercent(launcherHoodActuators.stream().map(Servo::get)
+                                .collect(Collectors.averagingDouble(num -> Double.valueOf(num)))),
                 Degrees);
     }
 

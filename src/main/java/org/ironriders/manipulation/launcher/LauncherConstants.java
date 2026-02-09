@@ -1,9 +1,7 @@
 package org.ironriders.manipulation.launcher;
 
-import org.ironriders.drive.DriveConstants;
 import org.ironriders.lib.field.FieldPositions;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 /** Constants for the {@link LauncherSubsystem} */
