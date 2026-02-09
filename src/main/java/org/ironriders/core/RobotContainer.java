@@ -122,13 +122,17 @@ public class RobotContainer {
         scoringZone = new Zone(ZoneType.SCORING);
     }
 
-    public void periodic() {
+    private void revertToSafeDefaults() {
+        targetingHub = false;
+        targetingPassing = false;
+        TargetingControl.revertToSafeDefaults();
+    }
+
+    private void periodic() {
         TargetingControl.update();
 
         if (Math.abs(primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
-            targetingHub = false;
-            targetingPassing = false;
-            TargetingControl.revertToSafeDefaults();
+            revertToSafeDefaults();
         }
     }
 
@@ -179,7 +183,7 @@ public class RobotContainer {
                         targetingPassing = false;
                         TargetingControl.targetHubInternal();
                     } else {
-                        TargetingControl.revertToSafeDefaults();
+                        revertToSafeDefaults();
                     }
                 }));
 
@@ -190,7 +194,7 @@ public class RobotContainer {
                         targetingHub = false;
                         TargetingControl.targetPassingInternal();
                     } else {
-                        TargetingControl.revertToSafeDefaults();
+                        revertToSafeDefaults();
                     }
                 }));
 
@@ -203,7 +207,7 @@ public class RobotContainer {
                             targetingHub = false;
                             targetingPassing = false;
                         }))
-                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
+                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.b()
                 .onTrue(Commands
@@ -212,7 +216,7 @@ public class RobotContainer {
                             targetingHub = false;
                             targetingPassing = false;
                         }))
-                .onFalse(Commands.runOnce(() -> TargetingControl.revertToSafeDefaults()));
+                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
 
