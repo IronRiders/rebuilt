@@ -1,7 +1,7 @@
 package org.ironriders.manipulation.intake;
 
 public class IntakeConstants {
-    public static final int ID = 8;
+    public static final int ID = 12;
 
     public static final int INTAKE_MOTOR_STALL_LIMIT = 40;
 

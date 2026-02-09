@@ -8,7 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 public class WristConstants {
 
     /* MOTOR CONSTANTS */
-    public static final int MOTOR_ID = 13;
+    public static final int MOTOR_ID = 17;
     public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current
     public static final double P = 0.5; // proportional gain
     public static final double I = 0.0; // Integral gain
