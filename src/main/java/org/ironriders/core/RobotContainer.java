@@ -98,7 +98,6 @@ public class RobotContainer {
 
     private boolean targetingHub = false;
     private boolean targetingPassing = false;
-    private boolean aligning = false;
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
