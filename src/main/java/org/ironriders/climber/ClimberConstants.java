@@ -2,8 +2,8 @@ package org.ironriders.climber;
 
 /** Constants for the climber subsystem. */
 public class ClimberConstants {
-    public static final int PRIMARY_ID = 6767;
-    public static final int SECONDARY_ID = 676789989;
+    public static final int PRIMARY_ID = 5;
+    public static final int SECONDARY_ID = 6;
 
     public static final int STALL_LIMIT = 40;
 

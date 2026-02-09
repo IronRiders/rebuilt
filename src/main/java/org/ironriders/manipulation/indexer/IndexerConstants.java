@@ -1,7 +1,7 @@
 package org.ironriders.manipulation.indexer;
 
 public class IndexerConstants {
-    public static int ID = 0x3a33; // Motor ID
+    public static int ID = 7;
     public static double STALL_LIMIT = 40;
 
     /**
