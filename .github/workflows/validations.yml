@@ -1,0 +1,21 @@
+name: Validations
+on:
+  - pull_request
+  - workflow_dispatch
+jobs:
+  checkstyle:
+    name: Checkstyle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dbelyaev/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-check
+  pr-title:
+    name: Pull Request Title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ytanikin/pr-conventional-commits@1.5.1
+        with:
+          task_types: '["feat","fix","docs","test","ci","refactor","perf","chore","revert"]'
