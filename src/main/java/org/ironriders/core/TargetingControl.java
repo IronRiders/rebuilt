@@ -3,6 +3,7 @@ package org.ironriders.core;
 import static org.ironriders.lib.BallisticsUtils.getPosition;
 
 import org.ironriders.drive.DriveSubsystem;
+import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.DriverRequest;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.DriverRequest.AlignTargetingMode;
@@ -143,7 +144,7 @@ public class TargetingControl {
                 return FieldPositions.get(ElementType.HUB);
 
             case PASSING:
-                return RobotContainer.passingZone.closestPointAsPose3d();
+                return BallisticsUtils.snapPoseToRange(RobotContainer.passingZone.closestPointAsPose3d());
         }
     }
 
