@@ -1,5 +1,7 @@
 package org.ironriders.core;
 
+import static org.ironriders.lib.BallisticsUtils.getPosition;
+
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.DriverRequest;
 import org.ironriders.lib.Utils;
@@ -13,6 +15,7 @@ import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import dev.doglog.DogLog;
 
 import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.lib.field.Zone;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -129,7 +132,7 @@ public class TargetingControl {
                 return 180;
 
             case BUMP:
-                return 45;
+                return Math.toDegrees(findClosest45DegreeAngleInRadians(getPosition().getRotation().getRadians()));
         }
     }
 
@@ -142,5 +145,20 @@ public class TargetingControl {
             case PASSING:
                 return RobotContainer.passingZone.closestPointAsPose3d();
         }
+    }
+
+    private static double findClosest45DegreeAngleInRadians(double angle) {
+        angle = angle % (2 * Math.PI);
+        if (angle < 0) {
+            angle += 2 * Math.PI;
+        }
+
+        for (Double i = 0.25; i <= 2; i += 0.5) {
+            if (Math.abs(angle - (i * Math.PI)) < 0.25 * Math.PI) {
+                return i * Math.PI;
+            }
+        }
+
+        return 0.25 * Math.PI;
     }
 }

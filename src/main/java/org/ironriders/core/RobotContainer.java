@@ -4,6 +4,8 @@
 
 package org.ironriders.core;
 
+import java.util.Optional;
+
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberConstants;
 import org.ironriders.climber.ClimberSubsystem;
@@ -119,6 +121,16 @@ public class RobotContainer {
 
         passingZone = new Zone(ZoneType.PASSING);
         scoringZone = new Zone(ZoneType.SCORING);
+    }
+
+    public static Optional<Zone> getCurrentZone() {
+        if (passingZone.inside()) {
+            return Optional.of(passingZone);
+        } else if (scoringZone.inside()) {
+            return Optional.of(scoringZone);
+        }
+
+        return Optional.empty();
     }
 
     private void revertToSafeDefaults() {
