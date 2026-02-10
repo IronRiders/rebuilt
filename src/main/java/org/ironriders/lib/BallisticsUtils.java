@@ -18,6 +18,7 @@ import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 
 /** Utilities for ballistic calculations. */
@@ -80,63 +81,25 @@ public class BallisticsUtils {
         return Utils.inRange(LauncherSubsystem.range[0], LauncherSubsystem.range[1], distance);
     }
 
-    // NOTE: currently broken (keeps for reference)
-    /**
-     * Returns a new {@link Pose3d} that is the closest point to {@code inputPose}
-     * within the specified distance {@code range} from the {@code centerPoint},
-     * preserving the direction from the center.
-     *
-     * @param inputPose   The pose to be adjusted.
-     * @param range       The allowed distance range [max, min] from the centerPoint (in the XY
-     *                    plane).
-     * @param centerPoint The center point from which the range is measured.
-     * @return A new {@link Pose3d} within the specified range from the centerPoint, or the
-     *         original pose if already in range.
-     */
-    public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range, Pose3d centerPoint) {
-        double dx = inputPose.getX() - centerPoint.getX();
-        double dy = inputPose.getY() - centerPoint.getY();
+    public static Translation2d translationToPoint (
+            Pose2d from,
+            Pose2d to,
+            double magnitude) {
 
-        double distanceXY = Math.sqrt(dx * dx + dy * dy);
+        double dx = to.getX() - from.getX();
+        double dy = to.getY() - from.getY();
 
-        double targetDistance;
-        if (distanceXY > range[0]) {
-            targetDistance = range[0]; // Clamp to max
-        } else if (distanceXY < range[1]) {
-            targetDistance = range[1]; // Clamp to min
-        } else {
-            return inputPose;
+        double currentMagnitude = Math.sqrt(dx * dx + dy * dy);
+
+        if (currentMagnitude == 0) {
+            return new Translation2d(0, 0);
         }
 
-        distanceXY = (distanceXY == 0) ? 1e-6 : distanceXY;
-        double scale = targetDistance / distanceXY;
+        double scale = magnitude / currentMagnitude;
+        double vectorX = dx * scale;
+        double vectorY = dy * scale;
 
-        return new Pose3d(
-                centerPoint.getX() + dx * scale,
-                centerPoint.getY() + dy * scale,
-                inputPose.getZ(),
-                inputPose.getRotation());
-    }
-
-    /** Snap a pose to the given range around the current robot position. */
-    public static Pose3d snapPoseToRange(Pose3d inputPose, double[] range) {
-        return snapPoseToRange(inputPose, range, get3dPosition());
-    }
-
-    /** Snap a pose to the launcher subsystem range around the current robot position. */
-    public static Pose3d snapPoseToRange(Pose3d inputPose) {
-        return snapPoseToRange(inputPose, LauncherSubsystem.range, get3dPosition());
-    }
-
-    /** Snap a 2D pose to the launcher range (logs current range). */
-    public static Pose2d snapPoseToRange(Pose2d inputPose) {
-        DogLog.log(
-                "Range-test-inner",
-                "Big: " + String.valueOf(LauncherSubsystem.range[0]) + " | Small: "
-                        + String.valueOf(LauncherSubsystem.range[1]));
-
-        return Utils.flattenPose3d(
-                snapPoseToRange(Utils.expandPose2d(inputPose), LauncherSubsystem.range, get3dPosition()));
+        return new Translation2d(vectorX, vectorY);
     }
 
     // --- Angle ---
@@ -153,7 +116,8 @@ public class BallisticsUtils {
     /**
      * Calculate the angle to the current target from the current position.
      *
-     * @return The angle to the current target, in radians. See {@link #calculateAngleToTarget(Pose3d)}
+     * @return The angle to the current target, in radians. See
+     *         {@link #calculateAngleToTarget(Pose3d)}
      *         for out-of-range values.
      */
     public static Angle calculateAngleToInternalTarget() {
@@ -173,12 +137,13 @@ public class BallisticsUtils {
     }
 
     /**
-     * Calculate the shooter angle required to hit a target from the current
-     * position. (Formula adapted from contributor @Amber-leaf.)
+     * Calculate the launcher angle required to hit a target from the current
+     * position.
      *
      * @param target   The target {@link Pose3d position}.
      * @param distance The distance to the target.
-     * @return The angle of the shooter to hit the target. Returns sentinel angles when
+     * @return The angle of the launcher to hit the target. Returns sentinel angles
+     *         when
      *         target is unreachable.
      */
     public static Angle calculateAngleToTarget(Pose3d target, double distance) {
@@ -192,8 +157,10 @@ public class BallisticsUtils {
         }
 
         double sqrt = Math.sqrt(inner);
-        double lowAngle = Math.atan((v * v - sqrt) / (G * distance)) + Math.PI / 2;
-        double highAngle = Math.atan((v * v + sqrt) / (G * distance)) + Math.PI / 2;
+        double lowAngle = Math.atan((v * v - sqrt) / (G * distance));
+        double highAngle = Math.atan((v * v + sqrt) / (G * distance));
+
+        DogLog.log("Launcher/Angles", "high: " + String.valueOf(highAngle) + " low: " + String.valueOf(lowAngle));
 
         if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
             return Angle.ofBaseUnits(highAngle, Radians);
@@ -207,7 +174,8 @@ public class BallisticsUtils {
     /**
      * Estimate the minimum and maximum ranges (distance) where the hub can be hit.
      *
-     * @return Optional containing a double[] { min, max } when successful, otherwise
+     * @return Optional containing a double[] { min, max } when successful,
+     *         otherwise
      *         Optional.empty().
      */
     public static Optional<double[]> estimateMinMaxRange() {
@@ -254,7 +222,8 @@ public class BallisticsUtils {
         if (foundMinRegion) {
             for (int i = 0; i < 20; i++) {
                 double mid = (minLow + minHigh) / 2.0;
-                Double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), mid)
+                Double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP),
+                        mid)
                         .in(Radians);
 
                 if (result == -2) {

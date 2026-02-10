@@ -1,24 +1,29 @@
 package org.ironriders.core;
 
 import static org.ironriders.lib.BallisticsUtils.getPosition;
+import static org.ironriders.lib.BallisticsUtils.inRange;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.DriverRequest;
-import org.ironriders.lib.Utils;
 import org.ironriders.lib.DriverRequest.AlignTargetingMode;
 import org.ironriders.lib.DriverRequest.LauncherTargetingMode;
 import org.ironriders.lib.DriverRequest.PriorityMode;
+import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
-import org.ironriders.manipulation.launcher.LauncherSubsystem;
+import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
+import org.ironriders.manipulation.launcher.LauncherConstants;
+import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
 import dev.doglog.DogLog;
-
-import org.ironriders.lib.field.FieldPositions;
-import org.ironriders.lib.field.Zone;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -144,7 +149,28 @@ public class TargetingControl {
                 return FieldPositions.get(ElementType.HUB);
 
             case PASSING:
-                return BallisticsUtils.snapPoseToRange(RobotContainer.passingZone.closestPointAsPose3d());
+                List<Pose2d> points = new ArrayList<Pose2d>();
+
+                for (Pose2d point : FieldPositions.Zones.PASSING_POINTS) {
+                    points.add(point);
+                }
+
+                Pose2d closest = getPosition().nearest(points);
+                Pose2d bestPoint = closest;
+
+                if (!inRange(Utils.expandPose2d(bestPoint))) {
+                    Translation2d t = BallisticsUtils.translationToPoint(getPosition(),
+                            closest, LauncherSubsystem.range[1]);
+
+                    bestPoint = new Pose2d(t.getX() + getPosition().getX(), t.getY() + getPosition().getY(),
+                            new Rotation2d());
+                }
+
+                if (!RobotContainer.passingZone.inside(bestPoint)) {
+                    bestPoint = RobotContainer.passingZone.closestPoint();
+                }
+
+                return Utils.expandPose2d(bestPoint);
         }
     }
 

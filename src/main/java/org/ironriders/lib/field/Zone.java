@@ -1,5 +1,8 @@
 package org.ironriders.lib.field;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.Utils;
 
@@ -66,6 +69,14 @@ public class Zone {
      */
     public ZoneType getType() {
         return type;
+    }
+
+    /*
+     * Get the center of the polygon.
+     */
+    public Pose2d centerPoint() {
+        return new Pose2d(new Translation2d(Stream.of(polygon).collect(Collectors.averagingDouble(Pose2d::getX)),
+                Stream.of(polygon).collect(Collectors.averagingDouble(Pose2d::getY))), new Rotation2d());
     }
 
     /*
@@ -138,7 +149,7 @@ public class Zone {
 
     public Pose2d closestPoint() {
         Translation2d distance = distanceTo();
-        DogLog.log("Zone-distance", distance.toString());
+
         return new Pose2d(distance.getX() + getPose().getX(), distance.getY() + getPose().getY(), new Rotation2d());
     }
 

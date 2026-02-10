@@ -107,7 +107,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
         for (double i = 0; i <= 15; i += 1) {
             DogLog.log("Launcher/Launcher-test",
-                    String.valueOf(i) + " | Radius: "
+                    String.valueOf(i) + " | Radians: "
                             + calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), i)
                                     .in(Radians)
                             + " Degrees: "
