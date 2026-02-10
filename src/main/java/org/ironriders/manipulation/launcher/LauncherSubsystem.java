@@ -32,6 +32,7 @@ import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.manipulation.launcher.LauncherConstants.KickerState;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -63,6 +64,7 @@ public class LauncherSubsystem extends IronSubsystem {
     // Motors
     public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
+    public final TalonFX kickerMotor = new TalonFX(16);
 
     // PID Controllers
     public Map<TalonFX, PIDController> velocityPidMap = new HashMap<TalonFX, PIDController>();
@@ -146,6 +148,18 @@ public class LauncherSubsystem extends IronSubsystem {
         updatePID();
     }
 
+    public void fire() {
+        setKicker(KickerState.FIRE);
+    }
+
+    public void stopKicker() {
+        setKicker(KickerState.STOP);
+    }
+
+    public void setKicker(KickerState state) {
+        kickerMotor.set(state.speed);
+    }
+
     /**
      * Get the commands for the launcher subsystem.
      * 
@@ -169,6 +183,7 @@ public class LauncherSubsystem extends IronSubsystem {
             case STOW:
                 setFlywheelGoal(0);
                 setLauncherGoal(LAUNCHER_STOW_POSITION);
+                stopKicker();
                 return;
 
             case IDLE:

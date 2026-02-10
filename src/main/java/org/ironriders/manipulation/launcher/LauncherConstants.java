@@ -40,15 +40,24 @@ public class LauncherConstants {
 
   public static final double SPINDOWN_TIME = 2; // time to automatically go into idle mode after, currently TODO
 
+  public static final double KICK_TIME = 2; // seconds
+
   public enum State {
     READY,
     IDLE,
     STOW;
   }
 
-  public enum TargetingMode {
-    OUT_OF_RANGE,
-    ROTATE_TOWARDS,
-    FULL_CONTROL;
+
+  public enum KickerState {
+    FIRE(1),
+    STOP(0),
+    EJECT(-.6);
+
+    public double speed;
+
+    KickerState(double speed) {
+        this.speed = speed;
+    }
   }
 }

@@ -184,7 +184,7 @@ public class RobotContainer {
                     } else {
                         revertToSafeDefaults();
                     }
-                }));
+                }).alongWith(launcherCommands.readyAndFire()));
 
         primaryController.x().onTrue(
                 new InstantCommand(() -> {
@@ -195,7 +195,7 @@ public class RobotContainer {
                     } else {
                         revertToSafeDefaults();
                     }
-                }));
+                }).alongWith(launcherCommands.readyAndFire()));
 
         // --- Align ---
         primaryController.y()

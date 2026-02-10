@@ -1,5 +1,7 @@
 package org.ironriders.manipulation.launcher;
 
+import static org.ironriders.manipulation.launcher.LauncherConstants.KICK_TIME;
+
 import org.ironriders.core.RobotContainer;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
@@ -61,6 +63,15 @@ public class LauncherCommands {
      */
     public Command targetHub() {
         return setTarget(FieldPositions.get(ElementType.HUB));
+    }
+
+    public Command readyAndFire() {
+        return Commands.parallel(set(State.READY), fire());
+    }
+
+    public Command fire() {
+        return Commands.sequence(Commands.runOnce(() -> launcher.fire()), Commands.waitSeconds(KICK_TIME),
+                Commands.runOnce(() -> launcher.stopKicker()));
     }
 
     /**
