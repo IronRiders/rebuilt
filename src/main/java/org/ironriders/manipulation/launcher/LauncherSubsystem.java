@@ -61,8 +61,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public static double[] range;
 
     // Motors
-    public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15),
-            new TalonFX(16)); // IDs
+    public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
 
     // PID Controllers
