@@ -11,6 +11,7 @@ import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherConstants;
+import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristConstants;
 import org.ironriders.vision.VisionCommands;
@@ -63,21 +64,9 @@ public class RobotCommands {
         return driveCommands.driveTeleop(inputTranslationX, inputTranslationY, inputRotation, true);
     }
 
-    /**
-     * {@linkplain LauncherConstants.State#READY
-     * Readies} the
-     * {@linkplain org.ironriders.manipulation.launcher.LauncherCommands#set()
-     * Launcher} and sets the
-     * {@linkplain org.ironriders.manipulation.indexer.IndexerCommands#set()
-     * indexer} to
-     * {@linkplain org.ironriders.manipulation.indexer.IndexerConstants.State#INDEX
-     * INDEX}.
-     * 
-     * @return A command to do the above
-     */
-    public Command score() {
-        return Commands.sequence(launcherCommands.set(LauncherConstants.State.READY),
-                indexerCommands.set(IndexerConstants.State.INDEX));
+    public Command fire() {
+        return Commands.parallel(launcherCommands.readyAndFire(),
+                indexerCommands.set(IndexerConstants.State.INDEX).until(() -> !LauncherSubsystem.isKicking()));
     }
 
     public Command intake() {
@@ -87,6 +76,7 @@ public class RobotCommands {
 
     public Command stow() { // Reset everything
         return Commands.parallel(launcherCommands.set(LauncherConstants.State.STOW),
+                Commands.runOnce(() -> LauncherSubsystem.stopKicker()),
                 indexerCommands.set(IndexerConstants.State.STOP), intakeCommands.set(IntakeConstants.State.STOP),
                 wristCommands.set(WristConstants.State.UP), climberCommands.set(ClimberConstants.State.MIN));
     }

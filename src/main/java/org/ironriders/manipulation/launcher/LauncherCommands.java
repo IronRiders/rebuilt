@@ -70,8 +70,8 @@ public class LauncherCommands {
     }
 
     public Command fire() {
-        return Commands.sequence(Commands.runOnce(() -> launcher.fire()), Commands.waitSeconds(KICK_TIME),
-                Commands.runOnce(() -> launcher.stopKicker()));
+        return Commands.sequence(Commands.runOnce(() -> LauncherSubsystem.fire()), Commands.waitSeconds(KICK_TIME),
+                Commands.runOnce(() -> LauncherSubsystem.stopKicker()));
     }
 
     /**

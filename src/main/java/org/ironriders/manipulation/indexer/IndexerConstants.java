@@ -3,7 +3,7 @@ package org.ironriders.manipulation.indexer;
 public class IndexerConstants {
     public static int ID = 11;
     public static double STALL_LIMIT = 40;
-
+    
     /**
      * Possible states for the indexer. Each has a speed for the indexer.
      * <ul>

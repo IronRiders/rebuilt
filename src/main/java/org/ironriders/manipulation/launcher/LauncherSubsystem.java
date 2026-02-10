@@ -64,7 +64,7 @@ public class LauncherSubsystem extends IronSubsystem {
     // Motors
     public final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
-    public final TalonFX kickerMotor = new TalonFX(16);
+    public static final TalonFX kickerMotor = new TalonFX(16);
 
     // PID Controllers
     public Map<TalonFX, PIDController> velocityPidMap = new HashMap<TalonFX, PIDController>();
@@ -148,16 +148,20 @@ public class LauncherSubsystem extends IronSubsystem {
         updatePID();
     }
 
-    public void fire() {
+    public static void fire() {
         setKicker(KickerState.FIRE);
     }
 
-    public void stopKicker() {
+    public static void stopKicker() {
         setKicker(KickerState.STOP);
     }
 
-    public void setKicker(KickerState state) {
+    public static void setKicker(KickerState state) {
         kickerMotor.set(state.speed);
+    }
+
+    public static boolean isKicking() {
+        return kickerMotor.get() > 0;
     }
 
     /**
