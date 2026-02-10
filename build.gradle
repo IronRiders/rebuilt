@@ -1,6 +1,8 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id "checkstyle"
+    id "org.openrewrite.rewrite" version "7.25.0"
 }
 
 java {
@@ -73,6 +75,8 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    rewrite "org.openrewrite.recipe:rewrite-static-analysis:latest.release"
 }
 
 test {
@@ -104,4 +108,8 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+}
+
+rewrite {
+    activeRecipe("org.openrewrite.staticanalysis.CodeCleanup")
 }
