@@ -1,4 +1,4 @@
-name: Checkstyle
+name: Validations
 on:
   - pull_request
   - workflow_dispatch
@@ -12,3 +12,10 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-check
+  pr-title:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ytanikin/pr-conventional-commits@1.5.1
+        with:
+          task_types: '["feat","fix","docs","test","ci","refactor","perf","chore","revert"]'
