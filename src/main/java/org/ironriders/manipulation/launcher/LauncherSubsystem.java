@@ -66,6 +66,8 @@ public class LauncherSubsystem extends IronSubsystem {
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
     public static final TalonFX kickerMotor = new TalonFX(16);
 
+    public final boolean isHomed = false;
+
     // PID Controllers
     public Map<TalonFX, PIDController> velocityPidMap = new HashMap<TalonFX, PIDController>();
 
@@ -101,10 +103,6 @@ public class LauncherSubsystem extends IronSubsystem {
             v.setTolerance(FLYWHEEL_TOLERANCE);
         });
 
-        anglePidController.reset(getLauncherHoodAngle().in(Degrees));
-        anglePidController.setGoal(LAUNCHER_STOW_POSITION);
-        anglePidController.setTolerance(LAUNCHER_TOLERANCE);
-
         for (double i = 0; i <= 15; i += 1) {
             DogLog.log("Launcher/Launcher-test",
                     String.valueOf(i) + " | Radians: "
@@ -123,6 +121,12 @@ public class LauncherSubsystem extends IronSubsystem {
         }
 
         DogLog.log("Launcher/Range", "(" + String.valueOf(range[0]) + " : " + String.valueOf(range[1] + ")"));
+
+        homeLauncherHood();
+
+        anglePidController.setGoal(LAUNCHER_STOW_POSITION);
+        anglePidController.setTolerance(LAUNCHER_TOLERANCE);
+        anglePidController.reset(getLauncherHoodAngle().in(Degrees));
     }
 
     public TalonFX configureFlywheelMotor(TalonFX motor) {
