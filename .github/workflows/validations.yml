@@ -4,7 +4,7 @@ on:
   - workflow_dispatch
 jobs:
   checkstyle:
-    name: checkstyle
+    name: Checkstyle
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -13,7 +13,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-check
   pr-title:
-    name: Conventional Commits
+    name: Pull Request Title
     runs-on: ubuntu-latest
     steps:
       - uses: ytanikin/pr-conventional-commits@1.5.1
