@@ -1,0 +1,12 @@
+name: Conventional Commit In Pull Requests
+on:
+  - pull_request
+  - workflow_dispatch
+jobs:
+  validate-pull-request-title:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ytanikin/pr-conventional-commits@1.5.1
+        with:
+          task_types: '["feat","fix","docs","test","ci","refactor","perf","chore","revert"]'
