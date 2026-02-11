@@ -89,8 +89,9 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     public boolean currentCheckSpike(TalonFX motor) {
-        return Math
-                .abs(averageMap.get(motor) - getTorqueCurrent(motor)) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
+        // return Math
+        //         .abs(averageMap.get(motor) - getTorqueCurrent(motor)) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
+        return Math.abs(getTorqueCurrent(motor)) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
     }
 
     /**

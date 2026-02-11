@@ -5,7 +5,7 @@ public class ClimberConstants {
     public static final int PRIMARY_ID = 9;
     public static final int SECONDARY_ID = 10;
 
-    public static final int STALL_LIMIT = 40;
+    public static final int STALL_LIMIT = 80; // TODO
 
     public static final double P = 0.5;
     public static final double I = 0.0;
@@ -14,12 +14,12 @@ public class ClimberConstants {
     public static final double MAX_VEL = 180;
     public static final double MAX_ACC = 180;
 
-    public static final double TORQUE_CURRENT_SPIKE_THRESHOLD = 10; //amps
+    public static final double TORQUE_CURRENT_SPIKE_THRESHOLD = 30; //amps //TODO test climber Current Homing Threshold
 
     public static final double HOME_SPEED = 0.4;
 
-    public enum State {
-        CLIMBED(40),
+    public enum State { //In rotations
+        CLIMBED(40), //TODO test values 
         MIN(0),
         MAX(100);
 
