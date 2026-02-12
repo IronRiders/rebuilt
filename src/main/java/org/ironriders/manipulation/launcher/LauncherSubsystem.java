@@ -66,8 +66,6 @@ public class LauncherSubsystem extends IronSubsystem {
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
     public static final TalonFX kickerMotor = new TalonFX(16);
 
-    public final boolean isHomed = false;
-
     // PID Controllers
     public Map<TalonFX, PIDController> velocityPidMap = new HashMap<TalonFX, PIDController>();
 
