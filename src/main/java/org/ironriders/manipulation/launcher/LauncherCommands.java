@@ -66,12 +66,11 @@ public class LauncherCommands {
     }
 
     public Command readyAndFire() {
-        return Commands.parallel(set(State.READY), fire());
+        return Commands.sequence(set(State.READY), fire());
     }
 
     public Command fire() {
-        return Commands.sequence(Commands.runOnce(() -> LauncherSubsystem.fire()), Commands.waitSeconds(KICK_TIME),
-                Commands.runOnce(() -> LauncherSubsystem.stopKicker()));
+        return Commands.runOnce(() -> LauncherSubsystem.fire());
     }
 
     /**
