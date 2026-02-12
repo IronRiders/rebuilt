@@ -1,8 +1,5 @@
 package org.ironriders.lib.field;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.Zone.ZoneType;
@@ -25,7 +22,8 @@ public class FieldPositions {
      * Gets the position in meters of the specified element type. Automatically does
      * alliance mirroring.
      * <hr />
-     * !Currently only HUB, TOWER and OUTPOST are implemented, all other types will return a
+     * !Currently only HUB, TOWER and OUTPOST are implemented, all other types will
+     * return a
      * blank Pose3d()!
      */
     public static Pose3d get(ElementType element) {
@@ -216,11 +214,13 @@ public class FieldPositions {
 
         // Edge of the field
         public static final Pose2d[] SCORING_ZONE = new FieldPositions().new Rect(
-                new Pose2d(-5, 0, new Rotation2d()),
+                new Pose2d(0, 0, new Rotation2d()),
                 new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
-        public static Pose2d[] PASSING_POINTS = {new Pose2d((PASSING_ZONE_HEIGHT / 2) + ZONE_BUFFER, FIELD_WIDTH_METERS - 1.5, new Rotation2d()), new Pose2d((PASSING_ZONE_HEIGHT / 2) + ZONE_BUFFER, 1.5, new Rotation2d())};
+        public static final Pose2d[] PASSING_POINTS = {
+                new Pose2d((SCORING_ZONE_HEIGHT / 2), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
+                new Pose2d((SCORING_ZONE_HEIGHT / 2), 1.5, new Rotation2d()) };
     }
 
     /**

@@ -16,7 +16,6 @@ import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
-import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
 import dev.doglog.DogLog;
@@ -38,6 +37,17 @@ public class TargetingControl {
             AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
 
     private static DriverRequest lastDriverRequest = request;
+
+    private static List<Pose2d> points = new ArrayList<Pose2d>();
+
+    public static void init() {
+        for (Pose2d point : FieldPositions.Zones.PASSING_POINTS) {
+            points.add(FieldPositions.prepareMetersPose(point));
+        }
+
+        RobotContainer.scoringZone.printPolygon();
+        RobotContainer.passingZone.printPolygon();
+    }
 
     public static void receiveRequest(DriverRequest driverRequest) {
         lastDriverRequest = request;
@@ -149,12 +159,6 @@ public class TargetingControl {
                 return FieldPositions.get(ElementType.HUB);
 
             case PASSING:
-                List<Pose2d> points = new ArrayList<Pose2d>();
-
-                for (Pose2d point : FieldPositions.Zones.PASSING_POINTS) {
-                    points.add(point);
-                }
-
                 Pose2d closest = getPosition().nearest(points);
                 Pose2d bestPoint = closest;
 
@@ -164,10 +168,6 @@ public class TargetingControl {
 
                     bestPoint = new Pose2d(t.getX() + getPosition().getX(), t.getY() + getPosition().getY(),
                             new Rotation2d());
-                }
-
-                if (!RobotContainer.passingZone.inside(bestPoint)) {
-                    bestPoint = RobotContainer.passingZone.closestPoint();
                 }
 
                 return Utils.expandPose2d(bestPoint);

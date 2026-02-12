@@ -51,10 +51,6 @@ public class VisionSubsystem extends IronSubsystem {
         poseEstimator = new PhotonPoseEstimator(
                 fieldLayout,
                 VisionConstants.CAMERA_OFFSET);
-
-        for (var tag : fieldLayout.getTags()) {
-            System.out.printf("tag %d, %s.\n", tag.ID, tag.pose.getTranslation().toString());
-        }
     }
 
     /**

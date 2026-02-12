@@ -1,5 +1,8 @@
 package org.ironriders.lib.field;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,6 +14,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import swervelib.SwerveDrive;
 
@@ -42,7 +47,7 @@ public class Zone {
         printPolygon();
     }
 
-    private void printPolygon() {
+    public void printPolygon() {
         SwerveDrive swerve = DriveSubsystem.getSwerveDrive();
 
         if (swerve == null) {
@@ -69,6 +74,16 @@ public class Zone {
      */
     public ZoneType getType() {
         return type;
+    }
+
+    public List<Pose2d> asList() {
+        List<Pose2d> points = new ArrayList<Pose2d>();
+
+        for (Pose2d point : polygon) {
+            points.add(FieldPositions.prepareMetersPose(point));
+        }
+
+        return points;
     }
 
     /*
@@ -144,7 +159,7 @@ public class Zone {
             }
         }
 
-        return minDist.times(-1);
+        return minDist.times(DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue ? 1 : -1);
     }
 
     public Pose2d closestPoint() {
