@@ -65,8 +65,11 @@ public class RobotCommands {
     }
 
     public Command fire() {
-        return Commands.parallel(launcherCommands.readyAndFire(),
-                indexerCommands.set(IndexerConstants.State.INDEX).until(() -> !LauncherSubsystem.isKicking()));
+        return Commands.parallel(
+                launcherCommands.readyAndFire(),
+                indexerCommands.set(IndexerConstants.State.INDEX).until(() -> !LauncherSubsystem.isKicking()),
+                wristCommands.jostleBalls()
+                ).finallyDo(()->wristCommands.jostleBalls().cancel());
     }
 
     public Command intake() {
