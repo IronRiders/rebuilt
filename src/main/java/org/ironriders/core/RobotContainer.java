@@ -189,14 +189,11 @@ public class RobotContainer {
         // TODO: do this in a better way
         primaryController.a().onTrue(
                 new InstantCommand(() -> {
-                    targetingHub = !targetingHub;
-                    if (targetingHub) {
+                    targetingHub = true;
                         targetingPassing = false;
-                        TargetingControl.targetHubInternal();
-                    } else {
-                        revertToSafeDefaults();
-                    }
-                })).onTrue(robotCommands.fire());
+                        TargetingControl.targetHubInternal();}))
+            .onTrue(robotCommands.fire())
+            .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.x().onTrue(
                 new InstantCommand(() -> {
