@@ -192,7 +192,8 @@ public class RobotContainer {
         // TODO: do this in a better way
         primaryController.a().onTrue(
                 new InstantCommand(() -> {
-                    targetingHub = true;
+                    targetingHub = !targetingHub;
+                    if (targetingHub) {
                         targetingPassing = false;
                         TargetingControl.targetHubInternal();
                         CommandScheduler.getInstance().schedule(fireCommand);
