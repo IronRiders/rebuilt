@@ -6,10 +6,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 /** Constants for the {@link VisionSubsystem} */
 public class VisionConstants {
-    public static final double VISION_P = 0.1;
-    public static final double VISION_I = 0.05;
-    public static final double VISION_D = 0;
-    public static final double VISION_ROTATION_MAX_SPEED = 2; // rad/s
     public static final String VISION_CAMERA = "main";
 
     public static final Double SKEW_THROWAWAY_THRESHOLD = 60d; // deg, TODO: Tune

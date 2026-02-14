@@ -18,9 +18,9 @@ public class DriveConstants {
             new PIDConstants(1.0, 0.0, 0.0) // Rotation PID
     );
 
-    public static final double ROTATE_TO_TARGET_P = 6;
+    public static final double ROTATE_TO_TARGET_P = 8;
     public static final double ROTATE_TO_TARGET_I = 0.0;
-    public static final double ROTATE_TO_TARGET_D = 0.1;
+    public static final double ROTATE_TO_TARGET_D = 0.0;
 
     public static final Constraints ROTATION_CONSTRAINTS = new Constraints(
             DriveConstants.SWERVE_MAX_ANGULAR_TELEOP, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
