@@ -298,7 +298,6 @@ public class DriveSubsystem extends IronSubsystem {
      * @param pose2d The pose to reset the odometry to.
      */
     public static void resetOdometry(Pose2d pose2d) {
-    public static void resetOdometry(Pose2d pose2d) {
         swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(0)));
     }
 
