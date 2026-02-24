@@ -106,7 +106,9 @@ public class DriveSubsystem extends IronSubsystem {
                 this);
 
         rotationPid.reset(getRotation());
+        rotationPid.reset(getRotation());
         rotationPid.enableContinuousInput(0, Math.PI * 2);
+        rotationPid.setTolerance(0.05);
         rotationPid.setTolerance(0.05);
     }
 
@@ -125,6 +127,9 @@ public class DriveSubsystem extends IronSubsystem {
         if (leftMag > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
             cancelPathfind();
         }
+
+        publish("PID", rotationPid);
+        publish("Yaw", getRotation());
     }
 
     /**
@@ -176,11 +181,14 @@ public class DriveSubsystem extends IronSubsystem {
     /*
      * Enable and disable PID rotation control. Set goal using {@link
      * #setRotationGoal()}
+     * Enable and disable PID rotation control. Set goal using {@link
+     * #setRotationGoal()}
      */
     public static void setPIDRotationControl(boolean PIDControl) {
         PIDRotation = PIDControl;
 
         if (!PIDControl) {
+            rotationPid.reset(getRotation());
             rotationPid.reset(getRotation());
         }
     }
@@ -289,6 +297,7 @@ public class DriveSubsystem extends IronSubsystem {
      * 
      * @param pose2d The pose to reset the odometry to.
      */
+    public static void resetOdometry(Pose2d pose2d) {
     public static void resetOdometry(Pose2d pose2d) {
         swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(0)));
     }
