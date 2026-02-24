@@ -1,30 +1,29 @@
 package org.ironriders.drive;
 
-import static edu.wpi.first.units.Units.Radians;
-
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.ironriders.core.RobotContainer;
+import org.ironriders.core.TargetingControl;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
-import org.ironriders.vision.VisionSubsystem;
+import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -44,14 +43,15 @@ public class DriveSubsystem extends IronSubsystem {
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
 
-    public static boolean PIDAlign = false;
+    public static boolean PIDRotation = false;
 
     public static AtomicBoolean isDriving = new AtomicBoolean(false);
 
-    private static Command pathfindCommand;
+    public static Command pathfindingCommand = new InstantCommand();
 
-    private static ProfiledPIDController rotationPid = new ProfiledPIDController(DriveConstants.ROTATE_TO_TARGET_P, DriveConstants.ROTATE_TO_TARGET_I,
-            DriveConstants.ROTATE_TO_TARGET_D, DriveConstants.ROTATION_CONSTRAINTS);
+    private static ProfiledPIDController rotationPid;
+
+    public static Pigeon2 pigeon = new Pigeon2(11);
 
     public DriveSubsystem() throws RuntimeException {
         try {
@@ -74,11 +74,26 @@ public class DriveSubsystem extends IronSubsystem {
             throw new RuntimeException("Could not load path planner config", e);
         }
 
+        if (SwerveDriveTelemetry.isSimulation) {
+            rotationPid = new ProfiledPIDController(
+                    DriveConstants.SIM_ROTATE_TO_TARGET_P,
+                    DriveConstants.SIM_ROTATE_TO_TARGET_I,
+                    DriveConstants.SIM_ROTATE_TO_TARGET_D, DriveConstants.ROTATION_CONSTRAINTS);
+        } else {
+            rotationPid = new ProfiledPIDController(
+                    DriveConstants.ROTATE_TO_TARGET_P,
+                    DriveConstants.ROTATE_TO_TARGET_I,
+                    DriveConstants.ROTATE_TO_TARGET_D, DriveConstants.ROTATION_CONSTRAINTS);
+        }
+
         AutoBuilder.configure(
                 swerveDrive::getPose,
                 swerveDrive::resetOdometry,
                 swerveDrive::getRobotVelocity,
-                (speeds, feedforwards) -> swerveDrive.drive(speeds),
+                (speeds, feedforwards) -> {
+                    speeds.omegaRadiansPerSecond = rotationPid.calculate(getRotation());
+                    swerveDrive.drive(speeds);
+                },
                 DriveConstants.HOLONOMIC_CONFIG,
                 robotConfig,
                 () -> {
@@ -90,19 +105,25 @@ public class DriveSubsystem extends IronSubsystem {
                 },
                 this);
 
-        rotationPid.reset(0);
+        rotationPid.reset(getRotation());
         rotationPid.enableContinuousInput(0, Math.PI * 2);
-        rotationPid.setTolerance(5);
-
-        // debug setRotationGoal(180);
+        rotationPid.setTolerance(0.05);
     }
 
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
 
-        if (!isDriving.get() && PIDAlign) {
-            drivePID(new Translation2d());
+        TargetingControl.update();
+
+        if (Math.abs(RobotContainer.primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
+            RobotContainer.revertToSafeDefaults();
+        }
+
+        double leftMag = Math.hypot(RobotContainer.primaryController.getLeftX(),
+                RobotContainer.primaryController.getLeftY());
+        if (leftMag > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
+            cancelPathfind();
         }
     }
 
@@ -119,8 +140,11 @@ public class DriveSubsystem extends IronSubsystem {
     public static void drive(Translation2d translation, double rotation, boolean fieldRelative) {
         isDriving.getAndSet(true);
 
-        if (PIDAlign) {
-            drivePID(translation);
+        if (PIDRotation) {
+            swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
+                    rotationPid.calculate(getRotation()) * (SwerveDriveTelemetry.isSimulation ? 1 : -1),
+                    fieldRelative,
+                    false);
         } else {
             swerveDrive.drive(
                     translation.times(driveInvert ? -1 : 1),
@@ -132,18 +156,11 @@ public class DriveSubsystem extends IronSubsystem {
         isDriving.getAndSet(false);
     }
 
-    public static void drivePID(Translation2d translation) {
-        swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
-                rotationPid.calculate(getRotation().in(Radians)),
-                true,
-                true);
-    }
-
     /**
      * @return The robot's current rotation.
      */
-    public static Angle getRotation() {
-        return swerveDrive.getGyroRotation3d().toRotation2d().getMeasure();
+    public static double getRotation() {
+        return getPose().getRotation().getRadians();
     }
 
     /** Where is the robot? */
@@ -151,14 +168,20 @@ public class DriveSubsystem extends IronSubsystem {
         return DriveSubsystem.swerveDrive.getPose();
     }
 
+    /** Where is the robot in 3d? */
+    public static Pose3d getPose3d() {
+        return Utils.expandPose2d(getPose());
+    }
+
     /*
-     * Enable and disable PID rotation control. Set goal using {@link #setRotationGoal()}
+     * Enable and disable PID rotation control. Set goal using {@link
+     * #setRotationGoal()}
      */
-    public static void setPIDControl(boolean PIDControl) {
-        PIDAlign = PIDControl;
+    public static void setPIDRotationControl(boolean PIDControl) {
+        PIDRotation = PIDControl;
 
         if (!PIDControl) {
-            rotationPid.reset(getRotation().in(Radians));
+            rotationPid.reset(getRotation());
         }
     }
 
@@ -176,94 +199,63 @@ public class DriveSubsystem extends IronSubsystem {
         rotationPid.setGoal(goal);
     }
 
-    /**
-     * Pathfinds to a given pose using PathPlanner's pathfinding. See
-     * {@link #pathfindToPose()} for more information.
-     * 
-     * @param target      The {@link Pose2d} to pathfind to.
-     * @param constraints The {@link PathConstraints} to pathfind with.
-     */
-    public static Command pathfindToPose(Pose2d target, PathConstraints constraints) {
-        pathfindCommand = AutoBuilder.pathfindToPose(target, constraints);
-        return pathfindCommand.withName("Pathfind to " + target.getX() + ", " + target.getY());
-    }
-
-    /**
-     * Same as {@link #pathfindToPose(Pose2d, PathConstraints) pathfindToPose} but
-     * with default constraints.
-     * 
-     * @param target The {@link Pose2d} to pathfind to.
-     * @return A {@link Command} to do the above.
+    /*
+     * Command to pathfind to a given pose.
      */
     public static Command pathfindToPose(Pose2d target) {
-        pathfindCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS);
-        return pathfindCommand.withName("Pathfind to " + target.getX() + ", " + target.getY());
+        pathfindingCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS);
+        return pathfindingCommand;
     }
 
-    /**
-     * Pathfinds to a given path using PathPlanner's pathfinding.
-     * 
-     * @param path        The {@link PathPlannerPath} to pathfind with
-     * @param constraints The {@link PathConstraints} for pathfinding
-     * @return A {@link Command} to do the above with the name "Pathfind to " +
-     *         path.name
-     */
-    public static Command pathfindThenFollowPath(PathPlannerPath path, PathConstraints constraints) {
-        pathfindCommand = AutoBuilder.pathfindThenFollowPath(
-                path,
-                constraints);
-
-        return pathfindCommand.withName("Pathfind to " + path.name);
-    }
-
-    /**
-     * Same as {@link #pathfindThenFollowPath(PathPlannerPath, PathConstraints)
-     * pathfindThenFollowPath} but with default constraints.
-     * 
-     * @param path The {@link PathPlannerPath} to follow.
-     * @return A {@link Command} to do the above with the name "Pathfind to " +
-     *         path.name
+    /*
+     * Command to pathfind to the start of a given path then follow that path.
      */
     public static Command pathfindThenFollowPath(PathPlannerPath path) {
-        pathfindCommand = AutoBuilder.pathfindThenFollowPath(
-                path, DriveConstants.PATHFIND_CONSTRAINTS);
-
-        return pathfindCommand.withName("Pathfind to " + path.name);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        return pathfindingCommand;
     }
 
-    /**
-     * Pathfinds to a given AprilTag using PathPlanner's pathfinding. Uses
-     * {@link #pathfindToPose(Pose2d) pathfindToPose} on the flattened
-     * {@link Pose3d} of the {@code tag id}.
+    /*
+     * Command to pathfind to the start of a given path then follow the flipped
+     * version of that path.
+     */
+    public static Command pathfindThenFollowFlippedPath(PathPlannerPath path) {
+        path = path.flipPath();
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        return pathfindingCommand;
+    }
+
+    /*
+     * Command to figure out if the distance to the start point of the flipped
+     * version of the provided path is closer than the normal version, and if so
+     * follow the flipped version.
      * 
-     * @param id The ID of the AprilTag to pathfind to.
-     * @return An {@link Optional} containing a {@link Command} to do the above if
-     *         the tag exists, or an empty {@link Optional} if it does not.
+     * TODO: !Uses distance as the crow flies, not path distance to start point!
      */
-    public static Optional<Command> pathfindToTag(int id) {
-        var tag = VisionSubsystem.fieldLayout.getTagPose(id).orElse(null);
-        if (tag == null) {
-            return Optional.empty();
+    public static Command pathfindThenFlipPathIfBetterThenFollow(PathPlannerPath path) {
+        if (Utils.distanceToPose2d(path.getPathPoses().get(0), getPose()) < Utils
+                .distanceToPose2d(path.flipPath().getPathPoses().get(0), getPose())) {
+            path = path.flipPath();
         }
 
-        return Optional.of(pathfindToPose(Utils.flattenPose3d(tag)));
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        return pathfindingCommand;
     }
 
-    /**
-     * Schedules the current pathfind command, if it exists.
-     */
-    public static void startPathfind() {
-        if (pathfindCommand != null) {
-            CommandScheduler.getInstance().schedule(pathfindCommand);
-        }
-    }
-
-    /**
-     * Stops the currently running pathfind.
+    /*
+     * Cancel the current pathfinding operation.
      */
     public static void cancelPathfind() {
-        if (pathfindCommand != null) {
-            pathfindCommand.cancel();
+        pathfindingCommand.cancel();
+    }
+
+    public static Optional<PathPlannerPath> loadPath(String fileName) {
+        try {
+            return Optional.of(PathPlannerPath.fromPathFile(fileName));
+        } catch (FileVersionException | IOException | ParseException e) {
+            System.out.printf("Error loading path %s: ", fileName);
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 
@@ -286,18 +278,10 @@ public class DriveSubsystem extends IronSubsystem {
         swerveDrive.setMaximumAllowableSpeeds(max, DriveConstants.SWERVE_MAX_ANGULAR_TELEOP);
     }
 
-    /**
-     * Opens a {@link Pidgeon2} sensor and gets yaw, waits 1 second, then gets that
-     * value as double.
-     */
-    public void resetRotation() {
-        Pigeon2 pigeon2 = new Pigeon2(9);
-        swerveDrive.resetOdometry(
-                new Pose2d(
-                        swerveDrive.getPose().getTranslation(),
-                        new Rotation2d(
-                                pigeon2.getYaw(true).waitForUpdate(1).getValueAsDouble() * (Math.PI / 180f))));
-        pigeon2.close();
+    public static void resetRotation() {
+        pigeon.reset();
+        resetOdometry(swerveDrive.getPose());
+        rotationPid.reset(0);
     }
 
     /**
@@ -305,7 +289,7 @@ public class DriveSubsystem extends IronSubsystem {
      * 
      * @param pose2d The pose to reset the odometry to.
      */
-    public void resetOdometry(Pose2d pose2d) {
+    public static void resetOdometry(Pose2d pose2d) {
         swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(0)));
     }
 

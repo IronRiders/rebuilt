@@ -4,112 +4,119 @@
 
 package org.ironriders.core;
 
-import edu.wpi.first.cameraserver.CameraServer;
+import org.ironriders.drive.DriveSubsystem;
+import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.vision.VisionSubsystem;
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-/**
- * The methods in this class are called automatically corresponding to each
- * mode, as described in the TimedRobot documentation. If you change the name of
- * this class or the package after creating this project, you must also update
- * the Main.java file in the project.
- */
 public class Robot extends TimedRobot {
-
-    private final RobotContainer robotContainer;
 
     private Command autonomousCommand;
 
-    /**
-     * Runs when the robot starts.
-     *
-     * <ol>
-     * <li>Initializes Robot Container
-     * <li>Starts web server at port 5800
-     * <li>Starts automatic capture on camera server
-     * </ol>
-     */
+    private final RobotContainer robotContainer;
+
     public Robot() {
         robotContainer = new RobotContainer();
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-        CameraServer.startAutomaticCapture();
+
+        SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     }
 
-    /**
-     * Runs periodically, <em>only</em> calls {@link CommandScheduler#getInstance()}
-     * with the .run()
-     * method.
-     */
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        SmartDashboard.putData("Command Schedule", CommandScheduler.getInstance());
     }
 
     @Override
-    public void teleopPeriodic() {
-    } // Make it stop yelling at me
+    public void disabledInit() {
+    }
 
-    /**
-     * If you start in autonomous mode, this is the first method that runs. Calls
-     * {@link Robot#generalInit()} for startup functions, has some basic autonomous
-     * logic that calls
-     * {@link RobotContainer#schedule()} on
-     * {@link RobotContainer#getAutonomousCommand()}.
-     */
+    @Override
+    public void disabledPeriodic() {
+    }
+
+    @Override
+    public void disabledExit() {
+    }
+
     @Override
     public void autonomousInit() {
-        generalInit();
 
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(autonomousCommand);
         }
+
+        generalInit();
     }
 
-    /** Only calls {@link Robot#generalInit()}, no other logic. */
+    @Override
+    public void autonomousPeriodic() {
+    }
+
+    @Override
+    public void autonomousExit() {
+    }
+
     @Override
     public void teleopInit() {
+        if (autonomousCommand != null) {
+
+            autonomousCommand.cancel();
+        }
+
         generalInit();
     }
 
-    /** Only calls {@link Robot#generalInit()}, no other logic. */
     @Override
-    public void simulationInit() {
-        generalInit();
+    public void teleopPeriodic() {
     }
 
-    /** Only calls {@link Robot#generalInit()}, no other logic. */
     @Override
     public void teleopExit() {
-        generalInit();
     }
 
-    /** Only calls {@link Robot#generalInit()}, no other logic. */
     @Override
     public void testInit() {
         CommandScheduler.getInstance().cancelAll();
+        generalInit();
     }
 
-    /**
-     * Initialization that applies to autonomous and teleop. Contains startup
-     * methods for various parts of the robot, not part of WPILib. Created because
-     * we were tired of trying to keep all the startup functions updated for both
-     * startup methods.
-     */
-    private void generalInit() {
-        if (autonomousCommand != null) {
-            autonomousCommand.cancel();
-            autonomousCommand = null;
-        }
-        System.out.println("Starting Robot...");
-        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+    @Override
+    public void testPeriodic() {
+    }
 
-        TargetingControl.init();
+    @Override
+    public void testExit() {
+    }
+
+    @Override
+    public void simulationInit() {
+        PhotonCamera.setVersionCheckEnabled(false); // Silence camera not found warnings.
+
+        // teleport to the center of the field on startup
+        DriveSubsystem.getSwerveDrive().getMapleSimDrive().orElseThrow().setSimulationWorldPose(FieldPositions.Field.CENTER);
+
+        DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
+
+        generalInit();
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        VisionSubsystem.visionSim.update(DriveSubsystem.getSwerveDrive().field.getRobotPose());
+    }
+
+    private void generalInit() {
     }
 }

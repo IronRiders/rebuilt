@@ -49,6 +49,7 @@ public class InterpolatingMap<K extends Number, V extends Number> {
      * @param key The key.
      * @return The value associated with the given key.
      */
+    @SuppressWarnings("null")
     public V get(K key) {
         V val = map.get(key);
         if (val == null) {
@@ -112,8 +113,10 @@ public class InterpolatingMap<K extends Number, V extends Number> {
      * be interpolated. If the value is greater that the greatest value or less than
      * the least, will return an Optional.empty().
      */
+    @SuppressWarnings("null")
     public Optional<List<K>> getKeysByValue(V value) {
         List<Entry<K, V>> entriesList = map.entrySet().stream().sorted(new Comparator<Entry<K, V>>() {
+            @SuppressWarnings("null")
             @Override
             // Sort by values.
             public int compare(Entry<K, V> a, Entry<K, V> b) {
@@ -126,6 +129,7 @@ public class InterpolatingMap<K extends Number, V extends Number> {
         }).toList();
 
         List<K> keysList = entriesList.stream().filter(new Predicate<Entry<K, V>>() {
+            @SuppressWarnings("null")
             public boolean test(Entry<K, V> entry) {
                 return entry.getValue().doubleValue() == value.doubleValue();
             };
@@ -139,21 +143,25 @@ public class InterpolatingMap<K extends Number, V extends Number> {
                     Entry<K, V> a = entriesList.get(i);
                     Entry<K, V> b = entriesList.get(i + 1);
 
+                    @SuppressWarnings("null")
                     double va = a.getValue().doubleValue();
+                    @SuppressWarnings("null")
                     double vb = b.getValue().doubleValue();
 
+                    @SuppressWarnings("null")
                     double ka = a.getKey().doubleValue();
+                    @SuppressWarnings("null")
                     double kb = b.getKey().doubleValue();
 
                     if (Utils.inRange(va, vb, value.doubleValue())) {
                         double t = (value.doubleValue() - va) / (vb - va);
 
-                        @SuppressWarnings("unchecked")
+                        @SuppressWarnings({ "unchecked", "null" })
                         double interpolatedKey = (double) interpolator.interpolate(
                                 VfromDouble(ka, (Class<V>) a.getValue().getClass()),
                                 VfromDouble(kb, (Class<V>) a.getValue().getClass()), t);
 
-                        @SuppressWarnings("unchecked")
+                        @SuppressWarnings({ "unchecked", "null" })
                         K resultKey = KfromDouble(interpolatedKey, (Class<K>) a.getKey().getClass());
 
                         return Optional.of(List.of(resultKey));

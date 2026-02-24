@@ -1,14 +1,20 @@
 package org.ironriders.vision;
 
-import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.lib.Utils;
+import org.ironriders.lib.VisionCamera;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -16,63 +22,97 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * Subsystem for vision processing using PhotonVision and AprilTags.
+ * Subsystem for doing machine vision and calculating location based on that.
  */
 public class VisionSubsystem extends IronSubsystem {
-    private final VisionCommands commands = new VisionCommands(this);
+    public enum TagInvalidReason {
+        NO_SKEW,
+        TOO_DISTANT,
+        TOO_CLOSE
+    }
 
-    private PhotonCamera camera = new PhotonCamera(VisionConstants.VISION_CAMERA);
-    private PIDController visPidController = new PIDController(VisionConstants.VISION_P, VisionConstants.VISION_I,
-            VisionConstants.VISION_D);
-    private final PhotonPoseEstimator poseEstimator;
+    private String debugString;
 
-    private List<PhotonTrackedTarget> targets;
-    private List<PhotonPipelineResult> results;
+    public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-    double skew;
-    double lastSkew = -9999;
-
-    public static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static VisionSystemSim visionSim = new VisionSystemSim("main");
 
     public VisionSubsystem() {
-        try {
-            fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-        } catch (UncheckedIOException e) {
-            reportError("Could not load apriltag layout!");
-            e.printStackTrace();
+        /**
+         * If we are simulating, add the cameras to the photonsim.
+         */
+        if (VisionConstants.CAMERA_MODE == VisionConstants.CameraMode.SIM) {
+
+            visionSim.addAprilTags(tagLayout);
+
+            SimCameraProperties cameraProp = new SimCameraProperties();
+
+            cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(70));
+
+            // cameraProp.setCalibError(4, 0.1);
+            cameraProp.setCalibError(0.25, 0.08);
+
+            cameraProp.setFPS(40);
+
+            cameraProp.setAvgLatencyMs(35);
+            cameraProp.setLatencyStdDevMs(5);
+            final AtomicInteger i = new AtomicInteger(1);
+
+            VisionConstants.CAMERAS.stream().forEach((camera) -> {
+                PhotonCameraSim cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), cameraProp);
+
+                cameraSim.enableRawStream(true);
+                cameraSim.enableProcessedStream(true);
+
+                cameraSim.enableDrawWireframe(true);
+
+                visionSim.addCamera(cameraSim, camera.getOffset());
+
+                System.out.printf(
+                        "Camera %s's processed stream is at http://localhost:118%d, it's raw stream is at http://localhost:118%d\n",
+                        camera.getSimpleName(), i.get() * 2, ((i.get() * 2) - 1));
+                System.out.println(camera.toString());
+                i.getAndIncrement();
+            });
         }
-        poseEstimator = new PhotonPoseEstimator(
-                fieldLayout,
-                VisionConstants.CAMERA_OFFSET);
+    }
+
+    @Override
+    public void periodic() {
+        // for every camera...
+        VisionConstants.CAMERAS.parallelStream().forEach((camera) -> {
+            camera.updateResultBuffer();
+
+            if (!camera.seesTargets()) {
+                return; // We don't see any tags, give up.
+            }
+
+            // estimate the pose
+            estimateRobotPose(camera);
+        });
     }
 
     /**
-     * Estimates the standard deviation of a given position based on the number of
-     * tags.
-     * 
-     * @param pose    The estimated {@link EstimatedRobotPose robot position}.
-     * @param targets The list of tracked targets used for the estimation.
-     * @return A vector representing the estimated standard deviation in the
-     *         position.
+     * Try to estimate how much we should trust the opinion of this camera. Higher
+     * numbers mean less trust.
      */
-    public Vector<N3> estimateStdDevVector(EstimatedRobotPose pose, List<PhotonTrackedTarget> targets) {
+    public Vector<N3> estimateStdDevVector(VisionCamera camera) {
         double xyStdDev;
         double thetaStdDev;
 
-        double avgDistance = pose.targetsUsed.parallelStream()
+        double avgDistance = camera.getTargets().stream()
                 .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
                 .average()
                 .orElse(-1);
 
         // TODO: These numbers are mostly arbitrary.
-        if (pose.targetsUsed.size() > 1) { // Multi target
+        if (camera.getTargets().size() > 1) { // Multi target
             xyStdDev = 0.02 + (avgDistance * 0.03);
             thetaStdDev = Math.toRadians(1 + avgDistance);
         } else { // Single Target
@@ -80,7 +120,7 @@ public class VisionSubsystem extends IronSubsystem {
             thetaStdDev = Math.toRadians(10 + avgDistance * 5); // Really don't trust single tag rotation
         }
 
-        double ambiguity = targets.parallelStream()
+        double ambiguity = camera.getTargets().stream()
                 .mapToDouble(t -> t.getPoseAmbiguity())
                 .average()
                 .orElse(Double.POSITIVE_INFINITY) + 1d; // Make sure we really don't like this pose if the optional is
@@ -90,119 +130,152 @@ public class VisionSubsystem extends IronSubsystem {
         xyStdDev *= (ambiguity);
         thetaStdDev *= (ambiguity * 2.0);
 
+        // add camera weighting. Inverted because higher numbers are less trusting.
+        xyStdDev += -camera.getWeight() * VisionConstants.WEIGHT_SCALE;
+        thetaStdDev += -camera.getWeight() * VisionConstants.WEIGHT_SCALE;
+
         return VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev);
     }
 
     /**
-     * Estimates the robot's pose using the given {@link PhotonPipelineResult
-     * PhotonVision result}.
-     * 
-     * @param result The PhotonVision pipeline result containing detected targets.
+     * Try to estimate the position of the robot using the visible tags.
+     * This function should be called for every camera.
      */
-    public void estimateRobotPose(PhotonPipelineResult result) {
-        EstimatedRobotPose newPose;
+    public void estimateRobotPose(VisionCamera camera) {
+        List<PhotonTrackedTarget> validTargets = new ArrayList<PhotonTrackedTarget>();
+        Map<PhotonTrackedTarget, String> tagStrings = new HashMap<PhotonTrackedTarget, String>();
 
-        if (result.getTargets().size() > 1) {
-            newPose = poseEstimator.estimateCoprocMultiTagPose(result).orElse(null);
+        // for every target (tag)...
+        for (PhotonTrackedTarget target : camera.getTargets()) {
+            makeDebugString(target);
+
+            // get the skew (the angle off of straight on)
+            Double skew = calculateSkew(target);
+
+            // get the distance from the camera to the target.
+            double distance = target.getBestCameraToTarget().getTranslation().getNorm();
+
+            String distanceString = String.format("%03.2f", distance);
+
+            // -- Checks to make sure that tag is valid --
+
+            // if we are too normal to the tag, we can't trust the result. this is for
+            // complicated reasons involving how photon vision sees tags. ask Issy in
+            // discord if you really need to know (you probably don't)
+            if (Math.abs(skew) < VisionConstants.SKEW_THROWAWAY_THRESHOLD) {
+                addBadTagToString(TagInvalidReason.NO_SKEW, String.valueOf(skew));
+                tagStrings.put(target, debugString);
+
+                continue;
+            }
+
+            // the distance is negative, something has gone wrong.
+            if (distance < 0) {
+                addBadTagToString(TagInvalidReason.TOO_CLOSE, distanceString);
+                tagStrings.put(target, debugString);
+
+                continue;
+            }
+
+            // if the distance is too great, we can't trust that the tag will be read
+            // reliably, so just ignore it.
+            if (distance > VisionConstants.TARGET_DISTANCE_THROWAWAY_THRESHOLD) {
+                addBadTagToString(TagInvalidReason.TOO_DISTANT, distanceString);
+                tagStrings.put(target, debugString);
+
+                continue;
+            }
+
+            addGoodTagToString(distanceString);
+            tagStrings.put(target, debugString);
+
+            // tag is valid! yay :3
+            validTargets.add(target);
+        }
+
+        List<PhotonTrackedTarget> invalidTargets = camera.getTargets();
+        invalidTargets.removeAll(validTargets);
+
+        publish("Invalid targets",
+                invalidTargets.stream().map(t -> String.valueOf(t.fiducialId)).collect(Collectors.joining(" | ")));
+
+        publish("Valid targets:",
+                validTargets.stream().map(PhotonTrackedTarget::getFiducialId).map(i -> String.valueOf(i))
+                        .collect(Collectors.joining(" | ")));
+
+        publish(String.format("Tag data for camera: %s", camera.getSimpleName()),
+                tagStrings.values().stream().sorted().collect(Collectors.joining(" | ")));
+
+        // construct a new result
+        PhotonPipelineResult validResult = new PhotonPipelineResult(camera.getResult().metadata,
+                validTargets, camera.getResult().getMultiTagResult());
+
+        EstimatedRobotPose estimatedPose;
+
+        if (camera.getTargets().size() > 1) {
+            // if we have more than one tag, do multi-tag estimation,
+            estimatedPose = camera.getEstimator().estimateCoprocMultiTagPose(validResult).orElse(null);
+        } else if (camera.getTargets().size() == 1) {
+            // if we only have one, do single tag.
+            estimatedPose = camera.getEstimator().estimateLowestAmbiguityPose(validResult).orElse(null);
         } else {
-            newPose = poseEstimator.estimateLowestAmbiguityPose(result).orElse(null); // Because a single tag is worse.
+            // otherwise, we must not have any, exit.
+            return;
         }
 
-        if (newPose == null) {
+        if (estimatedPose == null) {
             // Something has gone wrong, give up and try again next tick.
-            reportWarning("Giving up in pose estimation!");
             return;
         }
 
-        skew = result.getBestTarget().getBestCameraToTarget().getRotation().getZ() * 180.0 / Math.PI;
-        skew -= 90;
-
-        publish("skew", skew);
-        publish("last skew", lastSkew);
-
-        if (Math.abs(lastSkew - skew) > 50 && lastSkew != -9999) {
-            reportWarning("Skew Jump");
+        // Throw away the new pose if it is too far away.
+        if (estimatedPose.estimatedPose.getTranslation()
+                .getDistance(Utils.expandPose2d(DriveSubsystem.getPose())
+                        .getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
+                && DriverStation.isTeleopEnabled()) {
             return;
         }
 
-        // Throwaway the pose if it is too normal to us or is too far away.
-        if (Math.abs(skew) < VisionConstants.SKEW_THROWAWAY_THRESHOLD
-        /*
-         * || Utils.getPoseDifference(Utils.flattenPose3d(newPose.estimatedPose),
-         * DriveSubsystem.getSwerveDrive().getPose()).getNorm() >
-         * Vision.DISTANCE_THROWAWAY_THRESHOLD
-         */) {
-            reportWarning("Skew Throwaway");
-            return;
-        }
-
-        lastSkew = skew;
-
-        // Actually add the estimate
-        DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(estimateStdDevVector(newPose, targets));
-        DriveSubsystem.getSwerveDrive().addVisionMeasurement(newPose.estimatedPose.toPose2d(),
+        // Actually add the estimate.
+        DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(estimateStdDevVector(camera));
+        DriveSubsystem.getSwerveDrive().addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(),
                 Timer.getFPGATimestamp());
     }
 
-    /**
-     * Calculates the distance to a given target using the camera's pitch and the
-     * target's pitch.
-     * 
-     * @param target The tracked target for which to calculate the distance.
-     * @return The estimated distance to the target in meters.
-     */
-    public double getDistance(PhotonTrackedTarget target) {
-        // *2, as the offset is from the center of the robot, and this wants the
-        // distance
-        // from the floor
-        return PhotonUtils.calculateDistanceToTargetMeters(
-                VisionConstants.CAMERA_OFFSET.getZ() * 2,
-                fieldLayout.getTagPose(target.getFiducialId())
-                        .orElse(new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0))).getZ(),
-                VisionConstants.CAMERA_OFFSET.getRotation().getY(), // Pitch
-                target.getPitch());
+    // debugging helper functions
+    public void makeDebugString(PhotonTrackedTarget target) {
+        debugString = "Tag " + String.valueOf(target.getFiducialId()) + ": ";
     }
 
-    /**
-     * Gets the target angles (yaw, pitch, and skew) for a given tracked target.
-     * 
-     * @param target The tracked target for which to get the angles.
-     * @return An array containing the yaw, pitch, and skew angles of the target (in
-     *         that order).
+    public void addBadTagToString(TagInvalidReason reason, String extra) {
+        if (debugString != null) {
+            debugString += "BAD: " + reason.toString();
+            if (extra != null) {
+                debugString += " | " + extra;
+            }
+        }
+    }
+
+    public void addGoodTagToString(String extra) {
+        if (debugString != null) {
+            debugString += "GOOD: ";
+            if (extra != null) {
+                debugString += " | " + extra;
+            }
+        }
+    }
+
+    /*
+     * Calculate the skew for a tag
+     */
+    public double calculateSkew(PhotonTrackedTarget target) {
+        return (target.getBestCameraToTarget().getRotation().getZ() * 180.0 / Math.PI) - 180;
+    }
+
+    /*
+     * Get a list of the angles of a tag
      */
     public Double[] getTargetAngles(PhotonTrackedTarget target) {
-        return new Double[] { target.getYaw(), target.getPitch(), target.getSkew() };
-    }
-
-    @Override
-    public void periodic() {
-        results = camera.getAllUnreadResults();
-
-        if (results.isEmpty()) {
-            return; // Immediately give up if there is no new work to do.
-        }
-
-        PhotonPipelineResult result = results.get(results.size() - 1); // We only care about the most recent reading.
-
-        publish("Sees target?", result.hasTargets());
-
-        if (!result.hasTargets() || result == null) {
-            return; // We don't see any tags, give up.
-        }
-
-        targets = result.getTargets();
-
-        if (result != null) {
-            estimateRobotPose(result);
-        }
-    }
-
-    /**
-     * Gets the {@link VisionCommands commands} for this subsystem.
-     * 
-     * @return The VisionCommands instance associated with this subsystem.
-     */
-    public VisionCommands getCommands() {
-        return commands;
+        return new Double[] { target.getYaw(), target.getPitch(), calculateSkew(target) };
     }
 }

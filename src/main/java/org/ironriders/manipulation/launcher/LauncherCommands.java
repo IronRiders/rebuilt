@@ -1,7 +1,5 @@
 package org.ironriders.manipulation.launcher;
 
-import static org.ironriders.manipulation.launcher.LauncherConstants.KICK_TIME;
-
 import org.ironriders.core.RobotContainer;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;

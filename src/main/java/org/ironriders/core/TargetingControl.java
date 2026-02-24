@@ -117,7 +117,7 @@ public class TargetingControl {
         switch (request.r_priorityMode) {
             default:
             case DRIVER_PRIORITY:
-                DriveSubsystem.setPIDControl(false);
+                DriveSubsystem.setPIDRotationControl(false);
                 LauncherSubsystem.currentState = State.IDLE;
 
                 break;
@@ -125,7 +125,7 @@ public class TargetingControl {
 
             case ALIGN_PRIORITY:
             case LAUNCHER_PRIORITY:
-                DriveSubsystem.setPIDControl(true);
+                DriveSubsystem.setPIDRotationControl(true);
                 LauncherSubsystem.currentState = State.READY;
 
                 break;
@@ -133,7 +133,7 @@ public class TargetingControl {
         }
 
         DogLog.log("TargetingValues",
-                "PID Control: " + String.valueOf(DriveSubsystem.PIDAlign) + " LauncherTargetMode: "
+                "PID Control: " + String.valueOf(DriveSubsystem.PIDRotation) + " LauncherTargetMode: "
                         + request.r_launcherTargetingMode.toString() + " AlignTargetMode: "
                         + String.valueOf(request.r_alignTargetingMode));
     }

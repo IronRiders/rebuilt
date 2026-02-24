@@ -7,7 +7,6 @@ package org.ironriders.core;
 import java.util.Optional;
 
 import org.ironriders.climber.ClimberCommands;
-import org.ironriders.climber.ClimberConstants;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
@@ -21,35 +20,24 @@ import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
-import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristSubsystem;
-import org.ironriders.vision.VisionCommands;
 import org.ironriders.vision.VisionSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import dev.doglog.DogLog;
-import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-enum Config {
-    PRIMARY_DRIVER, PRIMARY_DRIVER_WITH_BOOST, SECONDARY_DRIVER_WITH_BOOST;
-}
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -82,7 +70,6 @@ public class RobotContainer {
     public static final ClimberCommands climberCommands = climberSubsystem.getCommands();
 
     public static final VisionSubsystem visionSubsystem = new VisionSubsystem();
-    public static final VisionCommands visionCommands = visionSubsystem.getCommands();
 
     public static Zone passingZone = new Zone(ZoneType.PASSING);
     public static Zone scoringZone = new Zone(ZoneType.SCORING);
@@ -91,39 +78,25 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    private final CommandXboxController primaryController = new CommandXboxController(
+    public static final CommandXboxController primaryController = new CommandXboxController(
             DriveConstants.CONTROLLER_PRIMARY_PORT);
-    private final CommandGenericHID secondaryController = new CommandJoystick(
-            DriveConstants.CONTROLLER_SECONDARY_PORT);
 
     public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
-            launcherCommands, wristCommands, climberCommands, visionCommands, primaryController.getHID());
+            launcherCommands, wristCommands, climberCommands, primaryController.getHID());
 
-    private boolean targetingHub = false;
-    private boolean targetingPassing = false;
+    private static boolean targetingHub = false;
+    private static boolean targetingPassing = false;
 
-    private Command fireCommand = robotCommands.fire();
-
-    /**
-     * The container for the robot. Contains subsystems, IO devices, and commands.
-     * <hr />
-     * builds the autos using
-     * {@link com.pathplanner.lib.auto.AutoBuilder#buildAutoChooser()
-     * buildAutoChooser()}, posts the auto selection to
-     * {@link SmartDashboard#putData(String, SendableChooser) SmartDashboard}.
-     */
     public RobotContainer() {
-        // Configure the trigger bindings
-        configureBindings();
-
-        DogLog.setOptions(new DogLogOptions().withCaptureDs(true));
-        DogLog.setPdh(new PowerDistribution());
-
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Select", autoChooser);
 
+        DriverStation.silenceJoystickConnectionWarning(true);
+
         passingZone = new Zone(ZoneType.PASSING);
         scoringZone = new Zone(ZoneType.SCORING);
+
+        configureBindings();
     }
 
     public static Optional<Zone> getCurrentZone() {
@@ -136,70 +109,35 @@ public class RobotContainer {
         return Optional.empty();
     }
 
-    private void revertToSafeDefaults() {
+    public static void revertToSafeDefaults() {
         targetingHub = false;
         targetingPassing = false;
         TargetingControl.revertToSafeDefaults();
     }
 
-    private void periodic() {
-        TargetingControl.update();
-
-        if (Math.abs(primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
-            revertToSafeDefaults();
-        }
-    }
-
-    /**
-     * Configures primary & secondary {@linkplain CommandGenericHID controllers}
-     * bindings to commands. This also configures the default driving (controller
-     * sticks)
-     */
     private void configureBindings() {
-        DriverStation.silenceJoystickConnectionWarning(true);
+        driveSubsystem.setDefaultCommand(Commands.parallel(
+                robotCommands
+                        .driveTeleop(
+                                () -> Utils.controlCurve(primaryController.getLeftY(),
+                                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                                () -> Utils.controlCurve(primaryController.getLeftX(),
+                                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                                () -> Utils.controlCurve(primaryController.getRightX(),
+                                        DriveConstants.ROTATION_CONTROL_EXPONENT,
+                                        DriveConstants.ROTATION_CONTROL_DEADBAND))
+                        .withName("Drive Teleop")));
 
-        // See: https://tinyurl.com/yua72bn2
-
-        // --- DRIVE CONTROLS ---
-        driveSubsystem.setDefaultCommand(Commands.parallel(robotCommands.driveTeleop(
-                () -> Utils.controlCurve(primaryController.getLeftY(),
-                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> Utils.controlCurve(primaryController.getLeftX(),
-                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                () -> Utils.controlCurve(primaryController.getRightX(),
-                        DriveConstants.ROTATION_CONTROL_EXPONENT,
-                        DriveConstants.ROTATION_CONTROL_DEADBAND)),
-                Commands.run(() -> periodic())));
-
-        primaryController.rightBumper().onTrue(Commands.runOnce(
-                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP +
-                        3)))
-                .onFalse(Commands.runOnce(() -> DriveSubsystem
-                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP)));
-
-        primaryController.leftBumper().onTrue(Commands.runOnce(
-                () -> DriveSubsystem.setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP -
-                        2)))
-                .onFalse(Commands.runOnce(() -> DriveSubsystem
-                        .setSpeedMax(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP)));
-
-        primaryController.rightTrigger(triggerThreshold)
-                .onTrue(intakeCommands.set(IntakeConstants.State.INTAKE))
-                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
-
-        // TODO: do this in a better way
         primaryController.a().onTrue(
                 new InstantCommand(() -> {
                     targetingHub = !targetingHub;
                     if (targetingHub) {
                         targetingPassing = false;
                         TargetingControl.targetHubInternal();
-                        CommandScheduler.getInstance().schedule(fireCommand);
                     } else {
                         revertToSafeDefaults();
-                        fireCommand.cancel();
                     }
                 }));
 
@@ -209,10 +147,8 @@ public class RobotContainer {
                     if (targetingPassing) {
                         targetingHub = false;
                         TargetingControl.targetPassingInternal();
-                        CommandScheduler.getInstance().schedule(fireCommand);
                     } else {
                         revertToSafeDefaults();
-                        fireCommand.cancel();
                     }
                 }));
 
@@ -236,10 +172,15 @@ public class RobotContainer {
                         }))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-        primaryController.povUp().onTrue(climberCommands.set(ClimberConstants.State.MAX));
+        primaryController.leftBumper().onTrue(Commands.runOnce(() -> {
+            CommandScheduler.getInstance().schedule(DriveSubsystem
+                    .pathfindThenFlipPathIfBetterThenFollow(DriveSubsystem.loadPath("Center Sweep").get()));
+        }));
 
-        primaryController.povDown().onTrue(climberCommands.set(ClimberConstants.State.CLIMBED));
-
+        // Line up to score
+        primaryController.rightBumper().onTrue(Commands.runOnce(() -> {
+            CommandScheduler.getInstance().schedule(DriveSubsystem.pathfindToPose(scoringZone.centerPoint()));
+        }));
     }
 
     /**

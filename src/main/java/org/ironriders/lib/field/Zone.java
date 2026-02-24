@@ -2,14 +2,12 @@ package org.ironriders.lib.field;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.Utils;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;

@@ -27,13 +27,13 @@ public abstract class IronSubsystem extends SubsystemBase {
     private final String dashboardPrefix = "Subsystems/" + diagnosticName + "/";
     private final String messagePrefix = diagnosticName + ": ";
 
-    private static long startupTime;
+    private long startupTime;
 
     public IronSubsystem() {
         startupTime = System.nanoTime();
     }
 
-    public static String getThreadTimeString() {
+    public String getThreadTimeString() {
         String timeStr = Objects.toString(
                 TimeUnit.MILLISECONDS.convert(System.nanoTime() - startupTime, TimeUnit.NANOSECONDS)
                         / 1000d,
@@ -42,7 +42,7 @@ public abstract class IronSubsystem extends SubsystemBase {
         return "[" + timeStr + "] ";
     }
 
-    public static long getThreadTime() {
+    public long getThreadTime() {
         return System.nanoTime() - startupTime;
     }
 

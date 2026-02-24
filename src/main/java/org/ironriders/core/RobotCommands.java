@@ -14,7 +14,6 @@ import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristConstants;
-import org.ironriders.vision.VisionCommands;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,13 +32,11 @@ public class RobotCommands {
     private final LauncherCommands launcherCommands;
     private final WristCommands wristCommands;
     private final ClimberCommands climberCommands;
-    private final VisionCommands visionCommands;
 
     private final GenericHID controller;
 
     public RobotCommands(DriveCommands driveCommands, IndexerCommands indexerCommands, IntakeCommands intakeCommands,
             LauncherCommands launcherCommands, WristCommands wristCommands, ClimberCommands climberCommands,
-            VisionCommands visionCommands,
             GenericHID controller) {
         this.driveCommands = driveCommands;
         this.indexerCommands = indexerCommands;
@@ -47,7 +44,6 @@ public class RobotCommands {
         this.launcherCommands = launcherCommands;
         this.wristCommands = wristCommands;
         this.climberCommands = climberCommands;
-        this.visionCommands = visionCommands;
 
         this.controller = controller;
     }

@@ -183,6 +183,9 @@ public class FieldPositions {
     public class Field {
         public static final double FIELD_LENGTH = 651.22;
         public static final double FIELD_WIDTH = 317.69;
+
+        public static final Pose2d CENTER_INCHES = new Pose2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2, new Rotation2d());
+        public static final Pose2d CENTER = Utils.inchesToMeters(CENTER_INCHES);
     }
 
     /** Zones on the field, measurements in meters */

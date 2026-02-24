@@ -17,7 +17,7 @@ public class DriveCommands {
         }
 
         /**
-         * Command to drive the robot a suppliier.
+         * Command to drive the robot given a supplier.
          * 
          * @param translation   A {@link Supplier} of {@link Translation2d}, the
          *                      translation to drive the robot in.
