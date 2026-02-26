@@ -63,13 +63,13 @@ public class VisionConstants {
 
                 CAMERAS.add(new VisionCamera("launcher-hood", new Transform3d(
                         new Translation3d(
-                                0.25, // forward (meters)
+                                0, // forward (meters)
                                 0, // left (meters)
-                                0.618 // up (meters)
+                                0.498 // up (meters)
                         ),
                         new Rotation3d(
                                 0.0, // roll
-                                Math.toRadians(5), // pitch
+                                -Math.toRadians(20), // pitch
                                 Math.PI // yaw
                         ))));
 

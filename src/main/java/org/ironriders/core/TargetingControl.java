@@ -3,9 +3,6 @@ package org.ironriders.core;
 import static org.ironriders.lib.BallisticsUtils.getPosition;
 import static org.ironriders.lib.BallisticsUtils.inRange;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.DriverRequest;
@@ -37,17 +34,6 @@ public class TargetingControl {
             AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
 
     private static DriverRequest lastDriverRequest = request;
-
-    private static List<Pose2d> points = new ArrayList<Pose2d>();
-
-    public static void init() {
-        for (Pose2d point : FieldPositions.Zones.PASSING_POINTS) {
-            points.add(FieldPositions.prepareMetersPose(point));
-        }
-
-        RobotContainer.scoringZone.printPolygon();
-        RobotContainer.passingZone.printPolygon();
-    }
 
     public static void receiveRequest(DriverRequest driverRequest) {
         lastDriverRequest = request;
@@ -142,7 +128,7 @@ public class TargetingControl {
         switch (request.r_alignTargetingMode) {
             default:
             case LAUNCHER:
-                return Utils.getAngleToPoint(DriveSubsystem.getPose(), Utils.flattenPose3d(launcherTarget));
+                return Utils.getAngleToPoint(DriveSubsystem.getPose(), Utils.flattenPose3d(launcherTarget)) + 180;
 
             case OUTPOST:
                 return 180;
@@ -159,7 +145,7 @@ public class TargetingControl {
                 return FieldPositions.get(ElementType.HUB);
 
             case PASSING:
-                Pose2d closest = getPosition().nearest(points);
+                Pose2d closest = getPosition().nearest(FieldPositions.Zones.PASSING_POINTS);
                 Pose2d bestPoint = closest;
 
                 if (!inRange(Utils.expandPose2d(bestPoint))) {

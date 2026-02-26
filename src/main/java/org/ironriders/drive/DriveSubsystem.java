@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -91,7 +92,7 @@ public class DriveSubsystem extends IronSubsystem {
                 swerveDrive::resetOdometry,
                 swerveDrive::getRobotVelocity,
                 (speeds, feedforwards) -> {
-                    speeds.omegaRadiansPerSecond = rotationPid.calculate(getRotation());
+                    // speeds.omegaRadiansPerSecond = rotationPid.calculate(getRotation());
                     swerveDrive.drive(speeds);
                 },
                 DriveConstants.HOLONOMIC_CONFIG,
@@ -211,7 +212,21 @@ public class DriveSubsystem extends IronSubsystem {
      * Command to pathfind to a given pose.
      */
     public static Command pathfindToPose(Pose2d target) {
-        pathfindingCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
+        return pathfindingCommand;
+    }
+
+    /**
+     * Command to pathfind to a given pose and face a target.
+     * 
+     * @param pose   The pose to pathfind to.
+     * @param target The target to face.
+     */
+    public static Command pathfindToPoseAndAimAt(Pose2d pose, Pose2d target) {
+        pathfindingCommand = AutoBuilder.pathfindToPose(
+                new Pose2d(pose.getTranslation(), new Rotation2d(Utils.getAngleToPointRadians(pose, target) + Math.PI)),
+                DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
+        
         return pathfindingCommand;
     }
 
@@ -219,7 +234,7 @@ public class DriveSubsystem extends IronSubsystem {
      * Command to pathfind to the start of a given path then follow that path.
      */
     public static Command pathfindThenFollowPath(PathPlannerPath path) {
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
@@ -229,7 +244,7 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public static Command pathfindThenFollowFlippedPath(PathPlannerPath path) {
         path = path.flipPath();
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
@@ -246,7 +261,7 @@ public class DriveSubsystem extends IronSubsystem {
             path = path.flipPath();
         }
 
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
@@ -255,6 +270,7 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public static void cancelPathfind() {
         pathfindingCommand.cancel();
+        rotationPid.reset(getRotation());
     }
 
     public static Optional<PathPlannerPath> loadPath(String fileName) {

@@ -4,6 +4,7 @@
 
 package org.ironriders.core;
 
+import java.text.FieldPosition;
 import java.util.Optional;
 
 import org.ironriders.climber.ClimberCommands;
@@ -15,7 +16,9 @@ import org.ironriders.lib.DriverRequest;
 import org.ironriders.lib.DriverRequest.AlignTargetingMode;
 import org.ironriders.lib.DriverRequest.PriorityMode;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
+import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
@@ -179,7 +182,7 @@ public class RobotContainer {
 
         // Line up to score
         primaryController.rightBumper().onTrue(Commands.runOnce(() -> {
-            CommandScheduler.getInstance().schedule(DriveSubsystem.pathfindToPose(scoringZone.centerPoint()));
+            CommandScheduler.getInstance().schedule(DriveSubsystem.pathfindToPoseAndAimAt(scoringZone.centerPoint(), FieldPositions.get(ElementType.HUB).toPose2d()));
         }));
     }
 

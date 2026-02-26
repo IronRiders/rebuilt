@@ -1,5 +1,8 @@
 package org.ironriders.lib.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.Zone.ZoneType;
@@ -106,7 +109,7 @@ public class FieldPositions {
      * @return The prepared pose, in meters
      */
     private static Pose2d preparePose(Pose2d pose, boolean isMeters) {
-        boolean blue = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue;
+        boolean blue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
         if (blue) {
             if (!isMeters) {
@@ -160,9 +163,9 @@ public class FieldPositions {
     /** A position for the hub, Measurements in INCHES! */
     public class Hub {
         // Default red
-        public static final Pose3d HUB_TOP = new Pose3d(new Translation3d(182.11, 158.84, 72.00),
+        public static final Pose3d HUB_TOP = new Pose3d(new Translation3d(469.11, 158.84, 72.00),
                 new Rotation3d());
-        public static final Pose3d HUB_CENTER = new Pose3d(new Translation3d(182.11, 158.84, 44.25),
+        public static final Pose3d HUB_CENTER = new Pose3d(new Translation3d(469.11, 158.84, 44.25),
                 new Rotation3d());
     }
 
@@ -221,9 +224,17 @@ public class FieldPositions {
                 new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
-        public static final Pose2d[] PASSING_POINTS = {
+        public static final Pose2d[] PASSING_POINTS_ARRAY = {
                 new Pose2d((SCORING_ZONE_HEIGHT / 2), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
                 new Pose2d((SCORING_ZONE_HEIGHT / 2), 1.5, new Rotation2d()) };
+
+        public static final List<Pose2d> PASSING_POINTS = new ArrayList<>();
+
+        static {
+            for (Pose2d point : FieldPositions.Zones.PASSING_POINTS_ARRAY) {
+                PASSING_POINTS.add(FieldPositions.prepareMetersPose(point));
+            }
+        }
     }
 
     /**
