@@ -3,7 +3,6 @@ package org.ironriders.core;
 import java.util.function.DoubleSupplier;
 
 import org.ironriders.climber.ClimberCommands;
-import org.ironriders.climber.ClimberConstants;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerConstants;
@@ -33,6 +32,7 @@ public class RobotCommands {
     private final WristCommands wristCommands;
     private final ClimberCommands climberCommands;
 
+    @SuppressWarnings("unused")
     private final GenericHID controller;
 
     public RobotCommands(DriveCommands driveCommands, IndexerCommands indexerCommands, IntakeCommands intakeCommands,

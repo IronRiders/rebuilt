@@ -4,7 +4,6 @@
 
 package org.ironriders.core;
 
-import java.text.FieldPosition;
 import java.util.Optional;
 
 import org.ironriders.climber.ClimberCommands;
@@ -16,9 +15,9 @@ import org.ironriders.lib.DriverRequest;
 import org.ironriders.lib.DriverRequest.AlignTargetingMode;
 import org.ironriders.lib.DriverRequest.PriorityMode;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
-import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
