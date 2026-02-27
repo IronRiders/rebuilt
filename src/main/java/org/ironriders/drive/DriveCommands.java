@@ -4,6 +4,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,5 +68,63 @@ public class DriveCommands {
                         .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert),
                 () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_MAX_ANGULAR_TELEOP * invert,
                 () -> fieldRelative);
+    }
+
+    /**
+     * Command to pathfind to a given position.
+     */
+    public Command pathfindToPose(Pose2d target) {
+        return Commands.runOnce(() -> PathPlannerHelpers.pathfindToPose(target));
+    }
+
+    /**
+     * Command to pathfind to the start of a given path then follow that path.
+     */
+    public Command pathfindThenFollowPath(PathPlannerPath path) {
+        return Commands.runOnce(() -> PathPlannerHelpers.pathfindThenFollowPath(path));
+    }
+
+    /**
+     * Command to pathfind to the start of a given path then follow the flipped
+     * version of that path.
+     */
+    public Command pathfindThenFollowFlippedPath(PathPlannerPath path) {
+        return Commands.runOnce(() -> PathPlannerHelpers.pathfindThenFollowFlippedPath(path));
+    }
+
+    /**
+     * Command to figure out if the distance to the start point of the flipped
+     * version of the provided path is closer than the normal version, and if so
+     * follow the flipped version.
+     * 
+     * TODO: !Uses distance as the crow flies, not path distance to start point!
+     */
+    public Command pathfindThenFlipPathIfBetterThenFollow(PathPlannerPath path) {
+        return Commands.runOnce(() -> PathPlannerHelpers.pathfindThenFlipPathIfBetterThenFollow(path));
+    }
+
+    /**
+     * Command to pathfind to the start of a given path and then aim at a target.
+    */
+    public Command pathfindToPoseThenAimAt(Pose2d pose, Pose2d target) {
+        return Commands.runOnce(() -> PathPlannerHelpers.pathfindToPoseThenAimAt(pose, target));
+    }
+
+
+    /**
+     * Command to cancel the current pathfinding operation.
+     */
+    public Command cancelPathfind() {
+        return Commands.runOnce(() -> PathPlannerHelpers.cancelPathfind());
+    }
+
+    /** Command to reset the swerve drive's measured rotation. */
+    public Command resetRotation() {
+        return Commands.runOnce(() -> DriveSubsystem.resetRotation());
+    }
+
+    /** Command to reset the swerve drive's measured position and rotation. */
+    public Command resetOdometry() {
+        return Commands.runOnce(() -> DriveSubsystem.resetOdometry(new Pose2d()));
     }
 }

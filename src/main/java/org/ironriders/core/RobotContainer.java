@@ -9,6 +9,7 @@ import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
+import org.ironriders.drive.PathPlannerHelpers;
 import org.ironriders.lib.DriverRequest;
 import org.ironriders.lib.DriverRequest.AlignTargetingMode;
 import org.ironriders.lib.DriverRequest.PriorityMode;
@@ -34,7 +35,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -151,16 +151,13 @@ public class RobotContainer {
                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP)))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-        primaryController.leftBumper().onTrue(Commands.runOnce(() -> {
-            CommandScheduler.getInstance().schedule(DriveSubsystem
-                    .pathfindThenFlipPathIfBetterThenFollow(DriveSubsystem.loadPath("Center Sweep").get()));
-        }));
+        primaryController.leftBumper().onTrue(driveCommands
+                .pathfindThenFlipPathIfBetterThenFollow(PathPlannerHelpers.loadPath("Center Sweep").get()));
 
         // Line up to score
-        primaryController.rightBumper().onTrue(Commands.runOnce(() -> {
-            CommandScheduler.getInstance().schedule(DriveSubsystem.pathfindToPoseAndAimAt(scoringZone.centerPoint(),
-                    FieldPositions.get(ElementType.HUB).toPose2d()));
-        }));
+        primaryController.rightBumper().onTrue(
+                driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
+                        FieldPositions.get(ElementType.HUB).toPose2d()));
     }
 
     public Command buildAlignCommand(DriverRequest request) {

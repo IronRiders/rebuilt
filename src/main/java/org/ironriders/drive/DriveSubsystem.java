@@ -1,20 +1,16 @@
 package org.ironriders.drive;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ironriders.core.RobotContainer;
 import org.ironriders.core.TargetingControl;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
-import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -124,7 +119,7 @@ public class DriveSubsystem extends IronSubsystem {
         double leftMag = Math.hypot(RobotContainer.primaryController.getLeftX(),
                 RobotContainer.primaryController.getLeftY());
         if (leftMag > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
-            cancelPathfind();
+            commands.cancelPathfind();
         }
 
         publish("PID", rotationPid);
@@ -196,90 +191,6 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public static void setRotationGoalRad(double goal) {
         rotationPid.setGoal(goal);
-    }
-
-    /**
-     * Command to pathfind to a given pose.
-     *
-     * @param pose The pose to pathfind to.
-     *
-     */
-    public static Command pathfindToPose(Pose2d pose) {
-        pathfindingCommand = AutoBuilder.pathfindToPose(pose, DriveConstants.PATHFIND_CONSTRAINTS)
-                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
-        return pathfindingCommand;
-    }
-
-    /**
-     * Command to pathfind to a given pose and face a target.
-     * 
-     * @param pose   The pose to pathfind to.
-     * @param target The target to face.
-     */
-    public static Command pathfindToPoseAndAimAt(Pose2d pose, Pose2d target) {
-        pathfindingCommand = AutoBuilder.pathfindToPose(
-                new Pose2d(pose.getTranslation(), new Rotation2d(Utils.getAngleToPointRadians(pose, target) + Math.PI)),
-                DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
-
-        return pathfindingCommand;
-    }
-
-    /**
-     * Command to pathfind to the start of a given path then follow that path.
-     */
-    public static Command pathfindThenFollowPath(PathPlannerPath path) {
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
-                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
-        return pathfindingCommand;
-    }
-
-    /**
-     * Command to pathfind to the start of a given path then follow the flipped
-     * version of that path.
-     */
-    public static Command pathfindThenFollowFlippedPath(PathPlannerPath path) {
-        path = path.flipPath();
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
-                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
-        return pathfindingCommand;
-    }
-
-    /**
-     * Command to figure out if the distance to the start point of the flipped
-     * version of the provided path is closer than the normal version, and if so
-     * follow the flipped version.
-     * 
-     * TODO: !Uses distance as the crow flies, not path distance to start point!
-     */
-    public static Command pathfindThenFlipPathIfBetterThenFollow(PathPlannerPath path) {
-        if (Utils.distanceToPose2d(path.getPathPoses().get(0), getPose()) < Utils
-                .distanceToPose2d(path.flipPath().getPathPoses().get(0), getPose())) {
-            path = path.flipPath();
-        }
-
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
-                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
-        return pathfindingCommand;
-    }
-
-    /*
-     * Cancel the current pathfinding operation.
-     */
-    public static void cancelPathfind() {
-        if (pathfindingCommand.isScheduled()) {
-            pathfindingCommand.cancel();
-            rotationPid.reset(getRotation());
-        }
-    }
-
-    public static Optional<PathPlannerPath> loadPath(String fileName) {
-        try {
-            return Optional.of(PathPlannerPath.fromPathFile(fileName));
-        } catch (FileVersionException | IOException | ParseException e) {
-            System.out.printf("Error loading path %s: ", fileName);
-            e.printStackTrace();
-            return Optional.empty();
-        }
     }
 
     /** Fetch the DriveCommands instance */
