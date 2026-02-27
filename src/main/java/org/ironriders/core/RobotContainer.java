@@ -4,8 +4,6 @@
 
 package org.ironriders.core;
 
-import java.util.Optional;
-
 import org.ironriders.climber.ClimberCommands;
 import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
@@ -101,16 +99,6 @@ public class RobotContainer {
         configureBindings();
     }
 
-    public static Optional<Zone> getCurrentZone() {
-        if (passingZone.inside()) {
-            return Optional.of(passingZone);
-        } else if (scoringZone.inside()) {
-            return Optional.of(scoringZone);
-        }
-
-        return Optional.empty();
-    }
-
     public static void revertToSafeDefaults() {
         targetingHub = false;
         targetingPassing = false;
@@ -156,22 +144,11 @@ public class RobotContainer {
 
         // --- Align ---
         primaryController.y()
-                .onTrue(Commands
-                        .runOnce(() -> {
-                            new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST)
-                                    .send("align outpost");
-                            targetingHub = false;
-                            targetingPassing = false;
-                        }))
+                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.OUTPOST)))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.b()
-                .onTrue(Commands
-                        .runOnce(() -> {
-                            new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP).send("align bump");
-                            targetingHub = false;
-                            targetingPassing = false;
-                        }))
+                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP)))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.leftBumper().onTrue(Commands.runOnce(() -> {
@@ -181,8 +158,18 @@ public class RobotContainer {
 
         // Line up to score
         primaryController.rightBumper().onTrue(Commands.runOnce(() -> {
-            CommandScheduler.getInstance().schedule(DriveSubsystem.pathfindToPoseAndAimAt(scoringZone.centerPoint(), FieldPositions.get(ElementType.HUB).toPose2d()));
+            CommandScheduler.getInstance().schedule(DriveSubsystem.pathfindToPoseAndAimAt(scoringZone.centerPoint(),
+                    FieldPositions.get(ElementType.HUB).toPose2d()));
         }));
+    }
+
+    public Command buildAlignCommand(DriverRequest request) {
+        return Commands
+                .runOnce(() -> {
+                    request.send("");
+                    targetingHub = false;
+                    targetingPassing = false;
+                });
     }
 
     /**
