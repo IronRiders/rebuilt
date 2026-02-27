@@ -13,20 +13,6 @@ public class WristCommands {
 
     public WristCommands(WristSubsystem subsystem) {
         this.wristSubsystem = subsystem;
-        this.wristSubsystem.publish("Reset Wrist Encoder", resetRotations());
-    }
-
-    /**
-     * Resets the wrist's relative encoder rotations to 0. See
-     * {@link WristSubsystem#resetRelativeEncoderRotations()
-     * resetRelativeEncoderRotations()} for more details.
-     * 
-     * @return A {@link Command} to do the above.
-     */
-    public Command resetRotations() {
-        return wristSubsystem.runOnce(() -> {
-            wristSubsystem.resetRelativeEncoderRotations();
-        });
     }
 
     /**
@@ -40,6 +26,14 @@ public class WristCommands {
         return wristSubsystem.runOnce(() -> {
             wristSubsystem.setGoal(goal);
         });
+    }
+
+    public Command setDown() {
+        return set(State.DOWN);
+    }
+
+    public Command setUp() {
+        return set(State.UP);
     }
 
     /**

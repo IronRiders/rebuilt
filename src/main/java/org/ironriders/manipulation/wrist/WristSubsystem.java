@@ -9,7 +9,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Subsystem for controlling wrist
@@ -52,10 +51,7 @@ public class WristSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
-        wristMotor.set(
-                pid.calculate(this.getPosition())
-                        + (armFeedforward.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity)
-                                / RobotController.getBatteryVoltage()));
+        wristMotor.set(pid.calculate(getPosition()) + armFeedforward.calculate(getPosition(), getVelocity()));
     }
 
     /**
@@ -64,41 +60,32 @@ public class WristSubsystem extends IronSubsystem {
      * @return angle in degrees from horizontal
      */
     public double getPosition() {
-        return wristMotor.getPosition().getValueAsDouble();
+        return encoder.getAbsolutePosition().getValueAsDouble() - WristConstants.ENCODER_OFFSET;
     }
 
     /**
-     * Used to reset relative encoder, shouldn't be needed if we switch to absolute
-     * encoder
-     */
-    public void resetRelativeEncoderRotations() {
-        wristMotor.setPosition(0.0); // I think this is it, may cause a problem
-    }
-
-    /**
-     * Sets the {@link edu.wpi.first.math.trajectory.TrapezoidProfile Trapezoid
-     * Profile} goal for the {@link com.ctre.phoenix6.hardware.TalonFX wrist
-     * motor's} {@link edu.wpi.first.math.controller.ProfiledPIDController
-     * profiled pid}.
+     * Gets the position of the arm.
      * 
-     * @param goal Up and down double positions (interchangeable with trapezoid
-     *             profile's with a velocity goal of zero), currently both set to
-     *             0.0. Should be set in degrees from horizontal.
+     * @return angle in degrees from horizontal
+     */
+    public double getVelocity() {
+        return encoder.getVelocity().getValueAsDouble();
+    }
+
+    /**
+     * Set the angle target for the wrist.
      */
     public void setGoal(WristConstants.State goal) {
         pid.setGoal(goal.position);
     }
 
     /**
-     * Checks if the wrist is at its goal (within 1 degree).
+     * Checks if the wrist is at its goal.
      * 
      * @return true if the wrist is at its goal, false otherwise.
      */
     public boolean atGoal() {
-        if (Math.abs(pid.getSetpoint().position - pid.getGoal().position) < 1) {
-            return true;
-        }
-        return false;
+        return pid.atGoal();
     }
 
     /**

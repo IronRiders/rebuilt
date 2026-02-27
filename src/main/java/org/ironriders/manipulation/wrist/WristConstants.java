@@ -10,6 +10,7 @@ public class WristConstants {
     public static final int MOTOR_ID = 17;
     public static final int ENCODER_ID = 20;
 
+    public static final Double ENCODER_OFFSET = 0d; // TODO
 
     public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current
     public static final double P = 0.5; // proportional gain
