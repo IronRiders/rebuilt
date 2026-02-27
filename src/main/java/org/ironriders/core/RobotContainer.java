@@ -52,7 +52,7 @@ public class RobotContainer {
     public static LauncherMaps launcherMaps = new LauncherMaps();
 
     public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    public static final DriveCommands driveCommands = driveSubsystem.getCommands();
+    public static final DriveCommands driveCommands = DriveSubsystem.getCommands();
 
     public static final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
     public static final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
@@ -152,12 +152,16 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.leftBumper().onTrue(driveCommands
-                .pathfindThenFlipPathIfBetterThenFollow(PathPlannerHelpers.loadPath("Center Sweep").get()));
+                .pathfindThenFlipPathIfBetterThenFollow(PathPlannerHelpers.loadPath("Center Sweep").orElseThrow()));
 
         // Line up to score
         primaryController.rightBumper().onTrue(
                 driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
                         FieldPositions.get(ElementType.HUB).toPose2d()));
+
+        primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
+
+        primaryController.leftTrigger(triggerThreshold).whileTrue(robotCommands.intake());
     }
 
     public Command buildAlignCommand(DriverRequest request) {

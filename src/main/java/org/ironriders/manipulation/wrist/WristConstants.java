@@ -12,23 +12,24 @@ public class WristConstants {
 
     public static final Double ENCODER_OFFSET = 0d; // TODO
 
-    public static final double CURRENT_LIMIT = 40.0; // Current limit for the supply current
-    public static final double P = 0.5; // proportional gain
-    public static final double I = 0.0; // Integral gain
-    public static final double D = 0.1; // Derivative gain
-    public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(100, 100); // TODO:
-                                                                                                               // Test
-                                                                                                               // later
+    public static final Double CURRENT_LIMIT = 40.0; // Current limit for the supply current
+    public static final Double P = 0.5; // proportional gain
+    public static final Double I = 0.0; // Integral gain
+    public static final Double D = 0.1; // Derivative gain
+    public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(100, 100); // TODO
+
+    public static final Double JOSTLE_RANGE = 20d; // distance the wrist will move from the centerpoint while jostling; in degrees.
+    public static final Double JOSTLE_TOLERANCE = 2d; // in degrees.
+
 
     /**
-     * Wrist positions (Up & Down) in degrees from horizontal (interchangeable with
-     * {@link edu.wpi.first.math.trajectory.TrapezoidProfile TrapezoidProfiles}
-     * with a velocity of 0).
+     * Named positions of the wrist. 0 is all the way up, positive forward.
      */
     public enum State {
-        UP(90.0),
-        DOWN(0.0),
-        JOSTLE(30.0);
+        UP(0),
+        DOWN(100),
+        // Jostle is instead the midpoint of the motion.
+        JOSTLE(45);
 
         public final double position;
 

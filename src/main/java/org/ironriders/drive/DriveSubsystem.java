@@ -33,7 +33,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  * modules need to turn and be angled.
  */
 public class DriveSubsystem extends IronSubsystem {
-    private final DriveCommands commands;
+    public static DriveCommands commands;
 
     private static SwerveDrive swerveDrive;
 
@@ -46,7 +46,7 @@ public class DriveSubsystem extends IronSubsystem {
 
     public static Command pathfindingCommand = new InstantCommand();
 
-    private static ProfiledPIDController rotationPid;
+    public static ProfiledPIDController rotationPid;
 
     public static Pigeon2 pigeon = new Pigeon2(11);
 
@@ -119,7 +119,7 @@ public class DriveSubsystem extends IronSubsystem {
         double leftMag = Math.hypot(RobotContainer.primaryController.getLeftX(),
                 RobotContainer.primaryController.getLeftY());
         if (leftMag > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
-            commands.cancelPathfind();
+            PathPlannerHelpers.cancelPathfind();
         }
 
         publish("PID", rotationPid);
@@ -194,7 +194,7 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     /** Fetch the DriveCommands instance */
-    public DriveCommands getCommands() {
+    public static DriveCommands getCommands() {
         return commands;
     }
 
@@ -216,6 +216,10 @@ public class DriveSubsystem extends IronSubsystem {
         pigeon.reset();
         resetOdometry(swerveDrive.getPose());
         rotationPid.reset(0);
+    }
+
+    public static void resetPID() {
+        rotationPid.reset(getRotation());
     }
 
     /**

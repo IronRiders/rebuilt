@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
  */
 public class PathPlannerHelpers {
     private static Command pathfindingCommand = Commands.none();
+    private static DriveCommands driveCommands = DriveSubsystem.getCommands();
 
     private static void schedule(Command command) {
         CommandScheduler.getInstance().schedule(command);
@@ -33,7 +34,8 @@ public class PathPlannerHelpers {
      * Function to pathfind to a given pose.
      */
     public static void pathfindToPose(Pose2d target) {
-        pathfindingCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(driveCommands.resetPID());
         schedule(pathfindingCommand);
     }
 
@@ -41,7 +43,8 @@ public class PathPlannerHelpers {
      * Function to pathfind to the start of a given path then follow that path.
      */
     public static void pathfindThenFollowPath(PathPlannerPath path) {
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(driveCommands.resetPID());
         schedule(pathfindingCommand);
     }
 
@@ -51,7 +54,8 @@ public class PathPlannerHelpers {
      */
     public static void pathfindThenFollowFlippedPath(PathPlannerPath path) {
         path = path.flipPath();
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(driveCommands.resetPID());
         schedule(pathfindingCommand);
     }
 
@@ -74,14 +78,16 @@ public class PathPlannerHelpers {
             path = path.flipPath();
         }
 
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS);
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(driveCommands.resetPID());
+        schedule(pathfindingCommand);
     }
 
     public static void pathfindToPoseThenAimAt(Pose2d pose, Pose2d target) {
         pathfindingCommand = AutoBuilder.pathfindToPose(
                 new Pose2d(pose.getTranslation(), new Rotation2d(Utils.getAngleToPointRadians(pose, target) + Math.PI)),
-                DriveConstants.PATHFIND_CONSTRAINTS);
-    
+                DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(driveCommands.resetPID());
         schedule(pathfindingCommand);
     }
 
@@ -89,7 +95,11 @@ public class PathPlannerHelpers {
      * Cancel the current pathfinding operation.
      */
     public static void cancelPathfind() {
-        pathfindingCommand.cancel();
+        if (pathfindingCommand.isScheduled()) {
+            pathfindingCommand.cancel();
+
+            DriveSubsystem.rotationPid.reset(DriveSubsystem.getRotation());
+        }
     }
 
     // -- Utils --

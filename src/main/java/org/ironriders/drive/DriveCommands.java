@@ -110,7 +110,6 @@ public class DriveCommands {
         return Commands.runOnce(() -> PathPlannerHelpers.pathfindToPoseThenAimAt(pose, target));
     }
 
-
     /**
      * Command to cancel the current pathfinding operation.
      */
@@ -126,5 +125,9 @@ public class DriveCommands {
     /** Command to reset the swerve drive's measured position and rotation. */
     public Command resetOdometry() {
         return Commands.runOnce(() -> DriveSubsystem.resetOdometry(new Pose2d()));
+    }
+
+    public Command resetPID() {
+        return Commands.runOnce(()->DriveSubsystem.resetPID());
     }
 }

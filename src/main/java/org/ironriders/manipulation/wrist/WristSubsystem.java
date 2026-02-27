@@ -1,6 +1,8 @@
 package org.ironriders.manipulation.wrist;
 
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.lib.Utils;
+import org.ironriders.manipulation.wrist.WristConstants.State;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -32,8 +34,12 @@ public class WristSubsystem extends IronSubsystem {
 
     private final CANcoder encoder = new CANcoder(WristConstants.ENCODER_ID);
 
-    /* SUBSYSTEM COMPONENTS */
+    private State currentState = State.UP;
+
     private final WristCommands commands;
+
+    private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
+    private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
 
     public WristSubsystem() {
         commands = new WristCommands(this);
@@ -44,29 +50,38 @@ public class WristSubsystem extends IronSubsystem {
         wristMotor.getConfigurator()
                 .apply(configuration);
 
-        this.setGoal(WristConstants.State.UP);
+        setGoal(currentState);
 
         pid.reset(getPosition());
     }
 
     @Override
     public void periodic() {
+        switch (currentState) {
+            case JOSTLE:
+                if (atGoal()) {
+                    pid.setGoal(Utils.inRange(-WristConstants.JOSTLE_TOLERANCE, WristConstants.JOSTLE_TOLERANCE,
+                            Math.abs(getPosition() - jostleMax)) ? jostleMin : jostleMax);
+                }
+                break;
+            default:
+        }
         wristMotor.set(pid.calculate(getPosition()) + armFeedforward.calculate(getPosition(), getVelocity()));
     }
 
     /**
      * Gets the position of the arm.
      * 
-     * @return angle in degrees from horizontal
+     * @return The angle in degrees from vertical, with positive forward.
      */
     public double getPosition() {
         return encoder.getAbsolutePosition().getValueAsDouble() - WristConstants.ENCODER_OFFSET;
     }
 
     /**
-     * Gets the position of the arm.
+     * Gets the velocity of the arm in RPMs.
      * 
-     * @return angle in degrees from horizontal
+     * @return The velocity in RPMs
      */
     public double getVelocity() {
         return encoder.getVelocity().getValueAsDouble();
@@ -75,16 +90,21 @@ public class WristSubsystem extends IronSubsystem {
     /**
      * Set the angle target for the wrist.
      */
-    public void setGoal(WristConstants.State goal) {
+    public void setGoal(State goal) {
+        currentState = goal;
         pid.setGoal(goal.position);
     }
 
     /**
      * Checks if the wrist is at its goal.
+     * Will always return false while jostling.
      * 
-     * @return true if the wrist is at its goal, false otherwise.
+     * @return true if the wrist is at its goal, false otherwise or if jostling.
      */
     public boolean atGoal() {
+        if (currentState == State.JOSTLE) {
+            return false;
+        }
         return pid.atGoal();
     }
 

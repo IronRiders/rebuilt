@@ -253,13 +253,13 @@ public class FieldPositions {
 
         // Edge of the field
         public static final Pose2d[] SCORING_ZONE = new Rect(
-                new Pose2d(0, 0, new Rotation2d()),
+                new Pose2d(0.5, 0, new Rotation2d()),
                 new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
         public static final Pose2d[] PASSING_POINTS_ARRAY = {
-                new Pose2d((SCORING_ZONE_HEIGHT / 2), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
-                new Pose2d((SCORING_ZONE_HEIGHT / 2), 1.5, new Rotation2d()) };
+                new Pose2d((SCORING_ZONE_HEIGHT / 2.3), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
+                new Pose2d((SCORING_ZONE_HEIGHT / 2.3), 1.5, new Rotation2d()) };
 
         public static final List<Pose2d> PASSING_POINTS = new ArrayList<>();
 

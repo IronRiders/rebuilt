@@ -42,9 +42,6 @@ public class WristCommands {
      * @return A {@link Command} to do the above.
      */
     public Command jostleBalls() {
-        return Commands.sequence(
-                set(State.DOWN).until(() -> wristSubsystem.atGoal()),
-                set(State.JOSTLE).until(() -> wristSubsystem.atGoal())).repeatedly()
-                .finallyDo(() -> wristSubsystem.setGoal(State.DOWN));
+        return Commands.sequence(set(State.JOSTLE).finallyDo(() -> wristSubsystem.setGoal(State.DOWN)));
     }
 }
