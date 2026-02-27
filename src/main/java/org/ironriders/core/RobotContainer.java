@@ -138,7 +138,7 @@ public class RobotContainer {
                     targetingHub = !targetingHub;
                     if (targetingHub) {
                         targetingPassing = false;
-                        TargetingControl.targetHubInternal();
+                        TargetingControl.targetHub();
                     } else {
                         revertToSafeDefaults();
                     }
@@ -149,7 +149,7 @@ public class RobotContainer {
                     targetingPassing = !targetingPassing;
                     if (targetingPassing) {
                         targetingHub = false;
-                        TargetingControl.targetPassingInternal();
+                        TargetingControl.targetPassing();
                     } else {
                         revertToSafeDefaults();
                     }

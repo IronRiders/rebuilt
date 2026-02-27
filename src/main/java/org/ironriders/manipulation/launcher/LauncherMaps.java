@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.ironriders.lib.InterpolatingDoubleMap;
 
-import dev.doglog.DogLog;
-
 public class LauncherMaps {
     public AngleToExtensionMap angleToExtensionMap;
 
@@ -173,7 +171,6 @@ public class LauncherMaps {
          * Get the angle for the given extension (0-1).
          */
         public static double getAngleForExtensionPercent(double extension) {
-            DogLog.log("get key", String.valueOf(extension * maxExtension));
             return angleToExtensionMap.getKeysByValue(extension * maxExtension).orElse(List.of(0d)).get(0);
         }
 
@@ -181,7 +178,6 @@ public class LauncherMaps {
          * Get the angle for the given extension in mm.
          */
         public static double getAngleForExtension(double extension) {
-            DogLog.log("get key", String.valueOf(extension));
             return angleToExtensionMap.getKeysByValue(extension).orElse(List.of(0d)).get(0);
         }
     }

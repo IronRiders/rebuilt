@@ -15,7 +15,6 @@ import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,6 +37,7 @@ public class TargetingControl {
     public static void receiveRequest(DriverRequest driverRequest) {
         lastDriverRequest = request;
         request = driverRequest;
+        update();
     }
 
     public static void revert() {
@@ -45,28 +45,35 @@ public class TargetingControl {
         update();
     }
 
+    /**
+     * Revert the targeting mode to safe default values,
+     * Driver has control,
+     * Launcher has control over auto align,
+     * Target the hub.
+     */
     public static void revertToSafeDefaults() {
         lastDriverRequest = request;
         request = new DriverRequest(PriorityMode.DRIVER_PRIORITY,
                 AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
+        update();
     }
 
-    public static void targetHubInternal() {
+    public static void targetHub() {
         new DriverRequest(PriorityMode.LAUNCHER_PRIORITY,
-                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB).send("target hub internal");
+                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB).send("target hub");
     }
 
-    public static Command targetHub() {
-        return Commands.runOnce(() -> targetHubInternal());
+    public static Command targetHubCommand() {
+        return Commands.runOnce(() -> targetHub());
     }
 
-    public static void targetPassingInternal() {
+    public static void targetPassing() {
         new DriverRequest(PriorityMode.LAUNCHER_PRIORITY,
-                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.PASSING).send("target passing internal");
+                AlignTargetingMode.LAUNCHER, LauncherTargetingMode.PASSING).send("target passing");
     }
 
-    public static Command targetPassing() {
-        return Commands.runOnce(() -> targetPassingInternal());
+    public static Command targetPassingCommand() {
+        return Commands.runOnce(() -> targetPassing());
     }
 
     /*
@@ -97,55 +104,65 @@ public class TargetingControl {
 
         alignTarget = getAlignTarget();
 
-        LauncherSubsystem.currentTarget = launcherTarget;
+        LauncherSubsystem.setTarget(launcherTarget);
         DriveSubsystem.setRotationGoal(alignTarget);
 
-        switch (request.r_priorityMode) {
+        switch (request.m_priorityMode) {
             default:
             case DRIVER_PRIORITY:
+                // We want the driver to have control, disable PID control.
                 DriveSubsystem.setPIDRotationControl(false);
+                // Set the launcher to idle (1/2 max speed).
                 LauncherSubsystem.currentState = State.IDLE;
 
-                break;
-            // return;
+                return;
 
-            case ALIGN_PRIORITY:
             case LAUNCHER_PRIORITY:
-                DriveSubsystem.setPIDRotationControl(true);
+                // Get the launcher ready (set to max speed).
                 LauncherSubsystem.currentState = State.READY;
+                // Fall though here as we want to use targeting whether or not we are launching.
+            case ALIGN_PRIORITY:
+                // We want the targeting system to have control, enable PID control.
+                DriveSubsystem.setPIDRotationControl(true);
 
-                break;
-            // return;
+                return;
         }
-
-        DogLog.log("TargetingValues",
-                "PID Control: " + String.valueOf(DriveSubsystem.PIDRotation) + " LauncherTargetMode: "
-                        + request.r_launcherTargetingMode.toString() + " AlignTargetMode: "
-                        + String.valueOf(request.r_alignTargetingMode));
     }
 
+    /**
+     * Calculate the angle we should face for the align mode of the request.
+     * 
+     * @return The angle in degrees.
+     */
     private static double getAlignTarget() {
-        switch (request.r_alignTargetingMode) {
+        switch (request.m_alignTargetingMode) {
             default:
             case LAUNCHER:
-                return Utils.getAngleToPoint(DriveSubsystem.getPose(), Utils.flattenPose3d(launcherTarget)) + 180;
+                return Utils.getAngleToPoint(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + 180;
 
             case OUTPOST:
                 return 180;
 
             case BUMP:
-                return Math.toDegrees(findClosest45DegreeAngleInRadians(getPosition().getRotation().getRadians()));
+                return findClosest45DegreeAngle(DriveSubsystem.getPose().getRotation().getDegrees());
         }
     }
 
+    /**
+     * Calculate the new launcher target based off the targeting mode of the current
+     * request.
+     * 
+     * @return The new target.
+     */
     private static Pose3d getLauncherTarget() {
-        switch (request.r_launcherTargetingMode) {
+        switch (request.m_launcherTargetingMode) {
             default:
             case HUB:
                 return FieldPositions.get(ElementType.HUB);
 
             case PASSING:
                 Pose2d closest = getPosition().nearest(FieldPositions.Zones.PASSING_POINTS);
+
                 Pose2d bestPoint = closest;
 
                 if (!inRange(Utils.expandPose2d(bestPoint))) {
@@ -160,7 +177,16 @@ public class TargetingControl {
         }
     }
 
-    private static double findClosest45DegreeAngleInRadians(double angle) {
+    /**
+     * Find the nearest 45 degree angle that is not axis aligned (for going over the
+     * bump) from a given angle.
+     * 
+     * @param angle Our current angle in degrees.
+     * @return The best angle in degrees.
+     */
+    private static double findClosest45DegreeAngle(double angle) {
+        angle = Math.toRadians(angle);
+
         angle = angle % (2 * Math.PI);
         if (angle < 0) {
             angle += 2 * Math.PI;
@@ -168,10 +194,10 @@ public class TargetingControl {
 
         for (Double i = 0.25; i <= 2; i += 0.5) {
             if (Math.abs(angle - (i * Math.PI)) < 0.25 * Math.PI) {
-                return i * Math.PI;
+                return Math.toDegrees(i * Math.PI);
             }
         }
 
-        return 0.25 * Math.PI;
+        return Math.toDegrees(0.25 * Math.PI);
     }
 }

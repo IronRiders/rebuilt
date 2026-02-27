@@ -22,34 +22,34 @@ public class DriverRequest {
         PASSING();
     }
 
-    public PriorityMode r_priorityMode = PriorityMode.DRIVER_PRIORITY;
-    public AlignTargetingMode r_alignTargetingMode = AlignTargetingMode.LAUNCHER;
-    public LauncherTargetingMode r_launcherTargetingMode = LauncherTargetingMode.HUB;
+    public PriorityMode m_priorityMode = PriorityMode.DRIVER_PRIORITY;
+    public AlignTargetingMode m_alignTargetingMode = AlignTargetingMode.LAUNCHER;
+    public LauncherTargetingMode m_launcherTargetingMode = LauncherTargetingMode.HUB;
 
     public DriverRequest(PriorityMode priorityMode) {
-        this.r_priorityMode = priorityMode;
+        this.m_priorityMode = priorityMode;
     }
 
     public DriverRequest(PriorityMode priorityMode, AlignTargetingMode alignTargetingMode) {
-        this.r_priorityMode = priorityMode;
-        this.r_alignTargetingMode = alignTargetingMode;
+        this.m_priorityMode = priorityMode;
+        this.m_alignTargetingMode = alignTargetingMode;
     }
 
     public DriverRequest(PriorityMode priorityMode, LauncherTargetingMode launcherTargetingMode) {
-        this.r_priorityMode = priorityMode;
-        this.r_launcherTargetingMode = launcherTargetingMode;
+        this.m_priorityMode = priorityMode;
+        this.m_launcherTargetingMode = launcherTargetingMode;
     }
 
     public DriverRequest(PriorityMode priorityMode, AlignTargetingMode alignTargetingMode,
             LauncherTargetingMode launcherTargetingMode) {
-        this.r_priorityMode = priorityMode;
-        this.r_alignTargetingMode = alignTargetingMode;
-        this.r_launcherTargetingMode = launcherTargetingMode;
+        this.m_priorityMode = priorityMode;
+        this.m_alignTargetingMode = alignTargetingMode;
+        this.m_launcherTargetingMode = launcherTargetingMode;
     }
 
     public void send(String debugName) {
         TargetingControl.receiveRequest(this);
-        DogLog.log("Sent", "Name: " + debugName + "TargetingMode: " + this.r_alignTargetingMode.toString() + " LauncherMode: "
-                + this.r_launcherTargetingMode.toString() + " AlignMode: " + this.r_alignTargetingMode.toString());
+        DogLog.log("Sent", "Name: " + debugName + "TargetingMode: " + this.m_alignTargetingMode.toString() + " LauncherMode: "
+                + this.m_launcherTargetingMode.toString() + " AlignMode: " + this.m_alignTargetingMode.toString());
     }
 }

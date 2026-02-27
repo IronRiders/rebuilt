@@ -1,11 +1,13 @@
 package org.ironriders.lib;
 
+import java.util.stream.IntStream;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.RobotController;
 
 /** Utility class to encourage the robot's dangerous math addiction. */
 public class Utils {
@@ -16,7 +18,7 @@ public class Utils {
      * from 0 to 1 because 1^x = 1.
      *
      * @param input    The value to put into the curve (0.0 - 1.0 ONLY)
-     * @param deadband The exponent value.
+     * @param exponent The exponent value.
      * @return The end result of the curve.
      */
     public static double controlCurve(double input, double exponent, double deadband) {
@@ -34,33 +36,23 @@ public class Utils {
     }
 
     /**
-     * Normalizes Added Voltage from Feed Forward to a number between (0.0, 1.0).
+     * Normalizes added voltage from Feed Forward to a number between (0.0, 1.0).
      *
-     * @param input The additional voltage.
+     * @param voltage The additional voltage.
      * @return The normalized voltage value within the range (0.0, 1.0).
      */
-    public static double percentOfMaxVoltage(double voltage, double maxVoltage) {
+    public static double normalizeFeedForward(double voltage) {
+        double maxVoltage = RobotController.getBatteryVoltage();
+
         if (maxVoltage == 0) {
             maxVoltage = 0.000001;
         }
 
-        return voltage / maxVoltage;
+        return Utils.clamp(0, 1, voltage / maxVoltage);
     }
 
     /**
-     * Flattens a {@link Pose3d} to a {@link Pose2d} by dropping the z
-     * value and converting the rotation to a {@link Rotation2d}.
-     * 
-     * @param pose The {@link Pose3d} to flatten.
-     * @return The flattened {@link Pose2d}.
-     */
-    public static Pose2d flattenPose3d(Pose3d pose) {
-        return new Pose2d(new Translation2d(pose.getX(), pose.getY()), new Rotation2d(pose.getRotation().getAngle()));
-    }
-
-    /**
-     * Gets the difference between two poses as a {@link Translation2d}. Does
-     * not use rotation.
+     * Gets the difference between two poses as a {@link Translation2d}.
      * 
      * @param pose1 The first pose.
      * @param pose2 The second pose.
@@ -71,8 +63,7 @@ public class Utils {
     }
 
     /**
-     * Gets the difference between two poses as a {@link Translation3d}. Does
-     * not use rotation.
+     * Gets the difference between two poses as a {@link Translation3d}.
      * 
      * @param pose1 The first pose.
      * @param pose2 The second pose.
@@ -121,24 +112,13 @@ public class Utils {
     /**
      * Generates an array of all integers within a specified range, inclusive.
      * 
-     * Can this be replaced by
-     * {@code IntStream.range(Math.min(a, b), Math.max(a, b) + 1).toArray()}?
-     * 
      * @param a The start of the range.
      * @param b The end of the range.
      * @return An array containing all integers from the smaller of a and b to the
      *         larger of a and b.
      */
     public static int[] everyIntInRange(int a, int b) {
-        int start = Math.min(a, b);
-        int end = Math.max(a, b);
-
-        int[] result = new int[end - start + 1];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = start + i;
-        }
-
-        return result;
+        return IntStream.range(Math.min(a, b), Math.max(a, b) + 1).toArray();
     }
 
     /**
@@ -182,7 +162,7 @@ public class Utils {
         return Math.toDegrees(getAngleToPointRadians(p1, p2));
     }
 
-    public static double distanceToPose(Pose3d p1, Pose3d p2) {
+    public static double distanceToPose3d(Pose3d p1, Pose3d p2) {
         return Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2)
                 + Math.pow(p2.getZ() - p1.getZ(), 2));
     }

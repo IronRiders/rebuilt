@@ -3,7 +3,7 @@ package org.ironriders.manipulation.intake;
 public class IntakeConstants {
     public static final int ID = 12;
 
-    public static final int INTAKE_MOTOR_STALL_LIMIT = 80; // If this isn't enough we might need to switch motors
+    public static final int INTAKE_MOTOR_STALL_LIMIT = 60; // If this isn't enough we might need to switch motors
 
     /**
      * Possible states for the intake. Each has a speed for the intake.

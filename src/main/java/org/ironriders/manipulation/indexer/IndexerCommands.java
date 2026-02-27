@@ -6,9 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
- * Commands for the {@link IndexerSubsystem indexer subsystem}. Has only one
- * method: {@link IndexerCommands#set() set}, which sets the indexer's
- * target state.
+ * Commands for the {@link IndexerSubsystem indexer subsystem}.
  */
 public class IndexerCommands {
     private final IndexerSubsystem indexer;
@@ -31,5 +29,17 @@ public class IndexerCommands {
      */
     public Command set(State state) {
         return Commands.runOnce(() -> indexer.setState(state));
+    }
+
+    public Command index() {
+        return set(State.INDEX);
+    }
+
+    public Command stop() {
+        return set(State.STOP);
+    }
+
+    public Command reverse() {
+        return set(State.REVERSE);
     }
 }

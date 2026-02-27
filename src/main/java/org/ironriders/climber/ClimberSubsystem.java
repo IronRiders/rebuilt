@@ -39,7 +39,7 @@ public class ClimberSubsystem extends IronSubsystem {
     public ClimberSubsystem() {
         configuration = new TalonFXConfiguration();
 
-        configuration.CurrentLimits.withSupplyCurrentLimit(ClimberConstants.STALL_LIMIT);
+        configuration.CurrentLimits.withStatorCurrentLimit(ClimberConstants.STALL_LIMIT);
 
         motors.parallelStream().forEach((TalonFX motor) -> motor.getConfigurator().apply(configuration));
 
@@ -59,16 +59,21 @@ public class ClimberSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
+        // if we are not homed...
         if (motors.parallelStream()
                 .map(motor -> homedMap.get(motor))
                 .allMatch(homed -> Boolean.FALSE.equals(homed))) {
-
+            
+            // move downwards.
             setMotors(-ClimberConstants.HOME_SPEED);
 
+            // check if we have a current spike.
             motors.parallelStream().forEach(motor -> homedMap.put(motor, currentCheckSpike(motor)));
 
+            // update the averages.
             updateRollingAverage();
         } else {
+            // else, move based off PID.
             setMotors(pidController.calculate(getPosition()));
         }
     }
@@ -90,8 +95,7 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     public boolean currentCheckSpike(TalonFX motor) {
-        return Math
-                .abs(averageMap.get(motor) - getTorqueCurrent(motor)) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
+        return Math.abs(averageMap.get(motor) - getTorqueCurrent(motor)) > ClimberConstants.TORQUE_CURRENT_SPIKE_THRESHOLD;
     }
 
     /**
@@ -122,25 +126,29 @@ public class ClimberSubsystem extends IronSubsystem {
     }
 
     /**
-     * Gets the climber's current number of rotations.
+     * Gets the climber's average current number of rotations.
      * 
-     * @return The current position of the climber.
+     * @return The average current position of the climber.
      */
     public double getPosition() {
         return motors.parallelStream().map(TalonFX::getPosition)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
     }
 
-    /*
-     * Gets the average torque current going to the motors. Used for homing
+    /**
+     * Gets the average torque current going to the motors. Used for homing.
+     * 
+     * @return The average torque current in amps.
      */
-    public double getTorqueCurrent() {
+    public double getAverageTorqueCurrent() {
         return motors.parallelStream().map(TalonFX::getTorqueCurrent)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble));
     }
 
-    /*
-     * Gets the average torque current going to provided motor. Used for homing
+    /**
+     * Gets the torque current going to provided motor. Used for homing.
+     * 
+     * @return The torque current in amps.
      */
     public double getTorqueCurrent(TalonFX motor) {
         return motor.getTorqueCurrent().getValueAsDouble();

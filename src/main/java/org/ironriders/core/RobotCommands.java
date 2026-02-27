@@ -77,6 +77,6 @@ public class RobotCommands {
         return Commands.parallel(launcherCommands.set(LauncherConstants.State.STOW),
                 Commands.runOnce(() -> LauncherSubsystem.stopKicker()),
                 indexerCommands.set(IndexerConstants.State.STOP), intakeCommands.set(IntakeConstants.State.STOP),
-                wristCommands.set(WristConstants.State.UP), climberCommands.set(ClimberConstants.State.MIN));
+                wristCommands.set(WristConstants.State.UP), climberCommands.home());
     }
 }

@@ -41,6 +41,7 @@ public class DriveSubsystem extends IronSubsystem {
     private final DriveCommands commands;
 
     private static SwerveDrive swerveDrive;
+
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
 
@@ -91,10 +92,7 @@ public class DriveSubsystem extends IronSubsystem {
                 swerveDrive::getPose,
                 swerveDrive::resetOdometry,
                 swerveDrive::getRobotVelocity,
-                (speeds, feedforwards) -> {
-                    // speeds.omegaRadiansPerSecond = rotationPid.calculate(getRotation());
-                    swerveDrive.drive(speeds);
-                },
+                (speeds, feedforwards) -> swerveDrive.drive(speeds),
                 DriveConstants.HOLONOMIC_CONFIG,
                 robotConfig,
                 () -> {
@@ -107,9 +105,9 @@ public class DriveSubsystem extends IronSubsystem {
                 this);
 
         rotationPid.reset(getRotation());
-        rotationPid.reset(getRotation());
+
         rotationPid.enableContinuousInput(0, Math.PI * 2);
-        rotationPid.setTolerance(0.05);
+
         rotationPid.setTolerance(0.05);
     }
 
@@ -163,7 +161,7 @@ public class DriveSubsystem extends IronSubsystem {
     }
 
     /**
-     * @return The robot's current rotation.
+     * @return The robot's current rotation in radians.
      */
     public static double getRotation() {
         return getPose().getRotation().getRadians();
@@ -179,17 +177,9 @@ public class DriveSubsystem extends IronSubsystem {
         return Utils.expandPose2d(getPose());
     }
 
-    /*
-     * Enable and disable PID rotation control. Set goal using {@link
-     * #setRotationGoal()}
-     * Enable and disable PID rotation control. Set goal using {@link
-     * #setRotationGoal()}
-     */
-    public static void setPIDRotationControl(boolean PIDControl) {
-        PIDRotation = PIDControl;
-
-        if (!PIDControl) {
-            rotationPid.reset(getRotation());
+    public static void setPIDRotationControl(boolean shouldPIDRotate) {
+        PIDRotation = shouldPIDRotate;
+        if (!PIDRotation) {
             rotationPid.reset(getRotation());
         }
     }
@@ -208,11 +198,15 @@ public class DriveSubsystem extends IronSubsystem {
         rotationPid.setGoal(goal);
     }
 
-    /*
+    /**
      * Command to pathfind to a given pose.
+     *
+     * @param pose The pose to pathfind to.
+     *
      */
-    public static Command pathfindToPose(Pose2d target) {
-        pathfindingCommand = AutoBuilder.pathfindToPose(target, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
+    public static Command pathfindToPose(Pose2d pose) {
+        pathfindingCommand = AutoBuilder.pathfindToPose(pose, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
@@ -225,30 +219,32 @@ public class DriveSubsystem extends IronSubsystem {
     public static Command pathfindToPoseAndAimAt(Pose2d pose, Pose2d target) {
         pathfindingCommand = AutoBuilder.pathfindToPose(
                 new Pose2d(pose.getTranslation(), new Rotation2d(Utils.getAngleToPointRadians(pose, target) + Math.PI)),
-                DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
-        
+                DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
+
         return pathfindingCommand;
     }
 
-    /*
+    /**
      * Command to pathfind to the start of a given path then follow that path.
      */
     public static Command pathfindThenFollowPath(PathPlannerPath path) {
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
-    /*
+    /**
      * Command to pathfind to the start of a given path then follow the flipped
      * version of that path.
      */
     public static Command pathfindThenFollowFlippedPath(PathPlannerPath path) {
         path = path.flipPath();
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
-    /*
+    /**
      * Command to figure out if the distance to the start point of the flipped
      * version of the provided path is closer than the normal version, and if so
      * follow the flipped version.
@@ -261,7 +257,8 @@ public class DriveSubsystem extends IronSubsystem {
             path = path.flipPath();
         }
 
-        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS).andThen(Commands.runOnce(()->rotationPid.reset(getRotation())));
+        pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, DriveConstants.PATHFIND_CONSTRAINTS)
+                .andThen(Commands.runOnce(() -> rotationPid.reset(getRotation())));
         return pathfindingCommand;
     }
 
@@ -269,8 +266,10 @@ public class DriveSubsystem extends IronSubsystem {
      * Cancel the current pathfinding operation.
      */
     public static void cancelPathfind() {
-        pathfindingCommand.cancel();
-        rotationPid.reset(getRotation());
+        if (pathfindingCommand.isScheduled()) {
+            pathfindingCommand.cancel();
+            rotationPid.reset(getRotation());
+        }
     }
 
     public static Optional<PathPlannerPath> loadPath(String fileName) {

@@ -13,8 +13,9 @@ import java.util.function.Predicate;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 
-/*
+/**
  * Re-implementation of WPILib InterpolatingTreeMap to expose more features of the tree map.
+ * This code can probably crash in several fun ways.
  */
 public class InterpolatingMap<K extends Number, V extends Number> {
     public TreeMap<K, V> map = new TreeMap<>();

@@ -1,11 +1,7 @@
 package org.ironriders.manipulation.launcher;
 
-import org.ironriders.core.RobotContainer;
-import org.ironriders.lib.field.FieldElement.ElementType;
-import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -26,43 +22,6 @@ public class LauncherCommands {
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
     }
 
-    /**
-     * Sets the launcher's target to a given {@link Pose3d target position}. See
-     * {@link LauncherSubsystem#setTarget(Pose3d) LauncherSubsystem's setTarget} for
-     * more details.
-     * 
-     * @param target The target position for the launcher.
-     * @return A command that sets the launcher's target.
-     */
-    public Command setTarget(Pose3d target) {
-        return Commands.runOnce(() -> launcher.setTarget(target));
-    }
-
-    /**
-     * Sets the launcher's target to the closest point in the passing zone. See
-     * {@link LauncherSubsystem#setTarget(Pose3d) setTarget} &
-     * {@link RobotContainer.passingZone#closestPointAsPose3d()
-     * RobotContainer's passingZone.closestPointAsPose3d} for more details.
-     * 
-     * @return A command that sets the launcher's target to the closest point in the
-     *         passing zone.
-     */
-    public Command targetPassing() {
-        return setTarget(RobotContainer.passingZone.closestPointAsPose3d());
-    }
-
-    /**
-     * Sets the launcher's target to the hub. See
-     * {@link LauncherSubsystem#setTarget(Pose3d) setTarget} &
-     * {@link FieldPositions#get(ElementType) FieldPositions' get} for more
-     * details.
-     * 
-     * @return A command that sets the launcher's target to the hub.
-     */
-    public Command targetHub() {
-        return setTarget(FieldPositions.get(ElementType.HUB));
-    }
-
     public Command readyAndFire() {
         return Commands.sequence(set(State.READY), fire());
     }
@@ -73,7 +32,7 @@ public class LauncherCommands {
 
     /**
      * Sets the launcher's target state. Will wait until the launcher is ready
-     * before signaling {@code task complete} and self-destructing.
+     * before finishing.
      * 
      * @param state The target state to set for the launcher.
      * @return A command that sets the launcher's target state.
@@ -90,7 +49,6 @@ public class LauncherCommands {
                 return launcher.isReady();
             }
         };
-
     }
 
     /**

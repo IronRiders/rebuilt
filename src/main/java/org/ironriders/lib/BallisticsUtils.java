@@ -54,7 +54,7 @@ public class BallisticsUtils {
      * @return The distance to the target.
      */
     public static double calculateDistanceToTarget(Pose3d pose) {
-        return Utils.getPoseDifference(getPosition(), Utils.flattenPose3d(pose)).getNorm();
+        return Utils.getPoseDifference(getPosition(), pose.toPose2d()).getNorm();
     }
 
     /**
@@ -131,8 +131,8 @@ public class BallisticsUtils {
      * @return The angle to the target, in radians.
      */
     public static Angle calculateAngleToTarget(Pose3d target) {
-        double distance = Utils.getPoseDifference(getPosition(), Utils.flattenPose3d(target)).getNorm();
-        DogLog.log("distance", String.valueOf(distance));
+        double distance = Utils.getPoseDifference(getPosition(), target.toPose2d()).getNorm();
+        DogLog.log("Launcher/Distance to target", String.valueOf(distance));
         return calculateAngleToTarget(target, distance);
     }
 
@@ -177,6 +177,8 @@ public class BallisticsUtils {
      * @return Optional containing a double[] { min, max } when successful,
      *         otherwise
      *         Optional.empty().
+     * 
+     * This code really sucks.
      */
     public static Optional<double[]> estimateMinMaxRange() {
         double low = 0d;

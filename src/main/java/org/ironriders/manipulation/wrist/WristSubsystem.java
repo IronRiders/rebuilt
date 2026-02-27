@@ -4,6 +4,7 @@ import org.ironriders.lib.IronSubsystem;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -29,6 +30,8 @@ public class WristSubsystem extends IronSubsystem {
             WristConstants.I,
             WristConstants.D,
             WristConstants.CONSTRAINTS);
+
+    private final CANcoder encoder = new CANcoder(WristConstants.ENCODER_ID);
 
     /* SUBSYSTEM COMPONENTS */
     private final WristCommands commands;
@@ -57,16 +60,11 @@ public class WristSubsystem extends IronSubsystem {
 
     /**
      * Gets the position of the arm.
-     * Currently this won't work with the proposed design with the dead shaft
-     * <i>When this is swapped for the new design, MAKE SURE the encoder reads 0
-     * degrees (or add offset make it) as horizontal,
-     * as {@link edu.wpi.first.math.controller.ArmFeedforward#calculate
-     * ArmFeedForward} requires.</i>
      * 
      * @return angle in degrees from horizontal
      */
     public double getPosition() {
-        return wristMotor.getPosition().getValueAsDouble(); // TODO: fix when we know what abs encoder we're using
+        return wristMotor.getPosition().getValueAsDouble();
     }
 
     /**

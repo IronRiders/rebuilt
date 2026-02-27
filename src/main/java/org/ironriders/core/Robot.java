@@ -50,14 +50,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(autonomousCommand);
         }
-
-        generalInit();
     }
 
     @Override
@@ -74,8 +71,6 @@ public class Robot extends TimedRobot {
 
             autonomousCommand.cancel();
         }
-
-        generalInit();
     }
 
     @Override
@@ -89,7 +84,6 @@ public class Robot extends TimedRobot {
     @Override
     public void testInit() {
         CommandScheduler.getInstance().cancelAll();
-        generalInit();
     }
 
     @Override
@@ -104,19 +98,15 @@ public class Robot extends TimedRobot {
     public void simulationInit() {
         PhotonCamera.setVersionCheckEnabled(false); // Silence camera not found warnings.
 
-        // teleport to the center of the field on startup
+        // teleport to the center of the field on startup.
         DriveSubsystem.getSwerveDrive().getMapleSimDrive().orElseThrow().setSimulationWorldPose(FieldPositions.Field.CENTER);
+        DriveSubsystem.getSwerveDrive().resetOdometry(FieldPositions.Field.CENTER);
 
         DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
-
-        generalInit();
     }
 
     @Override
     public void simulationPeriodic() {
         VisionSubsystem.visionSim.update(DriveSubsystem.getSwerveDrive().field.getRobotPose());
-    }
-
-    private void generalInit() {
     }
 }

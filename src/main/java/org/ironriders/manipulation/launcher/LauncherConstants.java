@@ -18,8 +18,8 @@ public class LauncherConstants {
   public static final double FLYWHEEL_MAX_VEL = 6065; // (see https://www.reca.lc/flywheel)
   public static final double FLYWHEEL_MAX_ACC = FLYWHEEL_MAX_VEL / 2;
 
-  public static final double LAUNCHER_HOOD_MAX_VEL = 180; // TODO
-  public static final double LAUNCHER_HOOD_MAX_ACC = LAUNCHER_HOOD_MAX_VEL / 2; // TODO
+  public static final double LAUNCHER_HOOD_MAX_VEL = 90; // TODO
+  public static final double LAUNCHER_HOOD_MAX_ACC = LAUNCHER_HOOD_MAX_VEL / 1.2; // TODO
 
   public static final double FLYWHEEL_P = 0.5;
   public static final double FLYWHEEL_I = 0.0;
@@ -36,11 +36,7 @@ public class LauncherConstants {
   public static final double MIN_ROTATION = Math.toRadians(30);
   public static final double MAX_ROTATION = Math.toRadians(90);
 
-  public static final double LAUNCHER_STOW_POSITION = MIN_ROTATION;
-
-  public static final double SPINDOWN_TIME = 2; // time to automatically go into idle mode after, currently TODO
-
-  public static final double KICK_TIME = 2; // seconds
+  public static final double LAUNCHER_STOW_POSITION = 30;
 
   public enum State {
     READY,

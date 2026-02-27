@@ -69,7 +69,7 @@ public class FieldPositions {
      * @return The prepared {@link Pose3d}, in meters
      */
     public static Pose3d prepareInchesPose(Pose3d pose) {
-        Pose2d flipped = prepareInchesPose(Utils.flattenPose3d(pose));
+        Pose2d flipped = prepareInchesPose(pose.toPose2d());
         return new Pose3d(flipped.getX(), flipped.getY(), Units.inchesToMeters(pose.getZ()),
                 new Rotation3d(flipped.getRotation()));
     }
@@ -95,7 +95,7 @@ public class FieldPositions {
      * @return The prepared {@link Pose3d}, in meters
      */
     public static Pose3d prepareMetersPose(Pose3d pose) {
-        Pose2d flipped = prepareMetersPose(Utils.flattenPose3d(pose));
+        Pose2d flipped = prepareMetersPose(pose.toPose2d());
         return new Pose3d(flipped.getX(), flipped.getY(), pose.getZ(), new Rotation3d(flipped.getRotation()));
     }
 
@@ -191,57 +191,11 @@ public class FieldPositions {
         public static final Pose2d CENTER = Utils.inchesToMeters(CENTER_INCHES);
     }
 
-    /** Zones on the field, measurements in meters */
-    public class Zones {
-        public static Pose2d[] get(ZoneType type) {
-            // TODO: This limits to only having one zone per type, fine for now
-            switch (type) {
-                default:
-                case PASSING:
-                    return preparePolygon(PASSING_ZONE);
-
-                case SCORING:
-                    return preparePolygon(SCORING_ZONE);
-            }
-        }
-
-        private static final double PASSING_ZONE_HEIGHT = 4.5;
-        private static final double SCORING_ZONE_HEIGHT = 4;
-
-        private static final double ZONE_BUFFER = 2 + SCORING_ZONE_HEIGHT;
-
-        private static final double FIELD_WIDTH_METERS = Units.inchesToMeters(FieldPositions.Field.FIELD_WIDTH);
-
-        // Center of the field
-        public static final Pose2d[] PASSING_ZONE = new FieldPositions().new Rect(
-                new Pose2d(ZONE_BUFFER, 0, new Rotation2d()),
-                new Pose2d(PASSING_ZONE_HEIGHT + ZONE_BUFFER, FIELD_WIDTH_METERS, new Rotation2d()))
-                .getPoints();
-
-        // Edge of the field
-        public static final Pose2d[] SCORING_ZONE = new FieldPositions().new Rect(
-                new Pose2d(0, 0, new Rotation2d()),
-                new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
-                .getPoints();
-
-        public static final Pose2d[] PASSING_POINTS_ARRAY = {
-                new Pose2d((SCORING_ZONE_HEIGHT / 2), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
-                new Pose2d((SCORING_ZONE_HEIGHT / 2), 1.5, new Rotation2d()) };
-
-        public static final List<Pose2d> PASSING_POINTS = new ArrayList<>();
-
-        static {
-            for (Pose2d point : FieldPositions.Zones.PASSING_POINTS_ARRAY) {
-                PASSING_POINTS.add(FieldPositions.prepareMetersPose(point));
-            }
-        }
-    }
-
     /**
      * A rectangle defined by two opposite corners. Used for defining zones on the
      * {@link FieldPositions field}.
      */
-    private class Rect {
+    private static class Rect {
         Pose2d[] rect;
 
         Rect(Pose2d point1, Pose2d point2) {
@@ -267,6 +221,52 @@ public class FieldPositions {
          */
         public Pose2d[] getPoints() {
             return rect;
+        }
+    }
+
+    /** Zones on the field, measurements in meters */
+    public class Zones {
+        public static Pose2d[] get(ZoneType type) {
+            // TODO: This limits to only having one zone per type, fine for now
+            switch (type) {
+                default:
+                case PASSING:
+                    return preparePolygon(PASSING_ZONE);
+
+                case SCORING:
+                    return preparePolygon(SCORING_ZONE);
+            }
+        }
+
+        private static final double PASSING_ZONE_HEIGHT = 4.5;
+        private static final double SCORING_ZONE_HEIGHT = 4;
+
+        private static final double ZONE_BUFFER = 2 + SCORING_ZONE_HEIGHT;
+
+        private static final double FIELD_WIDTH_METERS = Units.inchesToMeters(FieldPositions.Field.FIELD_WIDTH);
+
+        // Center of the field
+        public static final Pose2d[] PASSING_ZONE = new Rect(
+                new Pose2d(ZONE_BUFFER, 0, new Rotation2d()),
+                new Pose2d(PASSING_ZONE_HEIGHT + ZONE_BUFFER, FIELD_WIDTH_METERS, new Rotation2d()))
+                .getPoints();
+
+        // Edge of the field
+        public static final Pose2d[] SCORING_ZONE = new Rect(
+                new Pose2d(0, 0, new Rotation2d()),
+                new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
+                .getPoints();
+
+        public static final Pose2d[] PASSING_POINTS_ARRAY = {
+                new Pose2d((SCORING_ZONE_HEIGHT / 2), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
+                new Pose2d((SCORING_ZONE_HEIGHT / 2), 1.5, new Rotation2d()) };
+
+        public static final List<Pose2d> PASSING_POINTS = new ArrayList<>();
+
+        static {
+            for (Pose2d point : FieldPositions.Zones.PASSING_POINTS_ARRAY) {
+                PASSING_POINTS.add(FieldPositions.prepareMetersPose(point));
+            }
         }
     }
 }

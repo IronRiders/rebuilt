@@ -23,4 +23,16 @@ public class ClimberCommands {
     public Command set(State state) {
         return Commands.runOnce(() -> climber.setGoal(state));
     }
+
+    public Command climb() {
+        return set(State.CLIMBED);
+    }
+
+    public Command home() {
+        return set(State.MIN);
+    }
+
+    public Command extend() {
+        return set(State.MAX);
+    }
 }
