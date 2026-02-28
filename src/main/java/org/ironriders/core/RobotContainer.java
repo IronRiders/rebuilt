@@ -158,15 +158,14 @@ public class RobotContainer {
         primaryController.rightBumper().onTrue(
                 driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
                         FieldPositions.get(ElementType.HUB).toPose2d()));
-
+                        
         primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
 
         primaryController.leftTrigger(triggerThreshold).whileTrue(robotCommands.intake());
 
-        primaryController.povUp().onTrue(Commands.runOnce(()->LauncherSubsystem.trim(1)));
+        primaryController.povUp().onTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
 
-        primaryController.povDown().onTrue(Commands.runOnce(()->LauncherSubsystem.trim(-1)));
-
+        primaryController.povDown().onTrue(Commands.runOnce(() -> LauncherSubsystem.trim(-1)));
     }
 
     public Command buildAlignCommand(DriverRequest request) {

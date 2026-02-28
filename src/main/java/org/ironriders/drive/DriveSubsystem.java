@@ -7,6 +7,7 @@ import org.ironriders.core.RobotContainer;
 import org.ironriders.core.TargetingControl;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.field.Zone;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -49,6 +50,8 @@ public class DriveSubsystem extends IronSubsystem {
     public static ProfiledPIDController rotationPid;
 
     public static Pigeon2 pigeon = new Pigeon2(11);
+
+    public Zone lastZone;
 
     public DriveSubsystem() throws RuntimeException {
         try {
@@ -111,6 +114,14 @@ public class DriveSubsystem extends IronSubsystem {
         swerveDrive.updateOdometry();
 
         TargetingControl.update();
+
+        if (RobotContainer.passingZone.inside() && lastZone != RobotContainer.passingZone) {
+            TargetingControl.targetPassing();
+            lastZone = RobotContainer.passingZone;
+        } else if (RobotContainer.scoringZone.inside() && lastZone != RobotContainer.scoringZone) {
+            TargetingControl.targetHub();
+            lastZone = RobotContainer.scoringZone;
+        }
 
         if (Math.abs(RobotContainer.primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
             RobotContainer.revertToSafeDefaults();
