@@ -82,6 +82,8 @@ public class LauncherSubsystem extends IronSubsystem {
     public double manualAnglePosition = LAUNCHER_STOW_POSITION;
     public double manualFlywheelVelocity = 0;
 
+    public static double angleTrim = 0;
+
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
@@ -227,13 +229,17 @@ public class LauncherSubsystem extends IronSubsystem {
 
         flyWheelMotors.parallelStream().forEach(this::setFlywheelMotors);
 
-        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)), Degrees));
+        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)) + angleTrim, Degrees));
     }
 
     public void setFlywheelMotors(TalonFX motor) {
         motor.set(
                 Utils.clamp(0d, 1d,
                         velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(DegreesPerSecond))));
+    }
+
+    public static void trim(double val) {
+        angleTrim += val;
     }
 
     /**
