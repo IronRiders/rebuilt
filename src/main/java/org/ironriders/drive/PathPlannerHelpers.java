@@ -72,7 +72,7 @@ public class PathPlannerHelpers {
         // Flip path modifies the path it is called on...
         Double flippedDistance = distanceToPose2d(path.flipPath().getPathPoses().get(0), DriveSubsystem.getPose());
 
-        if (normalDistance < flippedDistance) {
+        if (normalDistance > flippedDistance) {
             // so we need to call it again here which is odd.
             // TOOD: make this more intuitive.
             path = path.flipPath();
@@ -88,6 +88,8 @@ public class PathPlannerHelpers {
                 new Pose2d(pose.getTranslation(), new Rotation2d(Utils.getAngleToPointRadians(pose, target) + Math.PI)),
                 DriveConstants.PATHFIND_CONSTRAINTS)
                 .andThen(driveCommands.resetPID());
+        DriveSubsystem.setRotationGoal(Utils.getAngleToPointRadians(pose, target) + Math.PI);
+        DriveSubsystem.setPIDRotationControl(true);
         schedule(pathfindingCommand);
     }
 

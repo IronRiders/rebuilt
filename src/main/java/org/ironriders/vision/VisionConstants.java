@@ -101,8 +101,8 @@ public class VisionConstants {
     }
 
     public static final Double SKEW_THROWAWAY_THRESHOLD = 15d; // deg,
-    public static final Double POSE_DISTANCE_THROWAWAY_THRESHOLD = 6d; // meters, TODO: Tune
-    public static final Double TARGET_DISTANCE_THROWAWAY_THRESHOLD = 5d; // meters, TODO: Tune
+    public static final Double POSE_DISTANCE_THROWAWAY_THRESHOLD = 6d; // meters
+    public static final Double TARGET_DISTANCE_THROWAWAY_THRESHOLD = 4d; // meters
 
     public static final Double WEIGHT_SCALE = 5d;
 }

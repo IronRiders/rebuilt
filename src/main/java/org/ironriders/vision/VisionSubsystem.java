@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.ironriders.core.RobotContainer;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
@@ -162,7 +163,8 @@ public class VisionSubsystem extends IronSubsystem {
             // if we are too normal to the tag, we can't trust the result. this is for
             // complicated reasons involving how photon vision sees tags. ask Issy in
             // discord if you really need to know (you probably don't)
-            if (Math.abs(skew) < VisionConstants.SKEW_THROWAWAY_THRESHOLD) {
+            if (Math.abs(skew) < VisionConstants.SKEW_THROWAWAY_THRESHOLD
+                    || Math.abs(skew) > 360 - VisionConstants.SKEW_THROWAWAY_THRESHOLD) {
                 addBadTagToString(TagInvalidReason.NO_SKEW, String.valueOf(skew));
                 tagStrings.put(target, debugString);
 
@@ -186,7 +188,7 @@ public class VisionSubsystem extends IronSubsystem {
                 continue;
             }
 
-            addGoodTagToString(distanceString);
+            addGoodTagToString(String.format("dist: %s skew: %s", distanceString, skew));
             tagStrings.put(target, debugString);
 
             // tag is valid! yay :3
@@ -230,16 +232,21 @@ public class VisionSubsystem extends IronSubsystem {
 
         // Throw away the new pose if it is too far away.
         if (estimatedPose.estimatedPose.getTranslation()
-                .getDistance(Utils.expandPose2d(DriveSubsystem.getPose())
-                        .getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
-                && DriverStation.isTeleopEnabled()) {
+                .getDistance(
+                        DriveSubsystem.getPose3d().getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
+                && (DriverStation.isTeleopEnabled() || DriverStation.isAutonomousEnabled())) {
             return;
         }
 
+        if (DriverStation.isAutonomous() && !RobotContainer.scoringZone.inside()) {
+            DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(VecBuilder.fill(20, 20, 50));
+        } else {
+            DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(estimateStdDevVector(camera));
+        }
+
         // Actually add the estimate.
-        DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(estimateStdDevVector(camera));
         DriveSubsystem.getSwerveDrive().addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(),
-                Timer.getFPGATimestamp());
+                estimatedPose.timestampSeconds); // Use capture time, not now, for latency compensation
     }
 
     // debugging helper functions

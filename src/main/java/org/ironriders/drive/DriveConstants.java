@@ -15,7 +15,7 @@ public class DriveConstants {
 
     public static final PPHolonomicDriveController HOLONOMIC_CONFIG = new PPHolonomicDriveController(
             new PIDConstants(10.0, 0.0, 0.0), // Translation PID
-            new PIDConstants(10.0, 0.0, 0.0) // Rotation PID
+            new PIDConstants(0.4, 0.0, 0.0) // Rotation PID
     );
 
     public static final double ROTATE_TO_TARGET_P = 8;

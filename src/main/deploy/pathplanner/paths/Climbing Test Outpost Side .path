@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.2,
-        "y": 7.0
+        "x": 2.621771523178808,
+        "y": 2.713692052980133
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.2,
-        "y": 7.948830374620241
+        "x": 1.9611175496688746,
+        "y": 2.713692052980133
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.2,
-        "y": 1.0
+        "x": 1.0899254966887417,
+        "y": 2.713692052980133
       },
       "prevControl": {
-        "x": 8.2,
-        "y": 2.149
+        "x": 1.5110016556291388,
+        "y": 2.720951986754966
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,21 +29,7 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.3,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -55,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 3.0,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Climbing Test Paths",
   "idealStartingState": {
-    "velocity": 1.3,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
