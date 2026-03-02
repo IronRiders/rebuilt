@@ -1,7 +1,6 @@
 package org.ironriders.manipulation.launcher;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
@@ -34,7 +33,6 @@ import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -96,8 +94,8 @@ public class LauncherSubsystem extends IronSubsystem {
             motor.setNeutralMode(NeutralModeValue.Coast);
             return motor;
         })
-                .forEach(m -> velocityPidMap.put(m, new PIDController(FLYWHEEL_P, FLYWHEEL_I,
-                        FLYWHEEL_D)));
+        .forEach(m -> velocityPidMap.put(m, new PIDController(FLYWHEEL_P, FLYWHEEL_I,
+            FLYWHEEL_D)));
 
         launcherHoodActuators.parallelStream().forEach(s -> s.enableDeadbandElimination(true));
 
@@ -151,7 +149,7 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public static void setKicker(KickerState state) {
-        kickerMotor.set(state.speed);
+        kickerMotor.set(-state.speed);
     }
 
     public static boolean isKicking() {
@@ -185,7 +183,7 @@ public class LauncherSubsystem extends IronSubsystem {
                 return;
 
             case IDLE:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL / 3.5);
+                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
                 return;
 
             case READY:
@@ -240,12 +238,10 @@ public class LauncherSubsystem extends IronSubsystem {
                         .map(m -> velocityPidMap.get(m).calculate(getFlywheelVelocity(m).in(RPM)))
                         .map(String::valueOf).collect(Collectors.joining(" | ")));
 
-        
         publish("PID goal",
                 flyWheelMotors.parallelStream()
                         .map(m -> velocityPidMap.get(m).getSetpoint())
                         .map(String::valueOf).collect(Collectors.joining(" | ")));
-
 
         if (currentState == State.STOW) {
             flyWheelMotors.parallelStream().forEach((m) -> m.set(0));
@@ -261,7 +257,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public void setFlywheelMotors(TalonFX motor) {
         motor.set(
-                Utils.clamp(0d, 1d,
+                Utils.clamp(-0.2d, 1d,
                         velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(RPM))));
     }
 
