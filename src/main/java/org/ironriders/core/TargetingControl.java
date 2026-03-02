@@ -100,33 +100,33 @@ public class TargetingControl {
          * else if we are in align priority, command drive to face align target.
          */
 
-        launcherTarget = getLauncherTarget();
+       //launcherTarget = getLauncherTarget();
 
-        alignTarget = getAlignTarget();
+       //alignTarget = getAlignTarget();
 
-        LauncherSubsystem.setTarget(launcherTarget);
-        DriveSubsystem.setRotationGoal(alignTarget);
+       //LauncherSubsystem.setTarget(launcherTarget);
+       //DriveSubsystem.setRotationGoal(alignTarget);
 
-        switch (request.m_priorityMode) {
-            default:
-            case DRIVER_PRIORITY:
-                // We want the driver to have control, disable PID control.
-                DriveSubsystem.setPIDRotationControl(false);
-                // Set the launcher to idle (1/2 max speed).
-                LauncherSubsystem.currentState = State.IDLE;
+       //switch (request.m_priorityMode) {
+       //    default:
+       //    case DRIVER_PRIORITY:
+       //        // We want the driver to have control, disable PID control.
+       //        DriveSubsystem.setPIDRotationControl(false);
+       //        // Set the launcher to idle (1/2 max speed).
+       //        LauncherSubsystem.currentState = State.IDLE;
 
-                return;
+       //        return;
 
-            case LAUNCHER_PRIORITY:
-                // Get the launcher ready (set to max speed).
-                LauncherSubsystem.currentState = State.READY;
-                // Fall though here as we want to use targeting whether or not we are launching.
-            case ALIGN_PRIORITY:
-                // We want the targeting system to have control, enable PID control.
-                DriveSubsystem.setPIDRotationControl(true);
+       //    case LAUNCHER_PRIORITY:
+       //        // Get the launcher ready (set to max speed).
+       //        LauncherSubsystem.currentState = State.READY;
+       //        // Fall though here as we want to use targeting whether or not we are launching.
+       //    case ALIGN_PRIORITY:
+       //        // We want the targeting system to have control, enable PID control.
+       //        DriveSubsystem.setPIDRotationControl(true);
 
-                return;
-        }
+       //        return;
+       //}
     }
 
     /**

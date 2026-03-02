@@ -25,6 +25,7 @@ import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
+import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristSubsystem;
 import org.ironriders.vision.VisionSubsystem;
@@ -159,13 +160,13 @@ public class RobotContainer {
                 driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
                         FieldPositions.get(ElementType.HUB).toPose2d()));
                         
-        primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
+        primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.fire());
 
-        primaryController.leftTrigger(triggerThreshold).whileTrue(robotCommands.intake());
+        primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-        primaryController.povUp().onTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
+        primaryController.povUp().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
 
-        primaryController.povDown().onTrue(Commands.runOnce(() -> LauncherSubsystem.trim(-1)));
+        primaryController.povDown().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(-1)));
     }
 
     public Command buildAlignCommand(DriverRequest request) {

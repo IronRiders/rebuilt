@@ -53,14 +53,14 @@ public class LauncherCommands {
 
     /**
      * Sets the launcher's angle to a given value. See
-     * {@link LauncherSubsystem#setLauncherGoal(double) LauncherSubsystem's
+     * {@link LauncherSubsystem#setHoodAngleGoal(double) LauncherSubsystem's
      * setLauncherGoal} for more details.
      * 
      * @param angle The target angle to set for the launcher.
      * @return A command that sets the launcher's angle.
      */
     public Command setAngleManually(double angle) {
-        return Commands.runOnce(() -> launcher.setLauncherGoal(angle));
+        return Commands.runOnce(() -> launcher.setHoodAngleGoal(angle));
     }
 
     /**

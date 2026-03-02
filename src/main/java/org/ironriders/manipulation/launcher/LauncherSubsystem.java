@@ -34,6 +34,8 @@ import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -87,6 +89,8 @@ public class LauncherSubsystem extends IronSubsystem {
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
+        kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
+
         flyWheelMotors.parallelStream().map((TalonFX motor) -> {
             motor.getConfigurator().apply(configuration);
             motor.setNeutralMode(NeutralModeValue.Coast);
@@ -122,12 +126,14 @@ public class LauncherSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
+        publish("State", currentState.name());
+
         putPose2d(currentTarget.toPose2d(), "LauncherTarget");
 
         switch (currentState) {
             case READY:
             case IDLE:
-                setLauncherGoal(calculateAngleToInternalTarget().in(Degrees));
+                setHoodAngleGoal(calculateAngleToInternalTarget().in(Degrees));
                 break;
             default:
                 break;
@@ -174,15 +180,17 @@ public class LauncherSubsystem extends IronSubsystem {
             default:
             case STOW:
                 setFlywheelGoal(0);
-                setLauncherGoal(LAUNCHER_STOW_POSITION);
+                setHoodAngleGoal(LAUNCHER_STOW_POSITION);
                 stopKicker();
                 return;
 
             case IDLE:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
+                setFlywheelGoal(FLYWHEEL_MAX_VEL / 3.5);
+                return;
 
             case READY:
                 setFlywheelGoal(FLYWHEEL_MAX_VEL);
+                return;
         }
     }
 
@@ -227,18 +235,34 @@ public class LauncherSubsystem extends IronSubsystem {
                 flyWheelMotors.parallelStream().map(TalonFX::getDifferentialAverageVelocity)
                         .map(StatusSignal::getValueAsDouble).collect(Collectors.toList()).toString());
 
+        publish("PID out",
+                flyWheelMotors.parallelStream()
+                        .map(m -> velocityPidMap.get(m).calculate(getFlywheelVelocity(m).in(RPM)))
+                        .map(String::valueOf).collect(Collectors.joining(" | ")));
+
+        
+        publish("PID goal",
+                flyWheelMotors.parallelStream()
+                        .map(m -> velocityPidMap.get(m).getSetpoint())
+                        .map(String::valueOf).collect(Collectors.joining(" | ")));
+
+
+        if (currentState == State.STOW) {
+            flyWheelMotors.parallelStream().forEach((m) -> m.set(0));
+            homeLauncherHood();
+            return;
+        }
+
         flyWheelMotors.parallelStream().forEach(this::setFlywheelMotors);
 
-        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)) + angleTrim, Degrees));
+        setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)) + angleTrim,
+                Degrees));
     }
 
     public void setFlywheelMotors(TalonFX motor) {
-        if (currentState == State.STOW) {
-            motor.set(0);
-        }
         motor.set(
                 Utils.clamp(0d, 1d,
-                        velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(DegreesPerSecond))));
+                        velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(RPM))));
     }
 
     public static void trim(double val) {
@@ -257,7 +281,7 @@ public class LauncherSubsystem extends IronSubsystem {
      * Sets the launcher's target angle for the PID controller. See
      * {@link PIDController#setGoal setGoal} for more information.
      */
-    public void setLauncherGoal(double goalAngle) {
+    public void setHoodAngleGoal(double goalAngle) {
         anglePidController.setGoal(goalAngle);
     }
 
