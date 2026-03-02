@@ -142,7 +142,7 @@ public class LauncherSubsystem extends IronSubsystem {
         updatePID();
     }
 
-    public static void fire() {
+    public static void runKicker() {
         setKicker(KickerState.FIRE);
     }
 

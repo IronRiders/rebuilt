@@ -160,7 +160,7 @@ public class RobotContainer {
                 driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
                         FieldPositions.get(ElementType.HUB).toPose2d()));
                         
-        primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.fire());
+        primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
 
         primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 

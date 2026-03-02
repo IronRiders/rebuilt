@@ -23,11 +23,11 @@ public class LauncherCommands {
     }
 
     public Command readyAndFire() {
-        return Commands.sequence(set(State.READY), fire());
+        return Commands.sequence(set(State.READY), runKicker());
     }
 
-    public Command fire() {
-        return Commands.runOnce(() -> LauncherSubsystem.fire());
+    public Command runKicker() {
+        return Commands.runOnce(() -> LauncherSubsystem.runKicker());
     }
 
     /**
