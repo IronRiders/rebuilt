@@ -15,7 +15,7 @@ public class LauncherConstants {
 
   public static final double TARGET_BALL_VELOCITY = 11.4; // m/s (see https://www.reca.lc/flywheel)
 
-  public static final double FLYWHEEL_MAX_VEL = 6065; // (see https://www.reca.lc/flywheel)
+  public static final double FLYWHEEL_MAX_VEL = 830; // (see https://www.reca.lc/flywheel)
   public static final double FLYWHEEL_MAX_ACC = FLYWHEEL_MAX_VEL / 2;
 
   public static final double LAUNCHER_HOOD_MAX_VEL = 90; // TODO
@@ -43,7 +43,6 @@ public class LauncherConstants {
     IDLE,
     STOW;
   }
-
 
   public enum KickerState {
     FIRE(1),

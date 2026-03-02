@@ -104,7 +104,7 @@ public class LauncherSubsystem extends IronSubsystem {
             v.setTolerance(FLYWHEEL_TOLERANCE);
         });
 
-        setCurrentState(State.IDLE);
+        setCurrentState(State.STOW);
 
         Optional<double[]> _range = estimateMinMaxRange();
         if (_range.isPresent()) {
@@ -233,8 +233,11 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public void setFlywheelMotors(TalonFX motor) {
+        if (currentState == State.STOW) {
+            motor.set(0);
+        }
         motor.set(
-                Utils.clamp(0d, 0d,
+                Utils.clamp(0d, 1d,
                         velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(DegreesPerSecond))));
     }
 
