@@ -234,7 +234,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public void setFlywheelMotors(TalonFX motor) {
         motor.set(
-                Utils.clamp(0d, 1d,
+                Utils.clamp(0d, 0d,
                         velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(DegreesPerSecond))));
     }
 
