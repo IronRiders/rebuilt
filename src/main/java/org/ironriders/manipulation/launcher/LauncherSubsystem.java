@@ -2,6 +2,7 @@ package org.ironriders.manipulation.launcher;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static org.ironriders.lib.BallisticsUtils.calculateAngleToInternalTarget;
 import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
@@ -35,6 +36,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -63,6 +65,8 @@ public class LauncherSubsystem extends IronSubsystem {
     public final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
     public static final TalonFX kickerMotor = new TalonFX(16);
 
+    private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
+
     // PID Controllers
     public Map<TalonFX, PIDController> velocityPidMap = new HashMap<TalonFX, PIDController>();
 
@@ -76,8 +80,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(40);
 
-    public final TalonFXConfiguration configuration = new TalonFXConfiguration()
-            .withCurrentLimits(currentLimitsConfigs);
+    public final TalonFXConfiguration configuration = new TalonFXConfiguration();
 
     public double manualAnglePosition = LAUNCHER_STOW_POSITION;
     public double manualFlywheelVelocity = 0;
@@ -89,9 +92,13 @@ public class LauncherSubsystem extends IronSubsystem {
 
         kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
 
+        configuration.CurrentLimits = currentLimitsConfigs;
+        configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        configuration.Slot0.kP = 0.14;
+        configuration.Slot0.kV = 0.01;
+
         flyWheelMotors.parallelStream().map((TalonFX motor) -> {
             motor.getConfigurator().apply(configuration);
-            motor.setNeutralMode(NeutralModeValue.Coast);
             return motor;
         })
         .forEach(m -> velocityPidMap.put(m, new PIDController(FLYWHEEL_P, FLYWHEEL_I,
@@ -120,12 +127,13 @@ public class LauncherSubsystem extends IronSubsystem {
         anglePidController.setGoal(LAUNCHER_STOW_POSITION);
         anglePidController.setTolerance(LAUNCHER_TOLERANCE);
         anglePidController.reset(getLauncherHoodAngle().in(Degrees));
+        publish("manualFlywheelVelocity", manualFlywheelVelocity);
     }
 
     @Override
     public void periodic() {
         publish("State", currentState.name());
-
+    
         putPose2d(currentTarget.toPose2d(), "LauncherTarget");
 
         switch (currentState) {
@@ -228,19 +236,17 @@ public class LauncherSubsystem extends IronSubsystem {
      * controllers. Utility class for {@link #periodic()}.
      */
     public void updatePID() {
-        publish("Launcher RPM", getFlywheelAverageVelocity().in(RPM));
-        publish("Launcher Differential RPM",
-                flyWheelMotors.parallelStream().map(TalonFX::getDifferentialAverageVelocity)
-                        .map(StatusSignal::getValueAsDouble).collect(Collectors.toList()).toString());
+        manualFlywheelVelocity = SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
+        publish("Launcher RPS", getFlywheelAverageVelocity().in(RevolutionsPerSecond));
 
         publish("PID out",
                 flyWheelMotors.parallelStream()
-                        .map(m -> velocityPidMap.get(m).calculate(getFlywheelVelocity(m).in(RPM)))
-                        .map(String::valueOf).collect(Collectors.joining(" | ")));
+                        .map(m -> m.getClosedLoopOutput()))
+                        .map(String::valueOf).collect(Collectors.joining(" | "));
 
         publish("PID goal",
                 flyWheelMotors.parallelStream()
-                        .map(m -> velocityPidMap.get(m).getSetpoint())
+                        .map(m -> m.getClosedLoopReferenceSlope())
                         .map(String::valueOf).collect(Collectors.joining(" | ")));
 
         if (currentState == State.STOW) {
@@ -249,16 +255,13 @@ public class LauncherSubsystem extends IronSubsystem {
             return;
         }
 
-        flyWheelMotors.parallelStream().forEach(this::setFlywheelMotors);
 
         setHoodAngle(Angle.ofBaseUnits(anglePidController.calculate(getLauncherHoodAngle().in(Degrees)) + angleTrim,
                 Degrees));
     }
 
-    public void setFlywheelMotors(TalonFX motor) {
-        motor.set(
-                Utils.clamp(-0.2d, 1d,
-                        velocityPidMap.get(motor).calculate(getFlywheelVelocity(motor).in(RPM))));
+    public void setFlywheelMotors(TalonFX motor, double velocity) {
+        motor.setControl(velocityRequest.withVelocity(velocity));
     }
 
     public static void trim(double val) {
@@ -282,9 +285,10 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     /**
-     * @return Returns the *AVERAGE* velocity!!
+     * @return Returns the *AVERAGE* velocity!! 
      */
     public AngularVelocity getFlywheelAverageVelocity() {
+        publish("Fly Wheel Velcoity M1 ", flyWheelMotors.get(0).getVelocity().getValue().in(RotationsPerSecond));
         return AngularVelocity.ofBaseUnits(flyWheelMotors.parallelStream().map(TalonFX::getVelocity)
                 .collect(Collectors.averagingDouble(StatusSignal::getValueAsDouble)), RotationsPerSecond);
     }
@@ -322,7 +326,7 @@ public class LauncherSubsystem extends IronSubsystem {
      *         {@link SmartDashboard#getNumber() SmartDashboard}.
      */
     public double getManualLauncherAngle() {
-        return SmartDashboard.getNumber("manualLauncherAngle", manualAnglePosition);
+        return manualFlywheelVelocity;
     }
 
     /**
