@@ -90,8 +90,8 @@ public class LauncherSubsystem extends IronSubsystem {
 
         configuration.CurrentLimits = currentLimitsConfigs;
         configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        configuration.Slot0.kP = 0.14;
-        configuration.Slot0.kV = 0.01;
+        configuration.Slot0.kP = FLYWHEEL_P;
+        configuration.Slot0.kI = FLYWHEEL_I;
 
         flyWheelMotors.parallelStream().forEach(motor -> {
             motor.getConfigurator().apply(configuration);
