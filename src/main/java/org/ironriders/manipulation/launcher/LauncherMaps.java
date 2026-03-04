@@ -26,7 +26,7 @@ public class LauncherMaps {
         LauncherAngleToDistanceMap() {
             launcherAngleToDistanceMap.put(90d, 0d);
             launcherAngleToDistanceMap.put(35d, 10d);
-            launcherAngleToDistanceMap.put(45d, 100d);
+            launcherAngleToDistanceMap.put(45d, 15d);
         }
 
         public static Angle getAngleToHubForDistance(double distance) {
