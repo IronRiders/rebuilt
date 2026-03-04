@@ -159,8 +159,12 @@ public class RobotContainer {
         primaryController.rightBumper().onTrue(
                 driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
                         FieldPositions.get(ElementType.HUB).toPose2d()));
-                        
+
+        // TODO: This binding currently only runs the kicker directly. It should
+        // eventually be updated to use robotCommands.fire() (or handle Launcher state)
+        // to ensure the flywheels and hood spin up properly.
         primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
+        // primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
 
         primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 

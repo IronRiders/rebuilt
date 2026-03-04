@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
 import dev.doglog.DogLog;
@@ -81,7 +82,7 @@ public class BallisticsUtils {
         return Utils.inRange(LauncherSubsystem.range[0], LauncherSubsystem.range[1], distance);
     }
 
-    public static Translation2d translationToPoint (
+    public static Translation2d translationToPoint(
             Pose2d from,
             Pose2d to,
             double magnitude) {
@@ -105,35 +106,33 @@ public class BallisticsUtils {
     // --- Angle ---
 
     /**
-     * Calculate the angle to the hub from the current position.
+     * Calculate the extension to the hub from the current position.
      *
-     * @return The angle to the hub, in radians.
+     * @return The extension to the hub, in percentage of full e.
      */
-    public static Angle calculateAngleToHub() {
-        return calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP));
+    public static double calculateExtensionToHub() {
+        return calculateExtensionToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP));
     }
 
     /**
-     * Calculate the angle to the current target from the current position.
+     * Calculate the extension to the current target from the current position.
      *
-     * @return The angle to the current target, in radians. See
-     *         {@link #calculateAngleToTarget(Pose3d)}
-     *         for out-of-range values.
+     * @return The extension to the current target, in percentage of full extension.
      */
-    public static Angle calculateAngleToInternalTarget() {
-        return calculateAngleToTarget(LauncherSubsystem.currentTarget);
+    public static double calculateExtensionToInternalTarget() {
+        return calculateExtensionToTarget(LauncherSubsystem.currentTarget);
     }
 
     /**
-     * Calculate the angle to the specified target from the current position.
+     * Calculate the extension to the specified target from the current position.
      *
      * @param target The target {@link Pose3d position}.
-     * @return The angle to the target, in radians.
+     * @return The extension to the target, in percentage of full extension.
      */
-    public static Angle calculateAngleToTarget(Pose3d target) {
+    public static double calculateExtensionToTarget(Pose3d target) {
         double distance = Utils.getPoseDifference(getPosition(), target.toPose2d()).getNorm();
         DogLog.log("Launcher/Distance to target", String.valueOf(distance));
-        return calculateAngleToTarget(target, distance);
+        return LauncherMaps.distanceToExtension.getExtensionForDistance(distance);
     }
 
     /**
@@ -178,7 +177,7 @@ public class BallisticsUtils {
      *         otherwise
      *         Optional.empty().
      * 
-     * This code really sucks.
+     *         This code really sucks.
      */
     public static Optional<double[]> estimateMinMaxRange() {
         double low = 0d;

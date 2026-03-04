@@ -14,51 +14,31 @@ public class LauncherMaps {
         this.angleToExtensionMap = new AngleToExtensionMap();
     }
 
-    public class AngleToFlyWheelSpeed {
-        public static InterpolatingDoubleMap firstAngleToFlyWheelSpeedMap = new InterpolatingDoubleMap();
-        public static InterpolatingDoubleMap secondAngleToFlyWheelSpeedMap = new InterpolatingDoubleMap();
-        public static InterpolatingDoubleMap thirdAngleToFlyWheelSpeedMap = new InterpolatingDoubleMap();
-        public static InterpolatingDoubleMap fourthAngleToFlyWheelSpeedMap = new InterpolatingDoubleMap();
+    public class distanceToFlyWheelSpeed {
+        public static InterpolatingDoubleMap distanceToFlyWheelSpeedMap = new InterpolatingDoubleMap();
 
-         public static InterpolatingDoubleMap hoodTable = new InterpolatingDoubleMap();
-         public static InterpolatingDoubleMap flyWheelSpeedTable = new InterpolatingDoubleMap();
-
-        AngleToFlyWheelSpeed(){
-            //FIRST STATIC ANGLE    
+        distanceToFlyWheelSpeed() {
             // firstAngleToFlyWheelSpeedMap.put(null,null);
+        }
 
-            //SECOND STATIC ANGLE 
-            // secondAngleToFlyWheelSpeedMap.put(null,null);
-
-            //THIRD STATIC ANGLE 
-            // thirdAngleToFlyWheelSpeedMap.put(null,null);
-
-            //FOURTH STATIC ANGLE 
-            // fourthAngleToFlyWheelSpeedMap.put(null, null);
-
-        }  
-
-        public static double getExtensionForAngle(LauncherConstants.StaticAngle staticAngle, double distance) {
-            switch (staticAngle) {
-                case FIRST:
-                    return firstAngleToFlyWheelSpeedMap.get(distance);
-                case SECCOND:
-                    return secondAngleToFlyWheelSpeedMap.get(distance);
-                case THIRD:
-                    return thirdAngleToFlyWheelSpeedMap.get(distance);
-                case FOURTH:
-                    return fourthAngleToFlyWheelSpeedMap.get(distance);
-            
-                default:
-
-                    return firstAngleToFlyWheelSpeedMap.get(distance);
-            }
-            
-            
+        public static double getFlyWheelSpeedForDistance(double distance) {
+            return distanceToFlyWheelSpeedMap.get(distance);
         }
 
     }
 
+    public class distanceToExtension {
+        public static InterpolatingDoubleMap distanceToExtensionMap = new InterpolatingDoubleMap();
+
+        distanceToExtension() {
+            // distanceToExtensionMap.put(null,null);
+        }
+
+        public static double getExtensionForDistance(double distance) {
+            return distanceToExtensionMap.get(distance);
+        }
+
+    }
 
     public class AngleToExtensionMap {
         public static InterpolatingDoubleMap angleToExtensionMap = new InterpolatingDoubleMap();

@@ -10,7 +10,7 @@ import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherConstants;
-import org.ironriders.manipulation.launcher.LauncherSubsystem;
+
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristConstants;
 
@@ -75,7 +75,7 @@ public class RobotCommands {
 
     public Command stow() { // Reset everything
         return Commands.parallel(launcherCommands.set(LauncherConstants.State.STOW),
-                Commands.runOnce(() -> LauncherSubsystem.stopKicker()),
+                Commands.runOnce(() -> launcherCommands.launcher.stopKicker()),
                 indexerCommands.set(IndexerConstants.State.STOP), intakeCommands.set(IntakeConstants.State.STOP),
                 wristCommands.set(WristConstants.State.UP), climberCommands.home());
     }

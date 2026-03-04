@@ -36,7 +36,10 @@ public class LauncherConstants {
   public static final double MIN_ROTATION = Math.toRadians(30);
   public static final double MAX_ROTATION = Math.toRadians(90);
 
-  public static final double LAUNCHER_STOW_POSITION = 30;
+  public static final double LAUNCHER_STOW_POSITION = 0.0;
+
+  public static final double MIN_RANGE = 0;
+  public static final double MAX_RANGE = 10;
 
   public enum State {
     READY,
@@ -44,12 +47,12 @@ public class LauncherConstants {
     STOW;
   }
 
-  public enum StaticAngle{
+  public enum StaticAngle {
     FIRST,
     SECCOND,
     THIRD,
     FOURTH;
-    
+
     public double shooterAgle;
 
   }
@@ -62,7 +65,7 @@ public class LauncherConstants {
     public double speed;
 
     KickerState(double speed) {
-        this.speed = speed;
+      this.speed = speed;
     }
   }
 }

@@ -17,7 +17,7 @@ public class LauncherCommands {
         launcher.publish("Set Launcher Idle State", set(State.IDLE));
         launcher.publish("Set Launcher Stow State", set(State.STOW));
 
-        launcher.publish("Set Launcher to Manual Angle", setAngleManually(launcher.getManualLauncherAngle()));
+        launcher.publish("Set Launcher to Manual Extension", setExtensionManually(launcher.getManualLauncherAngle()));
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
     }
@@ -27,7 +27,7 @@ public class LauncherCommands {
     }
 
     public Command runKicker() {
-        return Commands.runOnce(() -> LauncherSubsystem.runKicker());
+        return Commands.runOnce(() -> launcher.runKicker());
     }
 
     /**
@@ -38,7 +38,7 @@ public class LauncherCommands {
      * @return A command that sets the launcher's target state.
      */
     public Command set(State state) { // Will wait until we are ready
-        return new Command() {
+        var cmd = new Command() {
             @Override
             public void initialize() {
                 launcher.setCurrentState(state);
@@ -49,18 +49,20 @@ public class LauncherCommands {
                 return launcher.isReady();
             }
         };
+        cmd.addRequirements(launcher);
+        return cmd;
     }
 
     /**
-     * Sets the launcher's angle to a given value. See
-     * {@link LauncherSubsystem#setHoodAngleGoal(double) LauncherSubsystem's
+     * Sets the launcher's extension to a given value. See
+     * {@link LauncherSubsystem#setHoodExtension(double) LauncherSubsystem's
      * setLauncherGoal} for more details.
      * 
-     * @param angle The target angle to set for the launcher.
-     * @return A command that sets the launcher's angle.
+     * @param extension The target extension to set for the launcher.
+     * @return A command that sets the launcher's extension.
      */
-    public Command setAngleManually(double angle) {
-        return Commands.runOnce(() -> launcher.setHoodAngleGoal(angle));
+    public Command setExtensionManually(double extension) {
+        return Commands.runOnce(() -> launcher.setHoodExtension(extension));
     }
 
     /**
