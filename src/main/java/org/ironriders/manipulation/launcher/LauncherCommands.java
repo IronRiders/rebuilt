@@ -19,7 +19,7 @@ public class LauncherCommands {
 
         launcher.publish("Set Launcher to Manual Extension 0.5", setExtensionManually(0.5));
         launcher.publish("Set Launcher to Manual Extension 0.0", setExtensionManually(0.1));
-        launcher.publish("Set Launcher to Manual Extension 1.0", setExtensionManually(.9));
+        launcher.publish("Set Launcher to Manual Extension 10.0", setExtensionManually(10));
         // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
 
 

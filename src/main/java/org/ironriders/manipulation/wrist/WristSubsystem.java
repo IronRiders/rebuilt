@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -28,9 +29,9 @@ public class WristSubsystem extends IronSubsystem {
             WristConstants.MOTOR_ID);
 
     private final ArmFeedforward armFeedforward = new ArmFeedforward(
-            WristConstants.FeedForward.FRICTION,
-            WristConstants.FeedForward.GRAVITY,
-            WristConstants.FeedForward.COASTING);
+            WristConstants.S,
+            WristConstants.G,
+            WristConstants.V);
 
     private final ProfiledPIDController pid = new ProfiledPIDController(
             WristConstants.P,
@@ -58,6 +59,8 @@ public class WristSubsystem extends IronSubsystem {
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         configuration.withCurrentLimits(new CurrentLimitsConfigs().withSupplyCurrentLimit(WristConstants.CURRENT_LIMIT));
         configuration.withMotorOutput(new MotorOutputConfigs().withInverted(WristConstants.MOTOR_INVERSION));
+                configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
 
         wristMotor.getConfigurator()
                 .apply(configuration);
@@ -65,7 +68,7 @@ public class WristSubsystem extends IronSubsystem {
 
         setGoal(currentState);
 
-        pid.reset(getPositionDegrees());
+        pid.reset(getPositionRaw());
     }
 
     @Override
@@ -73,6 +76,7 @@ public class WristSubsystem extends IronSubsystem {
         publish("pos", getPositionDegrees());
         publish("Pos Raw", getPositionRaw());
         publish("pid", pid);
+
         publish("state", currentState.name());
 
         switch (currentState) {
@@ -100,6 +104,10 @@ public class WristSubsystem extends IronSubsystem {
 
     public double getPositionRaw(){
         return (encoder.getAbsolutePosition().getValueAsDouble());
+    }
+
+    public State getState() {
+        return currentState;
     }
 
     /**

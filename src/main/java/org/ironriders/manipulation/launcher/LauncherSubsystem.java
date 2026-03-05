@@ -154,7 +154,7 @@ public class LauncherSubsystem extends IronSubsystem {
                 return;
 
             case IDLE:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
+                setFlywheelGoal(FLYWHEEL_MAX_VEL / 7);
                 return;
 
             case READY:
@@ -266,7 +266,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public void setServos(double amount) {
         launcherHoodActuators.forEach((Servo servo) -> {
-            servo.set(amount);
+           servo.set(amount);
         });
         publish("Last requested extension", amount);
     }

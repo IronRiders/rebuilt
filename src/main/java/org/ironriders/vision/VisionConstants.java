@@ -18,22 +18,12 @@ public class VisionConstants {
 
     public static final List<VisionCamera> CAMERAS = new ArrayList<VisionCamera>();
 
-    public static final CameraMode CAMERA_MODE = CameraMode.SIM;
+    public static final CameraMode CAMERA_MODE = CameraMode.REAL;
 
     static {
         switch (CAMERA_MODE) {
             case REAL:
-                CAMERAS.add(new VisionCamera("main", new Transform3d(
-                        new Translation3d(
-                                -0.25, // forward (meters)
-                                0.0, // left (meters)
-                                0.5 // up (meters)
-                        ),
-                        new Rotation3d(
-                                0.0, // roll
-                                0.0, // pitch
-                                Math.PI // yaw
-                        ))));
+                
                 break;
 
             case SIM:

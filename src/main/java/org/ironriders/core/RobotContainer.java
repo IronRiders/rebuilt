@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -82,28 +83,32 @@ public class RobotContainer {
     public static final CommandXboxController primaryController = new CommandXboxController(
             DriveConstants.CONTROLLER_PRIMARY_PORT);
 
-    public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
-            launcherCommands, wristCommands, climberCommands, primaryController.getHID());
-
-    private static boolean targetingHub = false;
-    private static boolean targetingPassing = false;
-
-    public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Select", autoChooser);
-
-        DriverStation.silenceJoystickConnectionWarning(true);
-
-        passingZone = new Zone(ZoneType.PASSING);
-        scoringZone = new Zone(ZoneType.SCORING);
-
-        configureBindings();
-    }
-
-    public static void revertToSafeDefaults() {
-        targetingHub = false;
-        targetingPassing = false;
-        TargetingControl.revertToSafeDefaults();
+    public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
+                launcherCommands, wristCommands, climberCommands, primaryController.getHID());
+    
+        private static boolean targetingHub = false;
+        private static boolean targetingPassing = false;
+    
+        public RobotContainer() {
+            autoChooser = AutoBuilder.buildAutoChooser();
+            SmartDashboard.putData("Auto Select", autoChooser);
+    
+            DriverStation.silenceJoystickConnectionWarning(true);
+    
+            passingZone = new Zone(ZoneType.PASSING);
+            scoringZone = new Zone(ZoneType.SCORING);
+    
+            configureBindings();
+        }
+    
+        public static void revertToSafeDefaults() {
+            targetingHub = false;
+            targetingPassing = false;
+            TargetingControl.revertToSafeDefaults();
+        }
+    
+        public static void init() {
+            CommandScheduler.getInstance().schedule(robotCommands.stow());
     }
 
     private void configureBindings() {
