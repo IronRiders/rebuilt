@@ -17,7 +17,12 @@ public class LauncherCommands {
         launcher.publish("Set Launcher Idle State", set(State.IDLE));
         launcher.publish("Set Launcher Stow State", set(State.STOW));
 
-        launcher.publish("Set Launcher to Manual Extension", setExtensionManually(launcher.getManualLauncherAngle()));
+        launcher.publish("Set Launcher to Manual Extension 0.5", setExtensionManually(0.5));
+        launcher.publish("Set Launcher to Manual Extension 0.0", setExtensionManually(0.1));
+        launcher.publish("Set Launcher to Manual Extension 1.0", setExtensionManually(.9));
+        // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
+
+
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
     }
@@ -61,9 +66,12 @@ public class LauncherCommands {
      * @param extension The target extension to set for the launcher.
      * @return A command that sets the launcher's extension.
      */
-    public Command setExtensionManually(double extension) {
-        return Commands.runOnce(() -> launcher.setHoodExtension(extension));
+    public Command setExtensionManually(double amount) {
+        return Commands.runOnce(() -> launcher.setServos(amount));
     }
+    // public Command setExtensionFromElastic(){
+    //     return Commands.runOnce(()-> launcher.setExtensionManually());
+    // }
 
     /**
      * Sets the launcher's flywheel velocity to a given value. See

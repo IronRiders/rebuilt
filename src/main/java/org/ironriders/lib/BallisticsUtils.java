@@ -132,7 +132,7 @@ public class BallisticsUtils {
     public static double calculateExtensionToTarget(Pose3d target) {
         double distance = Utils.getPoseDifference(getPosition(), target.toPose2d()).getNorm();
         DogLog.log("Launcher/Distance to target", String.valueOf(distance));
-        return LauncherMaps.distanceToExtension.getExtensionForDistance(distance);
+        return LauncherMaps.AngleToExtensionMap.getExtensionForAngle(calculateAngleToTarget(target, distance).in(Degrees));
     }
 
     /**

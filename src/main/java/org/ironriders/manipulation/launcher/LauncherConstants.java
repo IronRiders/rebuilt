@@ -16,14 +16,14 @@ public class LauncherConstants {
   public static final double TARGET_BALL_VELOCITY = 11.4; // m/s (see https://www.reca.lc/flywheel)
 
   public static final double FLYWHEEL_MAX_VEL = 100; // RPS NOW (see https://www.reca.lc/flywheel)
-  public static final double FLYWHEEL_MAX_ACC = FLYWHEEL_MAX_VEL / .25;
+
 
   public static final double LAUNCHER_HOOD_MAX_VEL = 90; // TODO
   public static final double LAUNCHER_HOOD_MAX_ACC = LAUNCHER_HOOD_MAX_VEL / 1.2; // TODO
 
-  public static final double FLYWHEEL_P = 0.01275;
+  public static final double FLYWHEEL_P = 0.1;
   public static final double FLYWHEEL_I = 0.0;
-  public static final double FLYWHEEL_D = 0.0;
+  public static final double FLYWHEEL_D = 0.00;
 
   public static final double FLYWHEEL_TOLERANCE = 5; // rps
 

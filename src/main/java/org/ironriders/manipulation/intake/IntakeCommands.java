@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 /** Public-facing methods which return commands for the Intake */
-public class IntakeCommands {
+public class IntakeCommands {                       
 
     private IntakeSubsystem intake;
 

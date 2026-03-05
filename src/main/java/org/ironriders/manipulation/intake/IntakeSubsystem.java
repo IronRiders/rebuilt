@@ -42,6 +42,11 @@ public class IntakeSubsystem extends IronSubsystem {
         setMotor(state.speed);
     }
 
+    @Override
+    public void periodic() {
+        publish("intakeOutput", motor.getMotorVoltage().getValueAsDouble());
+    }
+
     /**
      * @return The IntakeCommands object for the intake subsystem
      */

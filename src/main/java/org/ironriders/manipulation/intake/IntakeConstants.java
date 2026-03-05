@@ -14,9 +14,9 @@ public class IntakeConstants {
      * </ul>
      */
     public enum State {
-        INTAKE(-1),
+        INTAKE(-0.4),
         STOP(0),
-        BACK(1);
+        BACK(0.4);
 
         public double speed;
 
