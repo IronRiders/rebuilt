@@ -185,7 +185,7 @@ public class LauncherMaps {
             angleToExtensionMap.put(125d, 240.0d);
         }
 
-        /*
+        /**
          * Get the value in terms of 0-1 instead of raw millimeters.
          * You should probably use this method in most cases.
          */
@@ -193,14 +193,14 @@ public class LauncherMaps {
             return angleToExtensionMap.get(angle) / maxExtension;
         }
 
-        /*
+        /**
          * Get the angle for the given extension (0-1).
          */
         public static double getAngleForExtensionPercent(double extension) {
             return angleToExtensionMap.getKeysByValue(extension * maxExtension).orElse(List.of(0d)).get(0);
         }
 
-        /*
+        /**
          * Get the angle for the given extension in mm.
          */
         public static double getAngleForExtension(double extension) {

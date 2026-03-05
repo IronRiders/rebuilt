@@ -4,8 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static org.ironriders.manipulation.launcher.LauncherConstants.G;
 import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HIGHT;
-import static org.ironriders.manipulation.launcher.LauncherConstants.MAX_ROTATION;
-import static org.ironriders.manipulation.launcher.LauncherConstants.MIN_ROTATION;
 import static org.ironriders.manipulation.launcher.LauncherConstants.TARGET_BALL_VELOCITY;
 
 import java.util.Optional;
@@ -110,7 +108,7 @@ public class BallisticsUtils {
      *
      * @return The extension to the hub, in percentage of full e.
      */
-    public static double calculateExtensionToHub() {
+    public static Optional<Double> calculateExtensionToHub() {
         return calculateExtensionToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP));
     }
 
@@ -119,7 +117,7 @@ public class BallisticsUtils {
      *
      * @return The extension to the current target, in percentage of full extension.
      */
-    public static double calculateExtensionToInternalTarget() {
+    public static Optional<Double> calculateExtensionToInternalTarget() {
         return calculateExtensionToTarget(LauncherSubsystem.currentTarget);
     }
 
@@ -129,127 +127,32 @@ public class BallisticsUtils {
      * @param target The target {@link Pose3d position}.
      * @return The extension to the target, in percentage of full extension.
      */
-    public static double calculateExtensionToTarget(Pose3d target) {
+    public static Optional<Double> calculateExtensionToTarget(Pose3d target) {
         double distance = Utils.getPoseDifference(getPosition(), target.toPose2d()).getNorm();
         DogLog.log("Launcher/Distance to target", String.valueOf(distance));
-        return LauncherMaps.AngleToExtensionMap.getExtensionForAngle(calculateAngleToTarget(target, distance).in(Degrees));
+        return calculateExtensionToTarget(target, distance);
     }
 
-    /**
-     * Calculate the launcher angle required to hit a target from the current
-     * position.
-     *
-     * @param target   The target {@link Pose3d position}.
-     * @param distance The distance to the target.
-     * @return The angle of the launcher to hit the target. Returns sentinel angles
-     *         when
-     *         target is unreachable.
-     */
-    public static Angle calculateAngleToTarget(Pose3d target, double distance) {
+    public static Optional<Double> calculateExtensionToTarget(Pose3d target, double distance) {
         double v = TARGET_BALL_VELOCITY;
         double y = target.getZ() - LAUNCHER_HIGHT;
 
         double inner = Math.pow(v, 4) - G * (G * distance * distance + 2 * y * v * v);
 
         if (inner < 0) {
-            return Angle.ofBaseUnits(-1d, Degrees);
+            return Optional.empty();
         }
 
         double sqrt = Math.sqrt(inner);
         double lowAngle = Math.atan((v * v - sqrt) / (G * distance));
         double highAngle = Math.atan((v * v + sqrt) / (G * distance));
 
-        DogLog.log("Launcher/Angles", "high: " + String.valueOf(highAngle) + " low: " + String.valueOf(lowAngle));
-
-        if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, highAngle)) {
-            return Angle.ofBaseUnits(highAngle, Radians);
-        } else if (Utils.inRange(MIN_ROTATION, MAX_ROTATION, lowAngle)) {
-            return Angle.ofBaseUnits(lowAngle, Radians);
+        if (Utils.inRange(LauncherMaps.AngleToExtensionMap.getAngleForExtension(0), LauncherMaps.AngleToExtensionMap.getAngleForExtension(1), highAngle)) {
+            return Optional.of(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(Math.toDegrees(highAngle)));
+        } else if (Utils.inRange(LauncherMaps.AngleToExtensionMap.getAngleForExtension(0), LauncherMaps.AngleToExtensionMap.getAngleForExtension(1), lowAngle)) {
+            return Optional.of(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(Math.toDegrees(lowAngle)));
         } else {
-            return Angle.ofBaseUnits(-2d, Degrees);
-        }
-    }
-
-    /**
-     * Estimate the minimum and maximum ranges (distance) where the hub can be hit.
-     *
-     * @return Optional containing a double[] { min, max } when successful,
-     *         otherwise
-     *         Optional.empty().
-     * 
-     *         This code really sucks.
-     */
-    public static Optional<double[]> estimateMinMaxRange() {
-        double low = 0d;
-        double high = 0d;
-        double step = 1d;
-        int loops = 0;
-        double lastResult = -2; // Start assuming we're too close
-        double minLow = 0d;
-        double minHigh = 0d;
-        boolean foundMinRegion = false;
-
-        while (loops <= 25) {
-            double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), high)
-                    .in(Radians);
-
-            if (result == -1) {
-                break;
-            }
-
-            if (lastResult == -2 && result != -2) {
-                minLow = low;
-                minHigh = high;
-                foundMinRegion = true;
-            }
-
-            low = high;
-            high += step;
-            step *= 2;
-            loops += 1;
-            lastResult = result;
-        }
-
-        if (loops > 25) {
-            DogLog.log("exit early on range estimate", String.valueOf(true));
             return Optional.empty();
         }
-
-        double maxLow = low;
-        double maxHigh = high;
-
-        // Binary search for min region
-        double min = 0d;
-        if (foundMinRegion) {
-            for (int i = 0; i < 20; i++) {
-                double mid = (minLow + minHigh) / 2.0;
-                Double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP),
-                        mid)
-                        .in(Radians);
-
-                if (result == -2) {
-                    minLow = mid;
-                } else {
-                    minHigh = mid;
-                }
-            }
-            min = minHigh;
-        }
-
-        // Binary search for max region
-        for (int i = 0; i < 20; i++) {
-            double mid = (maxLow + maxHigh) / 2.0;
-            Double result = calculateAngleToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP), mid)
-                    .in(Radians);
-
-            if (result == -1) {
-                maxHigh = mid;
-            } else {
-                maxLow = mid;
-            }
-        }
-        double max = maxLow;
-
-        return Optional.of(new double[] { min, max });
     }
 }

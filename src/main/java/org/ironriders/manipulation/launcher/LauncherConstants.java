@@ -6,66 +6,57 @@ import edu.wpi.first.math.util.Units;
 
 /** Constants for the {@link LauncherSubsystem} */
 public class LauncherConstants {
-  public static final double LAUNCHER_HIGHT = Units.inchesToMeters(20.0);
+    public static final double LAUNCHER_HIGHT = Units.inchesToMeters(20.0);
 
-  public static final double G = 9.8; // m/s
+    public static final double G = 9.8; // m/s
 
-  public static final double HEIGHT_DIFFERENCE_HUB_TO_LAUNCHER = Units.inchesToMeters(FieldPositions.Hub.HUB_TOP.getZ())
-      - LAUNCHER_HIGHT; // m
+    public static final double HEIGHT_DIFFERENCE_HUB_TO_LAUNCHER = Units
+            .inchesToMeters(FieldPositions.Hub.HUB_TOP.getZ())
+            - LAUNCHER_HIGHT; // m
 
-  public static final double TARGET_BALL_VELOCITY = 11.4; // m/s (see https://www.reca.lc/flywheel)
+    public static final double TARGET_BALL_VELOCITY = 11.4; // m/s (see https://www.reca.lc/flywheel)
 
-  public static final double FLYWHEEL_MAX_VEL = 100; // RPS NOW (see https://www.reca.lc/flywheel)
+    public static final double FLYWHEEL_MAX_VEL = 100; // RPS NOW (see https://www.reca.lc/flywheel)
 
+    public static final double FLYWHEEL_TOLERANCE = 5; // rps
 
-  public static final double LAUNCHER_HOOD_MAX_VEL = 90; // TODO
-  public static final double LAUNCHER_HOOD_MAX_ACC = LAUNCHER_HOOD_MAX_VEL / 1.2; // TODO
+    public static final double FLYWHEEL_S = 0.2;
+    public static final double FLYWHEEL_V = 0.118;
+    public static final double FLYWHEEL_A = 0.01;
 
-  public static final double FLYWHEEL_P = 0.1;
-  public static final double FLYWHEEL_I = 0.0;
-  public static final double FLYWHEEL_D = 0.00;
+    public static final double FLYWHEEL_P = 0.1;
 
-  public static final double FLYWHEEL_TOLERANCE = 5; // rps
+    public static final double LAUNCHER_P = 0.5;
+    public static final double LAUNCHER_I = 0.0;
+    public static final double LAUNCHER_D = 0.0;
 
-  public static final double LAUNCHER_P = 0.5;
-  public static final double LAUNCHER_I = 0.0;
-  public static final double LAUNCHER_D = 0.0;
+    public static final double LAUNCHER_TOLERANCE = 0.1;
 
-  public static final double LAUNCHER_TOLERANCE = 0.1;
+    public static final double MIN_RANGE = 0;
+    public static final double MAX_RANGE = 10;
 
-  public static final double MIN_ROTATION = Math.toRadians(30);
-  public static final double MAX_ROTATION = Math.toRadians(90);
-
-  public static final double LAUNCHER_STOW_POSITION = 0.0;
-
-  public static final double MIN_RANGE = 0;
-  public static final double MAX_RANGE = 10;
-
-  public enum State {
-    READY,
-    IDLE,
-    STOW;
-  }
-
-  public enum StaticAngle {
-    FIRST,
-    SECCOND,
-    THIRD,
-    FOURTH;
-
-    public double shooterAgle;
-
-  }
-
-  public enum KickerState {
-    FIRE(1),
-    STOP(0),
-    EJECT(-.6);
-
-    public double speed;
-
-    KickerState(double speed) {
-      this.speed = speed;
+    public enum State {
+        READY,
+        IDLE,
+        STOW;
     }
-  }
+
+    public enum StaticAngle {
+        FIRST,
+        SECOND,
+        THIRD,
+        FOURTH;
+    }
+
+    public enum KickerState {
+        FIRE(1),
+        STOP(0),
+        EJECT(-.6);
+
+        public double speed;
+
+        KickerState(double speed) {
+            this.speed = speed;
+        }
+    }
 }

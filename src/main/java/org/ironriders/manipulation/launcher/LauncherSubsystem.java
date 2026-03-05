@@ -1,30 +1,15 @@
 package org.ironriders.manipulation.launcher;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static org.ironriders.lib.BallisticsUtils.calculateExtensionToInternalTarget;
-import static org.ironriders.lib.BallisticsUtils.estimateMinMaxRange;
-import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_D;
-import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_I;
-import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_P;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_A;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_VEL;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_P;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_S;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_TOLERANCE;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_D;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HOOD_MAX_ACC;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HOOD_MAX_VEL;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_I;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_P;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_STOW_POSITION;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_TOLERANCE;
-import static org.ironriders.manipulation.launcher.LauncherConstants.MIN_RANGE;
-import static org.ironriders.manipulation.launcher.LauncherConstants.MAX_RANGE;
+import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_V;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.ironriders.lib.IronSubsystem;
@@ -34,21 +19,15 @@ import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.KickerState;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,57 +44,46 @@ public class LauncherSubsystem extends IronSubsystem {
     // Motors
     private final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
     private final List<Servo> launcherHoodActuators = List.of(new Servo(0), new Servo(1));
-    // private final Servo Servo1 = new Servo(0);
-    // private final Servo Servo2 = new Servo(1);
     public final TalonFX kickerMotor = new TalonFX(16);
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
-    // Target Velocity
-    private double targetFlywheelVelocity = 0;
-
-    private final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs().withSupplyCurrentLimit(40)
-            .withStatorCurrentLimit(40);
+    double targetFlywheelVelocity = 0;
 
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-    public double manualAnglePosition = LAUNCHER_STOW_POSITION;
     public double manualFlywheelVelocity = 1;
     public double manualExtensionPosition = 1;
 
-    public static double angleTrim = 0;
+    public static double extensionTrim = 0;
 
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
         kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
 
-        configuration.CurrentLimits = currentLimitsConfigs;
+        configuration.CurrentLimits.StatorCurrentLimit = 40;
+
         configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        configuration.Slot0.kS = FLYWHEEL_S;
+        configuration.Slot0.kV = FLYWHEEL_V;
+        configuration.Slot0.kA = FLYWHEEL_A;
+
         configuration.Slot0.kP = FLYWHEEL_P;
-        configuration.Slot0.kV = 0.118;
-        configuration.Slot0.kS = 0.2;
+
+        configuration.MotionMagic.MotionMagicCruiseVelocity = 100;
+        configuration.MotionMagic.MotionMagicAcceleration = 200;
 
         flyWheelMotors.parallelStream().forEach(motor -> {
             motor.getConfigurator().apply(configuration);
         });
 
-        // launcherHoodActuators.parallelStream().forEach(s -> s.enableDeadbandElimination(true));
-        launcherHoodActuators.parallelStream().forEach(s -> s.setBoundsMicroseconds(2000,0,1500,0,1000));
-
-
-        // Used to configure WPILib PID here
+        launcherHoodActuators.parallelStream().forEach(s -> s.setBoundsMicroseconds(2000, 0, 1500, 0, 1000));
 
         setCurrentState(State.STOW);
 
-        // Optional<double[]> _range = estimateMinMaxRange();
-        // if (_range.isPresent()) {
-        // range = _range.get();
-        // }
-
         range = new double[] { LauncherConstants.MIN_RANGE, LauncherConstants.MAX_RANGE };
-
-        DogLog.log("Launcher/Range", "(" + String.valueOf(range[0]) + " : " + String.valueOf(range[1] + ")"));
 
         homeLauncherHood();
 
@@ -234,9 +202,9 @@ public class LauncherSubsystem extends IronSubsystem {
 
         publish("Launcher RPS", getFlywheelAverageVelocity().in(RevolutionsPerSecond));
 
-        publish("Fly Wheel Velcoity M1 ", flyWheelMotors.get(0).getVelocity().getValue().in(RotationsPerSecond));
-        publish("Fly Wheel Velcoity M2 ", flyWheelMotors.get(1).getVelocity().getValue().in(RotationsPerSecond));
-        publish("Fly Wheel Velcoity M3 ", flyWheelMotors.get(2).getVelocity().getValue().in(RotationsPerSecond));
+        publish("Fly Wheel Velocity M1 ", flyWheelMotors.get(0).getVelocity().getValue().in(RotationsPerSecond));
+        publish("Fly Wheel Velocity M2 ", flyWheelMotors.get(1).getVelocity().getValue().in(RotationsPerSecond));
+        publish("Fly Wheel Velocity M3 ", flyWheelMotors.get(2).getVelocity().getValue().in(RotationsPerSecond));
 
         publish("PID out",
                 flyWheelMotors.parallelStream()
@@ -260,7 +228,7 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public static void trim(double val) {
-        angleTrim += val;
+        extensionTrim += val;
     }
 
     /**
@@ -291,21 +259,6 @@ public class LauncherSubsystem extends IronSubsystem {
         return AngularVelocity.ofBaseUnits(motor.getVelocity().getValueAsDouble(), RotationsPerSecond);
     }
 
-    // /**
-    //  * @return The current angle of the launcher hood.
-    //  */
-    // public Angle getLauncherHoodAngle() {
-    //     return Angle.ofBaseUnits(
-    //             LauncherMaps.AngleToExtensionMap
-    //                     .getAngleForExtensionPercent(launcherHoodActuators.parallelStream().map(Servo::get)
-    //                             .collect(Collectors.averagingDouble(num -> Double.valueOf(num)))),
-    //             Degrees);
-    // }
-
-    public void setHoodAngle(Angle angle) { // SCHEDULED FOR REMOVAL
-        // setServos(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(angle.in(Degrees)));
-    }
-
     public void setHoodExtension(double extension) {
         publish("Set extension", extension);
         setServos(extension);
@@ -315,11 +268,7 @@ public class LauncherSubsystem extends IronSubsystem {
         launcherHoodActuators.forEach((Servo servo) -> {
             servo.set(amount);
         });
-        // launcherHoodActuators.get(0).set(amount);
-        // launcherHoodActuators.get(1).set(amount);
-        publish("amount", amount);
-        // Servo1.set(amount);
-        // Servo2.set(amount);
+        publish("Last requested extension", amount);
     }
 
     /**
@@ -330,13 +279,9 @@ public class LauncherSubsystem extends IronSubsystem {
         return manualFlywheelVelocity;
     }
 
-    public double getManualExtension(){
+    public double getManualExtension() {
         return manualExtensionPosition;
     }
-
-    // public void setExtensionManually(){
-    //     setServos(manualExtensionPosition);
-    // }
 
     /**
      * @return The current flywheel velocity manually set in
@@ -350,6 +295,6 @@ public class LauncherSubsystem extends IronSubsystem {
      * Homes the launcher hood to it's default position.
      */
     public void homeLauncherHood() {
-        setHoodAngle(Angle.ofBaseUnits(LAUNCHER_STOW_POSITION, Degrees));
+        setServos(0);
     }
 }
