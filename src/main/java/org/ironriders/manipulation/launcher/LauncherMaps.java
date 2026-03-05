@@ -1,37 +1,17 @@
 package org.ironriders.manipulation.launcher;
 
-import static edu.wpi.first.units.Units.Degrees;
-
 import java.util.List;
 
 import org.ironriders.lib.InterpolatingDoubleMap;
 
-import edu.wpi.first.units.measure.Angle;
-
 public class LauncherMaps {
     public AngleToExtensionMap angleToExtensionMap;
-    public LauncherAngleToDistanceMap launcherAngleToDistanceMap;
 
     /*
      * Setup maps.
      */
     public LauncherMaps() {
         this.angleToExtensionMap = new AngleToExtensionMap();
-        this.launcherAngleToDistanceMap = new LauncherAngleToDistanceMap();
-    }
-
-    public class LauncherAngleToDistanceMap {
-        public static InterpolatingDoubleMap launcherAngleToDistanceMap = new InterpolatingDoubleMap();
-
-        LauncherAngleToDistanceMap() {
-            launcherAngleToDistanceMap.put(90d, 0d);
-            launcherAngleToDistanceMap.put(35d, 10d);
-            launcherAngleToDistanceMap.put(45d, 15d);
-        }
-
-        public static Angle getAngleToHubForDistance(double distance) {
-            return Angle.ofBaseUnits(launcherAngleToDistanceMap.get(distance), Degrees);
-        }
     }
 
     public class distanceToFlyWheelSpeed {
