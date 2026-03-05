@@ -66,7 +66,7 @@ public class WristSubsystem extends IronSubsystem {
                 break;
             default:
         }
-        wristMotor.set(pid.calculate(getPosition()) + armFeedforward.calculate(getPosition(), getVelocity()));
+        //wristMotor.set(pid.calculate(getPosition()) + armFeedforward.calculate(getPosition(), getVelocity()));
     }
 
     /**
