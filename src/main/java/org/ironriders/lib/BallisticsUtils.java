@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
+import org.ironriders.manipulation.launcher.LauncherMaps.LauncherAngleToDistanceMap;
 import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
@@ -21,9 +22,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /** Utilities for ballistic calculations. */
 public class BallisticsUtils {
+    // should we use kinematic equations to solve for the angle, or use a lookup table.
+    private static boolean isKinematic = true;
 
     /** @return current 2D position of the robot. */
     public static Pose2d getPosition() {
@@ -146,6 +150,15 @@ public class BallisticsUtils {
      *         target is unreachable.
      */
     public static Angle calculateAngleToTarget(Pose3d target, double distance) {
+        if (!isKinematic) {
+            if (target != FieldPositions.get(ElementType.HUB)) {
+                DriverStation.reportError("Can not find angle to arbitrary target in lookup table mode!", false);
+                return Angle.ofBaseUnits(45d, Degrees);
+            }
+
+            return LauncherAngleToDistanceMap.getAngleToHubForDistance(distance);
+        }
+
         double v = TARGET_BALL_VELOCITY;
         double y = target.getZ() - LAUNCHER_HIGHT;
 
