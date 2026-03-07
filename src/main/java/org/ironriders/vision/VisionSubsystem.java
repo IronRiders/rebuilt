@@ -100,6 +100,8 @@ public class VisionSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
+        publish("test", "hello");
+
         // for every camera...
         VisionConstants.CAMERAS.stream().forEach((camera) -> {
             camera.updateResultBuffer();
@@ -157,6 +159,8 @@ public class VisionSubsystem extends IronSubsystem {
      * This function should be called for every camera.
      */
     public void estimateRobotPose(VisionCamera camera) {
+        publish("estimating pose", true);
+
         List<PhotonTrackedTarget> validTargets = new ArrayList<PhotonTrackedTarget>();
         Map<PhotonTrackedTarget, String> tagStrings = new HashMap<PhotonTrackedTarget, String>();
 
