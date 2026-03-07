@@ -244,12 +244,32 @@ public class IronSubsystem extends SubsystemBase {
         SmartDashboard.putNumber(dashboardPath + name, value);
     }
 
-    /**
-     * Publish a String diagnostic value to SmartDashboard with the prefix
-     * `Subsystems/{Subsystem Name}/`.
-     */
     public void publish(String name, String value) {
         SmartDashboard.putString(dashboardPath + name, value);
+    }
+
+    /**
+     * Read a Boolean diagnostic value from SmartDashboard with the prefix
+     * `Subsystems/{Subsystem Name}/`.
+     */
+    public boolean getPublishedBoolean(String name, boolean defaultValue) {
+        return SmartDashboard.getBoolean(dashboardPath + name, defaultValue);
+    }
+
+    /**
+     * Read a Double diagnostic value from SmartDashboard with the prefix
+     * `Subsystems/{Subsystem Name}/`.
+     */
+    public double getPublishedNumber(String name, double defaultValue) {
+        return SmartDashboard.getNumber(dashboardPath + name, defaultValue);
+    }
+
+    /**
+     * Read a String diagnostic value from SmartDashboard with the prefix
+     * `Subsystems/{Subsystem Name}/`.
+     */
+    public String getPublishedString(String name, String defaultValue) {
+        return SmartDashboard.getString(dashboardPath + name, defaultValue);
     }
 
     /**

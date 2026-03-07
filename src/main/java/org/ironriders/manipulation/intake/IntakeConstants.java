@@ -8,15 +8,15 @@ public class IntakeConstants {
     /**
      * Possible states for the intake. Each has a speed for the intake.
      * <ul>
-     * <li>{@link #INTAKE}: Intakes balls; speed = -1</li>
+     * <li>{@link #INTAKE}: Intakes balls; speed = -0.7</li>
      * <li>{@link #STOP}: Stops the intake; speed = 0</li>
-     * <li>{@link #BACK}: Ejects balls; speed = 1</li>
+     * <li>{@link #BACK}: Ejects balls; speed = 0.4</li>
      * </ul>
      */
     public enum State {
-        INTAKE(-0.4),
+        INTAKE(-0.75),
         STOP(0),
-        BACK(0.4);
+        BACK(0.25);
 
         public double speed;
 

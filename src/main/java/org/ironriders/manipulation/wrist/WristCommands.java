@@ -14,8 +14,8 @@ public class WristCommands {
     public WristCommands(WristSubsystem subsystem) {
         this.wristSubsystem = subsystem;
 
-        subsystem.publish("Down", setDown());
-        subsystem.publish("Up", setUp());
+        subsystem.publish("Wrist Down", setDown());
+        subsystem.publish("Wrist Up", setUp());
 
         subsystem.publish("Jostle", jostleBalls());
 
@@ -48,6 +48,6 @@ public class WristCommands {
      * @return A {@link Command} to do the above.
      */
     public Command jostleBalls() {
-        return Commands.sequence(set(State.JOSTLE).finallyDo(() -> wristSubsystem.setGoal(State.DOWN)));
+        return set(State.JOSTLE);
     }
 }

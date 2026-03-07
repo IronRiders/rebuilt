@@ -19,6 +19,7 @@ public class VisionConstants {
     public static final List<VisionCamera> CAMERAS = new ArrayList<VisionCamera>();
 
     public static final CameraMode CAMERA_MODE = CameraMode.REAL;
+    public static final CameraMode CAMERA_MODE = CameraMode.REAL;
 
     static {
         switch (CAMERA_MODE) {

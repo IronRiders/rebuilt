@@ -42,13 +42,7 @@ public class WristConstants {
         }
     }
 
-    /**
-     * Inner class for feed forward voltages
-     */
-    public class FeedForward {
-        public static final double FRICTION = 0; // TODO: calculate this // Static friction overcome voltage
-                                                 // (https://www.reca.lc/arm)
-        public static final double COASTING = 0; // Voltage required to maintain velocity
-        public static final double GRAVITY = 0; // Voltage required to overcome gravity
-    }
+    public static final double S = 0.00; // todo
+    public static final double G = 0.0;
+    public static final double V = 0;
 }

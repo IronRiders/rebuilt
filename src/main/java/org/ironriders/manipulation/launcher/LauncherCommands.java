@@ -16,12 +16,12 @@ public class LauncherCommands {
         launcher.publish("Set Launcher Ready State", set(State.READY));
         launcher.publish("Set Launcher Idle State", set(State.IDLE));
         launcher.publish("Set Launcher Stow State", set(State.STOW));
+        launcher.publish("Set Launcher Manual State", set(State.MANUAL));
 
-        launcher.publish("Set Launcher to Manual Extension 0.5", setExtensionManually(0.5));
-        launcher.publish("Set Launcher to Manual Extension 0.0", setExtensionManually(0.1));
-        launcher.publish("Set Launcher to Manual Extension 1.0", setExtensionManually(.9));
+        launcher.publish("Set Min Extension 0.05", setExtensionManually(0.05));
+        launcher.publish("Set Max Extension 0.95", setExtensionManually(0.95));
+        launcher.publish("Set Extension 0.5", setExtensionManually(0.5));
         // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
-
 
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
@@ -67,10 +67,10 @@ public class LauncherCommands {
      * @return A command that sets the launcher's extension.
      */
     public Command setExtensionManually(double amount) {
-        return Commands.runOnce(() -> launcher.setServos(amount));
+        return Commands.runOnce(() -> launcher.setHoodExtension(amount));
     }
     // public Command setExtensionFromElastic(){
-    //     return Commands.runOnce(()-> launcher.setExtensionManually());
+    // return Commands.runOnce(()-> launcher.setExtensionManually());
     // }
 
     /**

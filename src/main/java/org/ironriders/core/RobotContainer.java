@@ -21,6 +21,7 @@ import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
+import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherMaps;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -82,7 +84,7 @@ public class RobotContainer {
     public static final CommandXboxController primaryController = new CommandXboxController(
             DriveConstants.CONTROLLER_PRIMARY_PORT);
 
-    public final RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
+    public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
             launcherCommands, wristCommands, climberCommands, primaryController.getHID());
 
     private static boolean targetingHub = false;
@@ -104,6 +106,10 @@ public class RobotContainer {
         targetingHub = false;
         targetingPassing = false;
         TargetingControl.revertToSafeDefaults();
+    }
+
+    public static void init() {
+        CommandScheduler.getInstance().schedule(robotCommands.stow());
     }
 
     private void configureBindings() {
@@ -163,10 +169,14 @@ public class RobotContainer {
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)
         // to ensure the flywheels and hood spin up properly.
-        primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
+        // primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
         // primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
 
+        primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake()).onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+
         primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+
+        primaryController.povRight().onTrue(indexerCommands.index()).onFalse(indexerCommands.stop());
 
         primaryController.povUp().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
 
