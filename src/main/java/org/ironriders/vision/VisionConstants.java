@@ -23,7 +23,17 @@ public class VisionConstants {
     static {
         switch (CAMERA_MODE) {
             case REAL:
-                
+                CAMERAS.add(new VisionCamera("launcher-front", new Transform3d(
+                        new Translation3d(
+                                0,
+                                0,
+                                0.498
+                        ),
+                        new Rotation3d(
+                                0.0, // roll
+                                -Math.toRadians(35),
+                                Math.PI // yaw
+                        ))));
                 break;
 
             case SIM:
