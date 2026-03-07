@@ -169,14 +169,13 @@ public class RobotContainer {
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)
         // to ensure the flywheels and hood spin up properly.
-        // primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
+        primaryController.leftTrigger(triggerThreshold).onTrue(launcherCommands.runKicker()).onFalse(robotCommands.stow());
         // primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
 
         primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake()).onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-        primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+        // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-        primaryController.povRight().onTrue(indexerCommands.index()).onFalse(indexerCommands.stop());
 
         primaryController.povUp().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
 

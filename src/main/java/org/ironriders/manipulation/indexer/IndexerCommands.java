@@ -14,6 +14,10 @@ public class IndexerCommands {
     public IndexerCommands(IndexerSubsystem indexer) {
         this.indexer = indexer;
 
+        indexer.publish("index on", index());
+        indexer.publish("index stop", stop());
+        indexer.publish("index reverse", reverse());
+
     }
 
     /**

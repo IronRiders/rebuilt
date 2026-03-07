@@ -25,6 +25,9 @@ public class LauncherCommands {
 
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
+
+        launcher.publish("kicker on", runKicker() );
+        launcher.publish("kicker off", stopKicker());
     }
 
     public Command readyAndFire() {
@@ -34,6 +37,11 @@ public class LauncherCommands {
     public Command runKicker() {
         return Commands.runOnce(() -> launcher.runKicker());
     }
+
+    public Command stopKicker(){
+        return Commands.runOnce(()-> launcher.stopKicker());
+    }
+
 
     /**
      * Sets the launcher's target state. Will wait until the launcher is ready
