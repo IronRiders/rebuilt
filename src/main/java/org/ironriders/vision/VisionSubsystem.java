@@ -24,6 +24,9 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -45,6 +48,17 @@ public class VisionSubsystem extends IronSubsystem {
     public static VisionSystemSim visionSim = new VisionSystemSim("main");
 
     public VisionSubsystem() {
+        VisionConstants.CAMERAS.add(new VisionCamera("launcher-front", new Transform3d(
+                new Translation3d(
+                        0,
+                        0,
+                        0.498),
+                new Rotation3d(
+                        0.0, // roll
+                        -Math.toRadians(35),
+                        Math.PI // yaw
+                ))));
+
         /**
          * If we are simulating, add the cameras to the photonsim.
          */
