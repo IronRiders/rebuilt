@@ -14,7 +14,7 @@ public class IntakeConstants {
      * </ul>
      */
     public enum State {
-        INTAKE(-0.5),
+        INTAKE(-0.75),
         STOP(0),
         BACK(0.25);
 

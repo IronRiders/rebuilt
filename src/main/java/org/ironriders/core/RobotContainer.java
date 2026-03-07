@@ -21,6 +21,7 @@ import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
 import org.ironriders.manipulation.indexer.IndexerSubsystem;
 import org.ironriders.manipulation.intake.IntakeCommands;
+import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherMaps;
@@ -84,31 +85,31 @@ public class RobotContainer {
             DriveConstants.CONTROLLER_PRIMARY_PORT);
 
     public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands, intakeCommands,
-                launcherCommands, wristCommands, climberCommands, primaryController.getHID());
-    
-        private static boolean targetingHub = false;
-        private static boolean targetingPassing = false;
-    
-        public RobotContainer() {
-            autoChooser = AutoBuilder.buildAutoChooser();
-            SmartDashboard.putData("Auto Select", autoChooser);
-    
-            DriverStation.silenceJoystickConnectionWarning(true);
-    
-            passingZone = new Zone(ZoneType.PASSING);
-            scoringZone = new Zone(ZoneType.SCORING);
-    
-            configureBindings();
-        }
-    
-        public static void revertToSafeDefaults() {
-            targetingHub = false;
-            targetingPassing = false;
-            TargetingControl.revertToSafeDefaults();
-        }
-    
-        public static void init() {
-            CommandScheduler.getInstance().schedule(robotCommands.stow());
+            launcherCommands, wristCommands, climberCommands, primaryController.getHID());
+
+    private static boolean targetingHub = false;
+    private static boolean targetingPassing = false;
+
+    public RobotContainer() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Select", autoChooser);
+
+        DriverStation.silenceJoystickConnectionWarning(true);
+
+        passingZone = new Zone(ZoneType.PASSING);
+        scoringZone = new Zone(ZoneType.SCORING);
+
+        configureBindings();
+    }
+
+    public static void revertToSafeDefaults() {
+        targetingHub = false;
+        targetingPassing = false;
+        TargetingControl.revertToSafeDefaults();
+    }
+
+    public static void init() {
+        CommandScheduler.getInstance().schedule(robotCommands.stow());
     }
 
     private void configureBindings() {
@@ -168,10 +169,14 @@ public class RobotContainer {
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)
         // to ensure the flywheels and hood spin up properly.
-        primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
+        // primaryController.rightTrigger(triggerThreshold).whileTrue(launcherCommands.runKicker());
         // primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
 
+        primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake()).onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+
         primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+
+        primaryController.povRight().onTrue(indexerCommands.index()).onFalse(indexerCommands.stop());
 
         primaryController.povUp().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
 

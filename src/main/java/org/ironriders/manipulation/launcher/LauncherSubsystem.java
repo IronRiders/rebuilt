@@ -12,6 +12,7 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_V;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
@@ -28,9 +29,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import swervelib.simulation.ironmaple.simulation.drivesims.SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation;
 
 /** Subsystem for targeting & shooting */
 public class LauncherSubsystem extends IronSubsystem {
@@ -52,8 +57,8 @@ public class LauncherSubsystem extends IronSubsystem {
 
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-    public double manualFlywheelVelocity = 1;
-    public double manualExtensionPosition = 1;
+    public double manualFlywheelVelocity = 20;
+    public double manualExtensionPosition = .25;
 
     public static double extensionTrim = 0;
 
@@ -94,8 +99,8 @@ public class LauncherSubsystem extends IronSubsystem {
     @Override
     public void periodic() {
         publish("State", currentState.name());
-        manualFlywheelVelocity = SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
-        manualExtensionPosition = SmartDashboard.getNumber("manualExtension", manualExtensionPosition);
+        manualFlywheelVelocity = getPublishedNumber("manualFlywheelVelocity", manualFlywheelVelocity);
+        manualExtensionPosition = getPublishedNumber("manualExtensionPosition", manualExtensionPosition);
 
         putPose2d(currentTarget.toPose2d(), "LauncherTarget");
 
@@ -149,18 +154,39 @@ public class LauncherSubsystem extends IronSubsystem {
             default:
             case STOW:
                 setFlywheelGoal(0);
+                setHoodExtension(0.05);
                 // setHoodExtension(LAUNCHER_STOW_POSITION);
                 stopKicker();
                 return;
 
-            case IDLE:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL / 7);
+            case IDLE: // Calculate distance and set hood
+                       // Calculate distance and set target velocity
+                       // Fall back manual velocity?
+                AimLauncher();
+                // setFlywheelGoal(FLYWHEEL_MAX_VEL / 7);
                 return;
 
-            case READY:
-                setFlywheelGoal(FLYWHEEL_MAX_VEL);
+            case READY: // Calculate distance and set hood
+                        // Calculate distance and set target velocity
+                        // Fall back manual velocity?
+                AimLauncher();
+                // setFlywheelGoal(FLYWHEEL_MAX_VEL);
+                return;
+
+            case MANUAL:
+                setFlywheelGoal(manualFlywheelVelocity);
+                setHoodExtension(manualExtensionPosition = getPublishedNumber("manualExtensionPosition",
+                        manualExtensionPosition));
                 return;
         }
+    }
+
+    public void AimLauncher() {
+        double distance = BallisticsUtils.calculateDistanceToHub();
+        setFlywheelGoal(manualFlywheelVelocity);
+        setHoodExtension(manualExtensionPosition);
+        // setFlywheelGoal(LauncherMaps.distanceToFlyWheelSpeed.getFlyWheelSpeedForDistance(distance));
+        // setHoodExtension(LauncherMaps.distanceToExtension.getExtensionForDistance(distance));
     }
 
     /**
@@ -261,14 +287,10 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public void setHoodExtension(double extension) {
         publish("Set extension", extension);
-        setServos(extension);
-    }
-
-    public void setServos(double amount) {
         launcherHoodActuators.forEach((Servo servo) -> {
-           servo.set(amount);
+            servo.set(extension);
         });
-        publish("Last requested extension", amount);
+
     }
 
     /**
@@ -285,16 +307,16 @@ public class LauncherSubsystem extends IronSubsystem {
 
     /**
      * @return The current flywheel velocity manually set in
-     *         {@link SmartDashboard#getNumber() SmartDashboard}.
+     *         SmartDashboard.
      */
     public double getManualFlywheelVelocity() {
-        return SmartDashboard.getNumber("manualFlywheelVelocity", manualFlywheelVelocity);
+        return getPublishedNumber("manualFlywheelVelocity", manualFlywheelVelocity);
     }
 
     /**
      * Homes the launcher hood to it's default position.
      */
     public void homeLauncherHood() {
-        setServos(0);
+        // setServos(0);
     }
 }

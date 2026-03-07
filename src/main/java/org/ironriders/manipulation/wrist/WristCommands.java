@@ -14,8 +14,8 @@ public class WristCommands {
     public WristCommands(WristSubsystem subsystem) {
         this.wristSubsystem = subsystem;
 
-        subsystem.publish("Down", setDown());
-        subsystem.publish("Up", setUp());
+        subsystem.publish("Wrist Down", setDown());
+        subsystem.publish("Wrist Up", setUp());
 
         subsystem.publish("Jostle", jostleBalls());
 

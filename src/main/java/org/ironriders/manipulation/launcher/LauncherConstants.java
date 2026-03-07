@@ -38,7 +38,8 @@ public class LauncherConstants {
     public enum State {
         READY,
         IDLE,
-        STOW;
+        STOW,
+        MANUAL;
     }
 
     public enum StaticAngle {

@@ -108,7 +108,7 @@ public class BallisticsUtils {
      *
      * @return The extension to the hub, in percentage of full e.
      */
-    public static Optional<Double> calculateExtensionToHub() {
+    public static Optional<Double> calculateExtensionToHubKinematics() {
         return calculateExtensionToTarget(FieldPositions.prepareInchesPose(FieldPositions.Hub.HUB_TOP));
     }
 
@@ -147,9 +147,11 @@ public class BallisticsUtils {
         double lowAngle = Math.atan((v * v - sqrt) / (G * distance));
         double highAngle = Math.atan((v * v + sqrt) / (G * distance));
 
-        if (Utils.inRange(LauncherMaps.AngleToExtensionMap.getAngleForExtension(0), LauncherMaps.AngleToExtensionMap.getAngleForExtension(1), highAngle)) {
+        if (Utils.inRange(LauncherMaps.AngleToExtensionMap.getAngleForExtension(0),
+                LauncherMaps.AngleToExtensionMap.getAngleForExtension(1), highAngle)) {
             return Optional.of(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(Math.toDegrees(highAngle)));
-        } else if (Utils.inRange(LauncherMaps.AngleToExtensionMap.getAngleForExtension(0), LauncherMaps.AngleToExtensionMap.getAngleForExtension(1), lowAngle)) {
+        } else if (Utils.inRange(LauncherMaps.AngleToExtensionMap.getAngleForExtension(0),
+                LauncherMaps.AngleToExtensionMap.getAngleForExtension(1), lowAngle)) {
             return Optional.of(LauncherMaps.AngleToExtensionMap.getExtensionForAngle(Math.toDegrees(lowAngle)));
         } else {
             return Optional.empty();
