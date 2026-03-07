@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Utilities for ballistic calculations. */
 public class BallisticsUtils {
@@ -130,6 +131,7 @@ public class BallisticsUtils {
     public static Optional<Double> calculateExtensionToTarget(Pose3d target) {
         double distance = Utils.getPoseDifference(getPosition(), target.toPose2d()).getNorm();
         DogLog.log("Launcher/Distance to target", String.valueOf(distance));
+        SmartDashboard.putNumber("Launcher/Distance to target", distance);
         return calculateExtensionToTarget(target, distance);
     }
 

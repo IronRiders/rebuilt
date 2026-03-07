@@ -10,6 +10,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionCamera {
     String m_name;
@@ -84,6 +86,8 @@ public class VisionCamera {
         List<PhotonPipelineResult> results = m_photonCamera.getAllUnreadResults();
 
         if (results == null || results.size() <= 0) {
+            SmartDashboard.putString("VisionCamera/" + m_name + "/null response",
+                    "null response from " + m_photonCamera.getName() + " at " + Timer.getFPGATimestamp());
             return; // don't update the buffer if we get a null response. Could be incorrect.
         }
 
