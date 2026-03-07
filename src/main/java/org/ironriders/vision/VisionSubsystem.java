@@ -245,16 +245,17 @@ public class VisionSubsystem extends IronSubsystem {
 
         EstimatedRobotPose estimatedPose;
 
-        if (camera.getTargets().size() > 1) {
-            // if we have more than one tag, do multi-tag estimation,
-            estimatedPose = camera.getEstimator().estimateCoprocMultiTagPose(validResult).orElse(null);
-        } else if (camera.getTargets().size() == 1) {
-            // if we only have one, do single tag.
-            estimatedPose = camera.getEstimator().estimateLowestAmbiguityPose(validResult).orElse(null);
-        } else {
-            // otherwise, we must not have any, exit.
-            return;
-        }
+        // if (camera.getTargets().size() > 1) {
+        // if we have more than one tag, do multi-tag estimation,
+        // estimatedPose =
+        // camera.getEstimator().estimateCoprocMultiTagPose(validResult).orElse(null);
+        // } else if (camera.getTargets().size() == 1) {
+        // if we only have one, do single tag.
+        estimatedPose = camera.getEstimator().estimateLowestAmbiguityPose(validResult).orElse(null);
+        // }// else {
+        // otherwise, we must not have any, exit.
+        // return;
+        // }
 
         if (estimatedPose == null) {
             // Something has gone wrong, give up and try again next tick.
@@ -269,6 +270,11 @@ public class VisionSubsystem extends IronSubsystem {
             return;
         }
 
+        // Swerve odometry is jumpy, so it messes with the autos. Dead reckoning is
+        // accurate enough and smooth, so we use that for auto.
+        // TODO: vision is for shooting maybe (might be more accurate to use for
+        // shooting, and smoothness doesn't matter if you're not using it to move the
+        // robot)
         if (DriverStation.isAutonomous() && !RobotContainer.scoringZone.inside()) {
             DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(VecBuilder.fill(20, 20, 50));
         } else {
