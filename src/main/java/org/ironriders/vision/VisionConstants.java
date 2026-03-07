@@ -31,7 +31,7 @@ public class VisionConstants {
                         ),
                         new Rotation3d(
                                 0.0, // roll
-                                -Math.toRadians(36.130144),
+                                -Math.toRadians(35),
                                 Math.PI // yaw
                         ))));
                 break;
