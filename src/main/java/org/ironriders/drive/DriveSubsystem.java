@@ -1,14 +1,16 @@
 package org.ironriders.drive;
 
 import java.io.IOException;
+import java.text.FieldPosition;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ironriders.core.RobotContainer;
 import org.ironriders.core.TargetingControl;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
+import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
-
+import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.drive.PathPlannerHelpers;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -41,7 +43,7 @@ public class DriveSubsystem extends IronSubsystem {
     private static SwerveDrive swerveDrive;
 
     private static boolean rotationInvert = false;
-    private static boolean driveInvert = false;
+    private static boolean driveInvert = true;
 
     public static boolean PIDRotation = false;
 
@@ -117,13 +119,13 @@ public class DriveSubsystem extends IronSubsystem {
 
         TargetingControl.update();
 
-        if (RobotContainer.passingZone.inside() && lastZone != RobotContainer.passingZone) {
-            TargetingControl.targetPassing();
-            lastZone = RobotContainer.passingZone;
-        } else if (RobotContainer.scoringZone.inside() && lastZone != RobotContainer.scoringZone) {
-            TargetingControl.targetHub();
-            lastZone = RobotContainer.scoringZone;
-        }
+       //if (RobotContainer.passingZone.inside() && lastZone != RobotContainer.passingZone) {
+       //    TargetingControl.targetPassing();
+       //    lastZone = RobotContainer.passingZone;
+       //} else if (RobotContainer.scoringZone.inside() && lastZone != RobotContainer.scoringZone) {
+       //    TargetingControl.targetHub();
+       //    lastZone = RobotContainer.scoringZone;
+       //}
 
         if (Math.abs(RobotContainer.primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
             RobotContainer.revertToSafeDefaults();
@@ -137,6 +139,12 @@ public class DriveSubsystem extends IronSubsystem {
 
         publish("PID", rotationPid);
         publish("Yaw", getRotation());
+
+        publish("Alliance", DriverStation.getAlliance().toString());
+        publish("Hub pose", FieldPositions.get(ElementType.HUB).toString());
+
+        double distance = Utils.getPoseDifference(getPose(), FieldPositions.get(ElementType.HUB).toPose2d()).getNorm();
+        publish("Hub dist", distance);
     }
 
     /**
@@ -154,7 +162,7 @@ public class DriveSubsystem extends IronSubsystem {
 
         if (PIDRotation) {
             swerveDrive.drive(translation.times(driveInvert ? -1 : 1),
-                    rotationPid.calculate(getRotation()) * (SwerveDriveTelemetry.isSimulation ? 1 : -1),
+                    rotationPid.calculate(getRotation()),
                     fieldRelative,
                     false);
         } else {

@@ -88,7 +88,6 @@ public class PathPlannerHelpers {
                 new Pose2d(pose.getTranslation(), new Rotation2d(Utils.getAngleToPointRadians(pose, target) + Math.PI)),
                 DriveConstants.PATHFIND_CONSTRAINTS)
                 .andThen(driveCommands.resetPID());
-        DriveSubsystem.setRotationGoal(Utils.getAngleToPointRadians(pose, target) + Math.PI);
         DriveSubsystem.setPIDRotationControl(true);
         schedule(pathfindingCommand);
     }

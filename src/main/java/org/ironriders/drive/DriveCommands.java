@@ -21,7 +21,9 @@ public class DriveCommands {
     public DriveCommands(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
 
-        driveSubsystem.publish("Reset odometry tower", resetOdometryTo(new Pose2d(FieldPositions.Field.CENTER.getX() / 2.5, FieldPositions.Field.CENTER.getY(), new Rotation2d())));
+        driveSubsystem.publish("Reset odometry red tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5) + FieldPositions.Field.CENTER.getX(), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
+        driveSubsystem.publish("Reset odometry tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
+
     }
 
     /**

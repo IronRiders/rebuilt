@@ -107,7 +107,7 @@ public class LauncherSubsystem extends IronSubsystem {
         switch (currentState) {
             case READY:
             case IDLE:
-                // setHoodExtension(calculateExtensionToInternalTarget());
+                setHoodExtension(BallisticsUtils.calculateExtensionToInternalTarget().orElse(0.1));
                 break;
             default:
                 break;
@@ -162,15 +162,14 @@ public class LauncherSubsystem extends IronSubsystem {
             case IDLE: // Calculate distance and set hood
                        // Calculate distance and set target velocity
                        // Fall back manual velocity?
-                AimLauncher();
-                // setFlywheelGoal(FLYWHEEL_MAX_VEL / 7);
+                //aimLauncher();
+                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
                 return;
 
             case READY: // Calculate distance and set hood
                         // Calculate distance and set target velocity
                         // Fall back manual velocity?
-                AimLauncher();
-                // setFlywheelGoal(FLYWHEEL_MAX_VEL);
+                setFlywheelGoal(FLYWHEEL_MAX_VEL);
                 return;
 
             case MANUAL:
@@ -181,7 +180,7 @@ public class LauncherSubsystem extends IronSubsystem {
         }
     }
 
-    public void AimLauncher() {
+    public void aimLauncher() {
         double distance = BallisticsUtils.calculateDistanceToHub();
         setFlywheelGoal(manualFlywheelVelocity);
         setHoodExtension(manualExtensionPosition);

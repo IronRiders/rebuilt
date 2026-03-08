@@ -96,9 +96,6 @@ public class RobotContainer {
 
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        passingZone = new Zone(ZoneType.PASSING);
-        scoringZone = new Zone(ZoneType.SCORING);
-
         configureBindings();
     }
 
@@ -158,13 +155,13 @@ public class RobotContainer {
                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP)))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-        primaryController.leftBumper().onTrue(driveCommands
-                .pathfindThenFlipPathIfBetterThenFollow(PathPlannerHelpers.loadPath("Center Sweep").orElseThrow()));
+        primaryController.leftBumper().onTrue(Commands.runOnce(()->CommandScheduler.getInstance().schedule(driveCommands
+                .pathfindThenFlipPathIfBetterThenFollow(PathPlannerHelpers.loadPath("Center Sweep").orElseThrow()))));
 
         // Line up to score
         primaryController.rightBumper().onTrue(
-                driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
-                        FieldPositions.get(ElementType.HUB).toPose2d()));
+                Commands.runOnce(()->CommandScheduler.getInstance().schedule(driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
+                        FieldPositions.get(ElementType.HUB).toPose2d()))));
 
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)

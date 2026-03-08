@@ -49,17 +49,6 @@ public class VisionSubsystem extends IronSubsystem {
     public static VisionSystemSim visionSim = new VisionSystemSim("main");
 
     public VisionSubsystem() {
-        VisionConstants.CAMERAS.add(new VisionCamera("Arducam_0V9281_USB_Camera", new Transform3d(
-                new Translation3d(
-                        0,
-                        0,
-                        0.498),
-                new Rotation3d(
-                        0.0, // roll
-                        -Math.toRadians(35),
-                        Math.PI // yaw
-                ))));
-
         /**
          * If we are simulating, add the cameras to the photonsim.
          */
@@ -100,19 +89,11 @@ public class VisionSubsystem extends IronSubsystem {
     }
 
     @Override
-    public void periodic() {
-        publish("test", "hello");
-        publish("PV_Front_Keys", String.join(", ", edu.wpi.first.networktables.NetworkTableInstance.getDefault()
-                .getTable("photonvision").getSubTable("launcher-front").getKeys()));
-        publish("PV_Arducam_Keys", String.join(", ", edu.wpi.first.networktables.NetworkTableInstance.getDefault()
-                .getTable("photonvision").getSubTable("Arducam_OV9281_USB_Camera").getKeys()));
+    public void periodic(){
 
-        List<String> cameras = new ArrayList<>();
         // for every camera...
         VisionConstants.CAMERAS.stream().forEach((camera) -> {
             camera.updateResultBuffer();
-            cameras.add(camera.getName());
-            publish("Can see tags", camera.seesTargets());
             if (!camera.seesTargets()) {
 
                 return; // We don't see any tags, give up.
@@ -120,12 +101,6 @@ public class VisionSubsystem extends IronSubsystem {
             // estimate the pose
             estimateRobotPose(camera);
         });
-        String cameraSting = "";
-        for (int i = 0; i < cameras.size(); i++) {
-            cameraSting = cameraSting + " | " + cameras.get(i);
-        }
-        publish("cameras", cameraSting);
-
     }
 
     /**

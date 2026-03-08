@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -26,8 +27,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
  * Class holding state for targeting points with launcher and drive angles.
  */
 public class TargetingControl {
-    private static Pose3d launcherTarget;
-    private static double alignTarget;
+    private static Pose3d launcherTarget = FieldPositions.get(ElementType.HUB);
+    private static double alignTarget = 0;
 
     private static DriverRequest request = new DriverRequest(PriorityMode.DRIVER_PRIORITY,
             AlignTargetingMode.LAUNCHER, LauncherTargetingMode.HUB);
@@ -100,33 +101,28 @@ public class TargetingControl {
          * else if we are in align priority, command drive to face align target.
          */
 
-       //launcherTarget = getLauncherTarget();
+        alignTarget = getAlignTarget();
 
-       //alignTarget = getAlignTarget();
+        LauncherSubsystem.setTarget(launcherTarget);
 
-       //LauncherSubsystem.setTarget(launcherTarget);
-       //DriveSubsystem.setRotationGoal(alignTarget);
-
-       //switch (request.m_priorityMode) {
-       //    default:
-       //    case DRIVER_PRIORITY:
-       //        // We want the driver to have control, disable PID control.
-       //        DriveSubsystem.setPIDRotationControl(false);
-       //        // Set the launcher to idle (1/2 max speed).
-       //        LauncherSubsystem.currentState = State.IDLE;
-
-       //        return;
-
-       //    case LAUNCHER_PRIORITY:
-       //        // Get the launcher ready (set to max speed).
-       //        LauncherSubsystem.currentState = State.READY;
-       //        // Fall though here as we want to use targeting whether or not we are launching.
-       //    case ALIGN_PRIORITY:
-       //        // We want the targeting system to have control, enable PID control.
-       //        DriveSubsystem.setPIDRotationControl(true);
-
-       //        return;
-       //}
+        DriveSubsystem.setRotationGoalRad(alignTarget);
+        switch (request.m_priorityMode) {
+            default:
+            case DRIVER_PRIORITY:
+                // We want the driver to have control, disable PID control.
+                DriveSubsystem.setPIDRotationControl(false);
+                // Set the launcher to idle (1/2 max speed).
+                LauncherSubsystem.currentState = State.IDLE;
+                return;
+            case LAUNCHER_PRIORITY:
+                // Get the launcher ready (set to max speed).
+                LauncherSubsystem.currentState = State.READY;
+                // Fall though here as we want to use targeting whether or not we are launching.
+            case ALIGN_PRIORITY:
+                // We want the targeting system to have control, enable PID control.
+                DriveSubsystem.setPIDRotationControl(true);
+                return;
+        }
     }
 
     /**
@@ -138,42 +134,14 @@ public class TargetingControl {
         switch (request.m_alignTargetingMode) {
             default:
             case LAUNCHER:
-                return Utils.getAngleToPoint(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + 180;
+            SmartDashboard.putNumber("Angle", Utils.getAngleToPointRadians(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + Math.PI);
+                return Utils.getAngleToPointRadians(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + Math.PI;
 
             case OUTPOST:
-                return 180;
+                return Math.PI;
 
             case BUMP:
-                return findClosest45DegreeAngle(DriveSubsystem.getPose().getRotation().getDegrees());
-        }
-    }
-
-    /**
-     * Calculate the new launcher target based off the targeting mode of the current
-     * request.
-     * 
-     * @return The new target.
-     */
-    private static Pose3d getLauncherTarget() {
-        switch (request.m_launcherTargetingMode) {
-            default:
-            case HUB:
-                return FieldPositions.get(ElementType.HUB);
-
-            case PASSING:
-                Pose2d closest = getPosition().nearest(FieldPositions.Zones.PASSING_POINTS);
-
-                Pose2d bestPoint = closest;
-
-                if (!inRange(Utils.expandPose2d(bestPoint))) {
-                    Translation2d t = BallisticsUtils.translationToPoint(getPosition(),
-                            closest, LauncherSubsystem.range[1]);
-
-                    bestPoint = new Pose2d(t.getX() + getPosition().getX(), t.getY() + getPosition().getY(),
-                            new Rotation2d());
-                }
-
-                return Utils.expandPose2d(bestPoint);
+                return Math.toRadians(findClosest45DegreeAngle(DriveSubsystem.getPose().getRotation().getDegrees()));
         }
     }
 
