@@ -18,7 +18,12 @@ public class LauncherMaps {
         public static InterpolatingDoubleMap distanceToFlyWheelSpeedMap = new InterpolatingDoubleMap();
 
         distanceToFlyWheelSpeed() {
-            // firstAngleToFlyWheelSpeedMap.put(null,null);
+            distanceToFlyWheelSpeedMap.put(2.408,34.97);
+            distanceToFlyWheelSpeedMap.put(3.13,36.15);
+            distanceToFlyWheelSpeedMap.put(3.97,39.30);
+            distanceToFlyWheelSpeedMap.put(4.6,39.53);
+            distanceToFlyWheelSpeedMap.put(10d,40d);
+        
         }
 
         public static double getFlyWheelSpeedForDistance(double distance) {
@@ -31,7 +36,12 @@ public class LauncherMaps {
         public static InterpolatingDoubleMap distanceToExtensionMap = new InterpolatingDoubleMap();
 
         distanceToExtension() {
-            // distanceToExtensionMap.put(null,null);
+            distanceToExtensionMap.put(2.408,0.31);
+            distanceToExtensionMap.put(3.13,.42);
+            distanceToExtensionMap.put(3.97,.42);
+            distanceToExtensionMap.put(4.6,0.50);
+            distanceToExtensionMap.put(10d,0.50);
+
         }
 
         public static double getExtensionForDistance(double distance) {
