@@ -181,9 +181,6 @@ public class RobotContainer {
 
         // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-        primaryController.povUp().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
-
-        primaryController.povDown().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(-1)));
     }
 
     public Command buildAlignCommand(DriverRequest request) {

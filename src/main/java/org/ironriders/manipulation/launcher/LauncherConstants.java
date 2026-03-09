@@ -1,8 +1,11 @@
 package org.ironriders.manipulation.launcher;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import org.ironriders.lib.field.FieldPositions;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 
 /** Constants for the {@link LauncherSubsystem} */
 public class LauncherConstants {
@@ -35,18 +38,15 @@ public class LauncherConstants {
     public static final double MIN_RANGE = 0;
     public static final double MAX_RANGE = 10;
 
+    public static final double hoodMotorOffset = 0.0;
+
+    public static final Angle hoodBottomHardStop = Angle.ofBaseUnits(0.0, Rotations); // ONLY USE IF HARD STOP CHANGES
+
     public enum State {
         READY,
         IDLE,
         STOW,
         MANUAL;
-    }
-
-    public enum StaticAngle {
-        FIRST,
-        SECOND,
-        THIRD,
-        FOURTH;
     }
 
     public enum KickerState {

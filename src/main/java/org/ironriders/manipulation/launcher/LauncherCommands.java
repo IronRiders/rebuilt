@@ -1,7 +1,10 @@
 package org.ironriders.manipulation.launcher;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -18,15 +21,14 @@ public class LauncherCommands {
         launcher.publish("Set Launcher Stow State", set(State.STOW));
         launcher.publish("Set Launcher Manual State", set(State.MANUAL));
 
-        launcher.publish("Set Min Extension 0.05", setExtensionManually(0.05));
-        launcher.publish("Set Max Extension 0.95", setExtensionManually(0.95));
-        launcher.publish("Set Extension 0.5", setExtensionManually(0.5));
+        launcher.publish("Set Min Angle 0", setAngleManually(Angle.ofRelativeUnits(0, Rotations)));
+        launcher.publish("Set Min Angle .2", setAngleManually(Angle.ofRelativeUnits(0, Rotations)));
         // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
 
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
 
-        launcher.publish("kicker on", runKicker() );
+        launcher.publish("kicker on", runKicker());
         launcher.publish("kicker off", stopKicker());
     }
 
@@ -38,10 +40,9 @@ public class LauncherCommands {
         return Commands.runOnce(() -> launcher.runKicker());
     }
 
-    public Command stopKicker(){
-        return Commands.runOnce(()-> launcher.stopKicker());
+    public Command stopKicker() {
+        return Commands.runOnce(() -> launcher.stopKicker());
     }
-
 
     /**
      * Sets the launcher's target state. Will wait until the launcher is ready
@@ -74,8 +75,8 @@ public class LauncherCommands {
      * @param extension The target extension to set for the launcher.
      * @return A command that sets the launcher's extension.
      */
-    public Command setExtensionManually(double amount) {
-        return Commands.runOnce(() -> launcher.setHoodExtension(amount));
+    public Command setAngleManually(Angle angle) {
+        return Commands.runOnce(() -> launcher.setHoodAngle(angle));
     }
     // public Command setExtensionFromElastic(){
     // return Commands.runOnce(()-> launcher.setExtensionManually());
