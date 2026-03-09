@@ -87,8 +87,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
         configuration.Slot0.kP = FLYWHEEL_P;
 
-        configuration.MotionMagic.MotionMagicCruiseVelocity = 100;
-        configuration.MotionMagic.MotionMagicAcceleration = 200;
+        configuration.MotionMagic.MotionMagicAcceleration = 400;
 
         hoodConfiguration.CurrentLimits.StatorCurrentLimit = 40;
         hoodConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
