@@ -12,6 +12,7 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_V;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
@@ -60,6 +61,8 @@ public class LauncherSubsystem extends IronSubsystem {
     public double manualFlywheelVelocity = 40;
     public double manualExtensionPosition = .5;
 
+    public double distance;
+
     public static double extensionTrim = 0;
 
     public LauncherSubsystem() {
@@ -98,6 +101,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
+        distance = Utils.getPoseDifference(DriveSubsystem.getPose(), FieldPositions.get(ElementType.HUB).toPose2d()).getNorm();
         publish("State", currentState.name());
         manualFlywheelVelocity = getPublishedNumber("manualFlywheelVelocity", manualFlywheelVelocity);
         manualExtensionPosition = getPublishedNumber("manualExtensionPosition", manualExtensionPosition);
@@ -107,7 +111,7 @@ public class LauncherSubsystem extends IronSubsystem {
         switch (currentState) {
             case READY:
             case IDLE:
-                setHoodExtension(BallisticsUtils.calculateExtensionToInternalTarget().orElse(0.1));
+                setHoodExtension(LauncherMaps.DistanceToExtensionMap.getExtensionForDistance(distance));
                 break;
             default:
                 break;
@@ -163,13 +167,13 @@ public class LauncherSubsystem extends IronSubsystem {
                        // Calculate distance and set target velocity
                        // Fall back manual velocity?
                 //aimLauncher();
-                setFlywheelGoal(FLYWHEEL_MAX_VEL / 2);
+                setFlywheelGoal(15);
                 return;
 
             case READY: // Calculate distance and set hood
                         // Calculate distance and set target velocity
                         // Fall back manual velocity?
-                setFlywheelGoal(FLYWHEEL_MAX_VEL);
+                setFlywheelGoal(LauncherMaps.DistanceToFlyWheelSpeedMap.getFlyWheelSpeedForDistance(distance));
                 return;
 
             case MANUAL:
