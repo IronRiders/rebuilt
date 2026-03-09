@@ -272,6 +272,7 @@ public class LauncherSubsystem extends IronSubsystem {
         publish("Hood Angle PID goal", hoodMotor.getClosedLoopReference().getValue());
 
         publish("Hood Angle", hoodMotor.getPosition().getValue().in(Rotations));
+        publish("Hood Motor Output Amps", hoodMotor.getSupplyCurrent().getValueAsDouble());
 
         if (currentState == State.STOW) {
             flyWheelMotors.parallelStream().forEach((m) -> m.set(0));
