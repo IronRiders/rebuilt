@@ -10,7 +10,7 @@ import org.ironriders.manipulation.intake.IntakeCommands;
 import org.ironriders.manipulation.intake.IntakeConstants;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherConstants;
-
+import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristConstants;
 
@@ -66,6 +66,15 @@ public class RobotCommands {
                 Commands.parallel(
                         indexerCommands.set(IndexerConstants.State.INDEX),
                         wristCommands.jostleBalls()));
+    }
+
+    public Command stopFire() {
+        return Commands.sequence(
+                launcherCommands.stopKicker(),
+                Commands.parallel(
+                        launcherCommands.set(State.STOW),
+                        indexerCommands.set(IndexerConstants.State.STOP),
+                        wristCommands.set(WristConstants.State.DOWN)));
     }
 
     public Command intake() {
