@@ -6,18 +6,24 @@ import org.ironriders.lib.InterpolatingDoubleMap;
 
 public class LauncherMaps {
     public AngleToExtensionMap angleToExtensionMap;
+    public DistanceToFlyWheelSpeedMap distanceToFlyWheelSpeedMap;
+    public DistanceToExtensionMap distanceToExtensionMap;
+
 
     /*
      * Setup maps.
      */
     public LauncherMaps() {
         this.angleToExtensionMap = new AngleToExtensionMap();
+        this.distanceToFlyWheelSpeedMap = new DistanceToFlyWheelSpeedMap();
+        this.distanceToExtensionMap = new DistanceToExtensionMap();
+
     }
 
-    public class distanceToFlyWheelSpeed {
+    public class DistanceToFlyWheelSpeedMap {
         public static InterpolatingDoubleMap distanceToFlyWheelSpeedMap = new InterpolatingDoubleMap();
 
-        distanceToFlyWheelSpeed() {
+        DistanceToFlyWheelSpeedMap() {
             distanceToFlyWheelSpeedMap.put(2.408,34.97);
             distanceToFlyWheelSpeedMap.put(3.13,36.15);
             distanceToFlyWheelSpeedMap.put(3.97,39.30);
@@ -32,10 +38,10 @@ public class LauncherMaps {
 
     }
 
-    public class distanceToExtension {
+    public class DistanceToExtensionMap {
         public static InterpolatingDoubleMap distanceToExtensionMap = new InterpolatingDoubleMap();
 
-        distanceToExtension() {
+        DistanceToExtensionMap() {
             distanceToExtensionMap.put(2.408,0.31);
             distanceToExtensionMap.put(3.13,.42);
             distanceToExtensionMap.put(3.97,.42);

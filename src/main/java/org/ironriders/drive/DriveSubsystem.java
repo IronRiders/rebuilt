@@ -43,7 +43,7 @@ public class DriveSubsystem extends IronSubsystem {
     private static SwerveDrive swerveDrive;
 
     private static boolean rotationInvert = false;
-    private static boolean driveInvert = true;
+    private static boolean driveInvert = false;
 
     public static boolean PIDRotation = false;
 
