@@ -57,7 +57,7 @@ public class LauncherSubsystem extends IronSubsystem {
     private final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
     public final TalonFX kickerMotor = new TalonFX(16);
 
-    private final TalonFX hoodMotor = new TalonFX(25);
+    // private final TalonFX hoodMotor = new TalonFX(25);
     private final TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
@@ -100,9 +100,10 @@ public class LauncherSubsystem extends IronSubsystem {
         hoodConfiguration.Slot0.kD = 0; // TODO: TUNE THIS
         hoodConfiguration.MotionMagic.MotionMagicCruiseVelocity = 100;
         hoodConfiguration.MotionMagic.MotionMagicAcceleration = 200;
-        hoodMotor.getConfigurator().apply(hoodConfiguration);
+        // hoodMotor.getConfigurator().apply(hoodConfiguration);
 
-        hoodMotor.setControl(hoodPositionRequest.withPosition(Angle.ofRelativeUnits(0, Rotations)));
+        // hoodMotor.setControl(hoodPositionRequest.withPosition(Angle.ofRelativeUnits(0,
+        // Rotations)));
 
         flyWheelMotors.parallelStream().forEach(motor -> {
             motor.getConfigurator().apply(configuration);
@@ -268,11 +269,13 @@ public class LauncherSubsystem extends IronSubsystem {
                         .map(m -> m.getClosedLoopReferenceSlope())
                         .map(String::valueOf).collect(Collectors.joining(" | ")));
 
-        publish("Hood Angle PID out", hoodMotor.getClosedLoopOutput().getValue());
-        publish("Hood Angle PID goal", hoodMotor.getClosedLoopReference().getValue());
+        // publish("Hood Angle PID out", hoodMotor.getClosedLoopOutput().getValue());
+        // publish("Hood Angle PID goal",
+        // hoodMotor.getClosedLoopReference().getValue());
 
-        publish("Hood Angle", hoodMotor.getPosition().getValue().in(Rotations));
-        publish("Hood Motor Output Amps", hoodMotor.getSupplyCurrent().getValueAsDouble());
+        // publish("Hood Angle", hoodMotor.getPosition().getValue().in(Rotations));
+        // publish("Hood Motor Output Amps",
+        // hoodMotor.getSupplyCurrent().getValueAsDouble());
 
         if (currentState == State.STOW) {
             flyWheelMotors.parallelStream().forEach((m) -> m.set(0));
@@ -316,11 +319,13 @@ public class LauncherSubsystem extends IronSubsystem {
     public void setHoodAngle(Angle angle) {
         publish("Set Angle", angle.in(Rotations));
         // TODO: Implement PID Setpoint
-        hoodMotor.setControl(hoodPositionRequest.withPosition(angle));
+        // hoodMotor.setControl(hoodPositionRequest.withPosition(angle)); //TODO un
+        // commenet once the motor exists
     }
 
     public Angle getHoodAngle() {
-        return hoodMotor.getPosition().getValue();
+        // return hoodMotor.getPosition().getValue();
+        return Angle.ofRelativeUnits(0, Rotations);
     }
 
     /**

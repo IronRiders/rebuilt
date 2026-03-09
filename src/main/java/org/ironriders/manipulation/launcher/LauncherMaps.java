@@ -41,7 +41,7 @@ public class LauncherMaps {
         public static InterpolatingDoubleMap distanceToAngleMap = new InterpolatingDoubleMap();
 
         DistanceToAngleMap() {
-            // distanceToAngleMap.put(2.408, 0.31);
+            distanceToAngleMap.put(0d, 0d); // TODO: replace with real data
 
         }
 
