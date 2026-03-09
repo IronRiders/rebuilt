@@ -33,6 +33,7 @@ import org.ironriders.vision.VisionSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -96,6 +97,8 @@ public class RobotContainer {
 
         DriverStation.silenceJoystickConnectionWarning(true);
 
+        DogLog.log("System/Init", "Starting DogLog to prevent 5-second stall when it is first used.");
+
         configureBindings();
     }
 
@@ -155,24 +158,28 @@ public class RobotContainer {
                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY, AlignTargetingMode.BUMP)))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-        primaryController.leftBumper().onTrue(Commands.runOnce(()->CommandScheduler.getInstance().schedule(driveCommands
-                .pathfindThenFlipPathIfBetterThenFollow(PathPlannerHelpers.loadPath("Center Sweep").orElseThrow()))));
+        primaryController.leftBumper()
+                .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands
+                        .pathfindThenFlipPathIfBetterThenFollow(
+                                PathPlannerHelpers.loadPath("Center Sweep").orElseThrow()))));
 
         // Line up to score
         primaryController.rightBumper().onTrue(
-                Commands.runOnce(()->CommandScheduler.getInstance().schedule(driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
-                        FieldPositions.get(ElementType.HUB).toPose2d()))));
+                Commands.runOnce(() -> CommandScheduler.getInstance()
+                        .schedule(driveCommands.pathfindToPoseThenAimAt(scoringZone.centerPoint(),
+                                FieldPositions.get(ElementType.HUB).toPose2d()))));
 
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)
         // to ensure the flywheels and hood spin up properly.
-        primaryController.leftTrigger(triggerThreshold).onTrue(launcherCommands.runKicker()).onFalse(robotCommands.stow());
+        primaryController.leftTrigger(triggerThreshold).onTrue(launcherCommands.runKicker())
+                .onFalse(robotCommands.stow());
         // primaryController.rightTrigger(triggerThreshold).whileTrue(robotCommands.fire());
 
-        primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake()).onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+        primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake())
+                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
         // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
-
 
         primaryController.povUp().whileTrue(Commands.runOnce(() -> LauncherSubsystem.trim(1)));
 
