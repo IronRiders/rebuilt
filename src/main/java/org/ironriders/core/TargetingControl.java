@@ -82,6 +82,10 @@ public class TargetingControl {
      * tick.
      */
     public static void update() {
+        if (request.m_launcherTargetingMode == LauncherTargetingMode.HUB) {
+            launcherTarget = FieldPositions.get(ElementType.HUB);
+        }
+
         /*
          * We need to:
          * Update the launcher target:
@@ -134,7 +138,8 @@ public class TargetingControl {
         switch (request.m_alignTargetingMode) {
             default:
             case LAUNCHER:
-            SmartDashboard.putNumber("Angle", Utils.getAngleToPointRadians(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + Math.PI);
+                SmartDashboard.putNumber("Angle",
+                        Utils.getAngleToPointRadians(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + Math.PI);
                 return Utils.getAngleToPointRadians(DriveSubsystem.getPose(), launcherTarget.toPose2d()) + Math.PI;
 
             case OUTPOST:
