@@ -14,6 +14,8 @@ import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristConstants;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -46,6 +48,7 @@ public class RobotCommands {
         this.climberCommands = climberCommands;
 
         this.controller = controller;
+        NamedCommands.registerCommand("Shooter fire", fire());
     }
 
     /**
@@ -65,8 +68,9 @@ public class RobotCommands {
                 launcherCommands.readyAndFire(),
                 Commands.parallel(
                         indexerCommands.set(IndexerConstants.State.INDEX),
-                        wristCommands.jostleBalls()),
-                        intakeCommands.intake());
+                        wristCommands.jostleBalls())
+                        // intakeCommands.intake());//TODO re ad
+        );
     }
 
     public Command stopFire() {
