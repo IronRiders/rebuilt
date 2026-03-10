@@ -56,7 +56,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     // Motors
     private final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
-    private final VelocityVoltage kickerVelocityRequest = new VelocityVoltage(0.0);
+    // private final VelocityVoltage kickerVelocityRequest = new VelocityVoltage(0.0);
     public final TalonFX kickerMotor = new TalonFX(16);
 
     // private final TalonFX hoodMotor = new TalonFX(25);
@@ -94,15 +94,15 @@ public class LauncherSubsystem extends IronSubsystem {
         configuration.MotionMagic.MotionMagicAcceleration = 400;
 
         
-        kickerConfiguration.Slot0.kV = 0.2; //TODO
-        kickerConfiguration.Slot0.kS = 0.0;
-        kickerConfiguration.Slot0.kP = 0.0;
+        // kickerConfiguration.Slot0.kV = 0.2; //TODO
+        // kickerConfiguration.Slot0.kS = 0.0;
+        // kickerConfiguration.Slot0.kP = 0.0;
 
         kickerConfiguration.CurrentLimits.withStatorCurrentLimit(40);
-        kickerConfiguration.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
-        kickerConfiguration.Feedback.withRotorToSensorRatio(15);
+        // kickerConfiguration.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
+        // kickerConfiguration.Feedback.withRotorToSensorRatio(15);
 
-        
+        kickerMotor.getConfigurator().apply(kickerConfiguration);
 
         hoodConfiguration.CurrentLimits.StatorCurrentLimit = 40;
         hoodConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -167,8 +167,8 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public void setKicker(KickerState state) {
-        kickerMotor.setControl(kickerVelocityRequest.withVelocity(state.speed));
-        // kickerMotor.set(state.speed/5);
+        // kickerMotor.setControl(kickerVelocityRequest.withVelocity(state.speed));
+        kickerMotor.set(state.speed);
     }
 
     public boolean isKicking() {

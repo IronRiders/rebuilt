@@ -84,18 +84,16 @@ public class WristSubsystem extends IronSubsystem {
         switch (currentState) {
             case JOSTLE:
                 double timeDifference = Timer.getFPGATimestamp() - lastStateChangeTime;
-                if (timeDifference > 4.0) {
+                if (timeDifference > 2.5) {
                     lastStateChangeTime = Timer.getFPGATimestamp();
                     break;
-                } else if (timeDifference > 3.0) {
+                } else if (timeDifference > 1.5) {
                     pid.setGoal(State.DOWN.position);
                     break;
-                } else if (timeDifference > 2.0) {
+                } else if (timeDifference > 1) {
                     pid.setGoal(State.UP.position);
                     break;
-                } else if (timeDifference > 1.0
-                        || getPositionRaw() < State.JOSTLE.position
-                        || pid.getSetpoint().position == State.DOWN.position) {
+                } else if (timeDifference > .5) {
                     pid.setGoal(State.DOWN.position);
                     break;
                 } else {
