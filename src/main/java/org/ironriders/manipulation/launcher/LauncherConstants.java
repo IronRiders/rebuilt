@@ -50,9 +50,9 @@ public class LauncherConstants {
     }
 
     public enum KickerState {
-        FIRE(1),
+        FIRE(8),
         STOP(0),
-        EJECT(-.6);
+        EJECT(-4);
 
         public double speed;
 

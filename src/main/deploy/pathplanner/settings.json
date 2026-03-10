@@ -2,21 +2,14 @@
   "robotWidth": 0.9,
   "robotLength": 1.2,
   "holonomicMode": true,
-  "pathFolders": [
-    "other",
-    "leave start blue",
-    "leave start red"
-  ],
-  "autoFolders": [
-    "leave start blue",
-    "leave start red"
-  ],
-  "defaultMaxVel": 0.2,
-  "defaultMaxAccel": 0.2,
+  "pathFolders": [],
+  "autoFolders": [],
+  "defaultMaxVel": 17.1,
+  "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 74.087,
+  "robotMass": 46.2664,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.048,

@@ -39,6 +39,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -55,10 +56,13 @@ public class LauncherSubsystem extends IronSubsystem {
 
     // Motors
     private final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
+    private final VelocityVoltage kickerVelocityRequest = new VelocityVoltage(0.0);
     public final TalonFX kickerMotor = new TalonFX(16);
 
     // private final TalonFX hoodMotor = new TalonFX(25);
     private final TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
+    private final TalonFXConfiguration kickerConfiguration = new TalonFXConfiguration();
+
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
     private final MotionMagicVoltage hoodPositionRequest = new MotionMagicVoltage(0);
@@ -75,7 +79,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
-        kickerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
+        
 
         configuration.CurrentLimits.StatorCurrentLimit = 40;
 
@@ -88,6 +92,17 @@ public class LauncherSubsystem extends IronSubsystem {
         configuration.Slot0.kP = FLYWHEEL_P;
 
         configuration.MotionMagic.MotionMagicAcceleration = 400;
+
+        
+        kickerConfiguration.Slot0.kV = 0.2; //TODO
+        kickerConfiguration.Slot0.kS = 0.0;
+        kickerConfiguration.Slot0.kP = 0.0;
+
+        kickerConfiguration.CurrentLimits.withStatorCurrentLimit(40);
+        kickerConfiguration.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
+        kickerConfiguration.Feedback.withRotorToSensorRatio(15);
+
+        
 
         hoodConfiguration.CurrentLimits.StatorCurrentLimit = 40;
         hoodConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -126,6 +141,8 @@ public class LauncherSubsystem extends IronSubsystem {
         manualFlywheelVelocity = getPublishedNumber("manualFlywheelVelocity", manualFlywheelVelocity);
         manualHoodAngle = getPublishedNumber("manualHoodAngle", manualHoodAngle);
 
+        publish("kicker Motor Velocity", kickerMotor.getVelocity().getValue().in(RotationsPerSecond));
+
         putPose2d(currentTarget.toPose2d(), "LauncherTarget");
 
         switch (currentState) {
@@ -150,7 +167,8 @@ public class LauncherSubsystem extends IronSubsystem {
     }
 
     public void setKicker(KickerState state) {
-        kickerMotor.set(-state.speed);
+        kickerMotor.setControl(kickerVelocityRequest.withVelocity(state.speed));
+        // kickerMotor.set(state.speed/5);
     }
 
     public boolean isKicking() {
