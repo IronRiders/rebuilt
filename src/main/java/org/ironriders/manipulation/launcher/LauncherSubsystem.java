@@ -159,6 +159,9 @@ public class LauncherSubsystem extends IronSubsystem {
         if (isKicking()){
             indexerMotor.set(INDEXER_SPEED);
         }
+        else{
+            indexerMotor.set(0);
+        }
         updatePID();
     }
 
