@@ -1,0 +1,141 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.5437831125827817,
+        "y": 6.35817880794702
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8323096026490067,
+        "y": 6.360620860927152
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.9810264900662253,
+        "y": 7.345529801324502
+      },
+      "prevControl": {
+        "x": 1.3976115567709373,
+        "y": 7.295034641723932
+      },
+      "nextControl": {
+        "x": 0.7328430445577981,
+        "y": 7.3756126432043105
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.5309105960264899,
+        "y": 6.750215231788079
+      },
+      "prevControl": {
+        "x": 0.516305252431036,
+        "y": 7.202980883247152
+      },
+      "nextControl": {
+        "x": 0.5454304635761587,
+        "y": 6.300099337748345
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.5309105960264899,
+        "y": 5.24740894039735
+      },
+      "prevControl": {
+        "x": 0.5589460718467308,
+        "y": 6.004366787543875
+      },
+      "nextControl": {
+        "x": 0.5216576808990201,
+        "y": 4.997580231955658
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.278683774834437,
+        "y": 5.44342715231788
+      },
+      "prevControl": {
+        "x": 0.9810264900662256,
+        "y": 5.080430463576157
+      },
+      "nextControl": {
+        "x": 1.5582308797103737,
+        "y": 5.784338255825121
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.4475331125827817,
+        "y": 5.44342715231788
+      },
+      "prevControl": {
+        "x": 2.0917963576158938,
+        "y": 5.683004966887417
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Depot Launching Pos"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8168701442841348,
+      "rotationDegrees": 87.98301858177555
+    },
+    {
+      "waypointRelativePos": 3.7,
+      "rotationDegrees": 90.84857431498452
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.697763578274753,
+      "maxWaypointRelativePos": 3.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 17.1,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 149.1985540238632
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
