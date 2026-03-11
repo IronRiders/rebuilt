@@ -60,4 +60,5 @@ public class LauncherConstants {
             this.speed = speed;
         }
     }
+    public static final double INDEXER_SPEED=.5;
 }
