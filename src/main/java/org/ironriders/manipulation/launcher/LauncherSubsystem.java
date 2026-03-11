@@ -1,11 +1,9 @@
 package org.ironriders.manipulation.launcher;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_A;
-import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_MAX_VEL;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_S;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_TOLERANCE;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ironriders.drive.DriveSubsystem;
-import org.ironriders.lib.BallisticsUtils;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldElement.ElementType;
@@ -24,27 +21,17 @@ import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.manipulation.launcher.LauncherConstants.KickerState;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.DoubleTopic;
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import swervelib.simulation.ironmaple.simulation.drivesims.SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation;
 
 /** Subsystem for targeting & shooting */
 public class LauncherSubsystem extends IronSubsystem {
@@ -67,7 +54,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
-    private final MotionMagicVoltage hoodPositionRequest = new MotionMagicVoltage(0);
+    //private final MotionMagicVoltage hoodPositionRequest = new MotionMagicVoltage(0);
 
     double targetFlywheelVelocity = 0;
 

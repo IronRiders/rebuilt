@@ -1,7 +1,6 @@
 package org.ironriders.drive;
 
 import java.io.IOException;
-import java.text.FieldPosition;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.ironriders.core.RobotContainer;
@@ -11,8 +10,6 @@ import org.ironriders.lib.Utils;
 import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
 import org.ironriders.lib.field.FieldElement.ElementType;
-import org.ironriders.drive.PathPlannerHelpers;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;

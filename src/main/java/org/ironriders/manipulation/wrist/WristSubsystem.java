@@ -1,10 +1,7 @@
 package org.ironriders.manipulation.wrist;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-
 import org.ironriders.lib.IronSubsystem;
-import org.ironriders.lib.Utils;
 import org.ironriders.manipulation.wrist.WristConstants.State;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -48,11 +45,11 @@ public class WristSubsystem extends IronSubsystem {
 
     private final WristCommands commands;
 
-    private double jostlingIterator = 0;
+    //private double jostlingIterator = 0;
     private CANcoderConfiguration cANcoderConfiguration = new CANcoderConfiguration();
 
-    private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
-    private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
+    //private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
+    //private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
 
     public WristSubsystem() {
         commands = new WristCommands(this);
