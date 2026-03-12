@@ -15,7 +15,7 @@ public class IntakeCommands {
 
         intake.publish("Intake", this.intake());
         intake.publish("Intake force", this.set(State.INTAKE));
-        intake.publish("Stop", this.set(State.STOP));
+        intake.publish("Stop Intake",this.set(State.STOP));
         intake.publish("Eject force", this.set(State.BACK));
         intake.publish("Eject", this.eject());
     }

@@ -51,9 +51,28 @@
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "fire"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Set Launcher Ready State"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 2.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "fire"
+              }
+            }
+          ]
         }
       }
     }

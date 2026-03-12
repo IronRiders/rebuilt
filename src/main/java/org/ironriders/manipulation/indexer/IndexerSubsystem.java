@@ -4,6 +4,7 @@ import org.ironriders.lib.IronSubsystem;
 import org.ironriders.manipulation.indexer.IndexerConstants.State;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 /** Subsystem for indexer (controls ball movement inside robot) */

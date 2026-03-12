@@ -56,13 +56,13 @@ public class LauncherSubsystem extends IronSubsystem {
 
     // Motors
     private final List<TalonFX> flyWheelMotors = List.of(new TalonFX(13), new TalonFX(14), new TalonFX(15)); // IDs
-    // private final VelocityVoltage kickerVelocityRequest = new VelocityVoltage(0.0);
+    // private final VelocityVoltage kickerVelocityRequest = new
+    // VelocityVoltage(0.0);
     public final TalonFX kickerMotor = new TalonFX(16);
 
     // private final TalonFX hoodMotor = new TalonFX(25);
     private final TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
     private final TalonFXConfiguration kickerConfiguration = new TalonFXConfiguration();
-
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
     private final MotionMagicVoltage hoodPositionRequest = new MotionMagicVoltage(0);
@@ -79,8 +79,6 @@ public class LauncherSubsystem extends IronSubsystem {
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
-        
-
         configuration.CurrentLimits.StatorCurrentLimit = 40;
 
         configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -93,7 +91,6 @@ public class LauncherSubsystem extends IronSubsystem {
 
         configuration.MotionMagic.MotionMagicAcceleration = 400;
 
-        
         // kickerConfiguration.Slot0.kV = 0.2; //TODO
         // kickerConfiguration.Slot0.kS = 0.0;
         // kickerConfiguration.Slot0.kP = 0.0;
@@ -150,6 +147,7 @@ public class LauncherSubsystem extends IronSubsystem {
             case IDLE:
                 setHoodAngle(Angle.ofRelativeUnits(LauncherMaps.DistanceToAngleMap.getAngleForDistance(distance),
                         Rotations));
+                // setFlywheelGoal(LauncherMaps.DistanceToFlyWheelSpeedMap.getFlyWheelSpeedForDistance(distance));
                 break;
             default:
                 break;
@@ -192,6 +190,7 @@ public class LauncherSubsystem extends IronSubsystem {
      */
     public void setCurrentState(State state) {
         currentState = state;
+        publish("New Launcher State", currentState.name());
 
         switch (currentState) {
             default:
@@ -342,7 +341,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     public Angle getHoodAngle() {
         // return hoodMotor.getPosition().getValue();
-        return Angle.ofRelativeUnits(0, Rotations);
+        return Angle.ofRelativeUnits(0, Rotations); // TODO: re add coments after the shooter hood is added
     }
 
     /**

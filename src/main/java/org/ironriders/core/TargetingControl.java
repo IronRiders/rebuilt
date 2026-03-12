@@ -35,6 +35,8 @@ public class TargetingControl {
 
     private static DriverRequest lastDriverRequest = request;
 
+    private static PriorityMode lastAppliedPriorityMode = null;
+
     public static void receiveRequest(DriverRequest driverRequest) {
         lastDriverRequest = request;
         request = driverRequest;
@@ -110,17 +112,25 @@ public class TargetingControl {
         LauncherSubsystem.setTarget(launcherTarget);
 
         DriveSubsystem.setRotationGoalRad(alignTarget);
+        
+        boolean priorityChanged = (request.m_priorityMode != lastAppliedPriorityMode);
+        lastAppliedPriorityMode = request.m_priorityMode;
+
         switch (request.m_priorityMode) {
             default:
             case DRIVER_PRIORITY:
                 // We want the driver to have control, disable PID control.
                 DriveSubsystem.setPIDRotationControl(false);
                 // Set the launcher to idle (1/2 max speed).
-                LauncherSubsystem.currentState = State.IDLE;
+                if (priorityChanged) {
+                    RobotContainer.launcherSubsystem.setCurrentState(State.IDLE);
+                }
                 return;
             case LAUNCHER_PRIORITY:
                 // Get the launcher ready (set to max speed).
-                LauncherSubsystem.currentState = State.READY;
+                if (priorityChanged) {
+                    RobotContainer.launcherSubsystem.setCurrentState(State.READY);
+                }
                 // Fall though here as we want to use targeting whether or not we are launching.
             case ALIGN_PRIORITY:
                 // We want the targeting system to have control, enable PID control.
