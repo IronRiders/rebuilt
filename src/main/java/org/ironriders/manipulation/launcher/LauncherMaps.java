@@ -1,7 +1,5 @@
 package org.ironriders.manipulation.launcher;
 
-import java.util.List;
-
 import org.ironriders.lib.InterpolatingDoubleMap;
 
 public class LauncherMaps {

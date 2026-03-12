@@ -1,25 +1,13 @@
 package org.ironriders.lib;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
-import static org.ironriders.manipulation.launcher.LauncherConstants.G;
-import static org.ironriders.manipulation.launcher.LauncherConstants.LAUNCHER_HIGHT;
-import static org.ironriders.manipulation.launcher.LauncherConstants.TARGET_BALL_VELOCITY;
-
-import java.util.Optional;
-
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
-import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Utilities for ballistic calculations. */
 public class BallisticsUtils {

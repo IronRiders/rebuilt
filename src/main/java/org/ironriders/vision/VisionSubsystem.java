@@ -5,13 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Collectors;
 
 import org.ironriders.core.RobotContainer;
 import org.ironriders.drive.DriveSubsystem;
 import org.ironriders.lib.IronSubsystem;
-import org.ironriders.lib.Utils;
 import org.ironriders.lib.VisionCamera;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -25,12 +23,8 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Subsystem for doing machine vision and calculating location based on that.
