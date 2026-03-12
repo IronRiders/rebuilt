@@ -21,7 +21,7 @@ public class LauncherConstants {
 
     public static final double FLYWHEEL_MAX_VEL = 100; // RPS NOW (see https://www.reca.lc/flywheel)
 
-    public static final double FLYWHEEL_TOLERANCE = 5; // rps
+    public static final double FLYWHEEL_TOLERANCE = 2; // rps
 
     public static final double FLYWHEEL_S = 0.2;
     public static final double FLYWHEEL_V = 0.118;

@@ -69,8 +69,7 @@ public class RobotCommands {
                 Commands.parallel(
                         indexerCommands.set(IndexerConstants.State.INDEX),
                         wristCommands.jostleBalls()),
-                intakeCommands.intake(),
-                indexerCommands.set(IndexerConstants.State.STOP));
+                intakeCommands.intake());
     }
 
     public Command stopFire() {
@@ -80,8 +79,7 @@ public class RobotCommands {
                         launcherCommands.set(State.STOW),
                         indexerCommands.set(IndexerConstants.State.STOP),
                         wristCommands.set(WristConstants.State.DOWN)),
-                intakeCommands.set(IntakeConstants.State.STOP),
-                indexerCommands.set(IndexerConstants.State.STOP));
+                intakeCommands.set(IntakeConstants.State.STOP));
     }
 
     public Command intake() {

@@ -43,6 +43,7 @@ public class IndexerSubsystem extends IronSubsystem {
      */
     public void setState(State state) {
         setMotor(state.speed);
+        publish("indexer state", state.name());
     }
 
     /**
