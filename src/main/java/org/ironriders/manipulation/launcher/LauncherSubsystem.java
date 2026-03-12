@@ -8,7 +8,6 @@ import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_P;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_S;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_TOLERANCE;
 import static org.ironriders.manipulation.launcher.LauncherConstants.FLYWHEEL_V;
-import static org.ironriders.manipulation.launcher.LauncherConstants.INDEXER_SPEED;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,14 +46,14 @@ public class LauncherSubsystem extends IronSubsystem {
     // private final VelocityVoltage kickerVelocityRequest = new
     // VelocityVoltage(0.0);
     public final TalonFX kickerMotor = new TalonFX(16);
-    public final TalonFX indexerMotor = new TalonFX(14732058);
 
     // private final TalonFX hoodMotor = new TalonFX(25);
     private final TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
     private final TalonFXConfiguration kickerConfiguration = new TalonFXConfiguration();
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
-    //private final MotionMagicVoltage hoodPositionRequest = new MotionMagicVoltage(0);
+    // private final MotionMagicVoltage hoodPositionRequest = new
+    // MotionMagicVoltage(0);
 
     double targetFlywheelVelocity = 0;
 
@@ -142,12 +141,6 @@ public class LauncherSubsystem extends IronSubsystem {
                 break;
             default:
                 break;
-        }
-        if (isKicking()){
-            indexerMotor.set(INDEXER_SPEED);
-        }
-        else{
-            indexerMotor.set(0);
         }
         updatePID();
     }
