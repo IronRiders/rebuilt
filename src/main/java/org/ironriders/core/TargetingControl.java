@@ -112,7 +112,7 @@ public class TargetingControl {
         LauncherSubsystem.setTarget(launcherTarget);
 
         DriveSubsystem.setRotationGoalRad(alignTarget);
-        
+
         boolean priorityChanged = (request.m_priorityMode != lastAppliedPriorityMode);
         lastAppliedPriorityMode = request.m_priorityMode;
 

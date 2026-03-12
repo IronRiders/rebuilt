@@ -144,10 +144,12 @@ public class LauncherSubsystem extends IronSubsystem {
 
         switch (currentState) {
             case READY:
-            case IDLE:
                 setHoodAngle(Angle.ofRelativeUnits(LauncherMaps.DistanceToAngleMap.getAngleForDistance(distance),
                         Rotations));
-                // setFlywheelGoal(LauncherMaps.DistanceToFlyWheelSpeedMap.getFlyWheelSpeedForDistance(distance));
+                setFlywheelGoal(LauncherMaps.DistanceToFlyWheelSpeedMap.getFlyWheelSpeedForDistance(distance));
+                break;
+            case IDLE:
+                setFlywheelGoal(LauncherMaps.DistanceToFlyWheelSpeedMap.getFlyWheelSpeedForDistance(distance));
                 break;
             default:
                 break;
