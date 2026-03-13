@@ -341,6 +341,11 @@ public class LauncherSubsystem extends IronSubsystem {
         return manualFlywheelVelocity;
     }
 
+     public void setManualLauncherAngle(double newManualFlywheelVelocity) {
+        manualFlywheelVelocity = newManualFlywheelVelocity;
+         publish("manualFlywheelVelocity", manualFlywheelVelocity);
+    }
+
     public double getManualHoodAngle() {
         return manualHoodAngle;
     }
