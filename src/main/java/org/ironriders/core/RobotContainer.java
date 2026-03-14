@@ -26,6 +26,7 @@ import org.ironriders.manipulation.intake.IntakeSubsystem;
 import org.ironriders.manipulation.launcher.LauncherCommands;
 import org.ironriders.manipulation.launcher.LauncherMaps;
 import org.ironriders.manipulation.launcher.LauncherSubsystem;
+import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
 import org.ironriders.manipulation.wrist.WristSubsystem;
@@ -183,6 +184,8 @@ public class RobotContainer {
 
                 primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake())
                                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+
+                primaryController.povDown().onTrue(launcherCommands.set(State.READY));
 
                 // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
