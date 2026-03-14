@@ -49,6 +49,8 @@ public class RobotCommands {
 
         this.controller = controller;
         NamedCommands.registerCommand("Shooter fire", fire());
+        NamedCommands.registerCommand("Custom Flywheel Fire 35", customAutoFire(35.0) );
+        NamedCommands.registerCommand("Custom Flywheel Fire 38", customAutoFire(38.0) );
     }
 
     /**
@@ -65,6 +67,16 @@ public class RobotCommands {
 
     public Command fire() {
         return Commands.sequence(
+                launcherCommands.readyAndFire(),
+                Commands.parallel(
+                        indexerCommands.set(IndexerConstants.State.INDEX),
+                        wristCommands.jostleBalls()),
+                intakeCommands.intake());
+    }
+
+    public Command customAutoFire(double flywheelSpeed) {
+        return Commands.sequence(
+                launcherCommands.setFlyWheelVelocityManually(flywheelSpeed),
                 launcherCommands.readyAndFire(),
                 Commands.parallel(
                         indexerCommands.set(IndexerConstants.State.INDEX),

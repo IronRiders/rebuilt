@@ -97,7 +97,7 @@ public class DriveSubsystem extends IronSubsystem {
                 () -> {
                     var alliance = DriverStation.getAlliance();
                     if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Blue;
+                        return alliance.get() == DriverStation.Alliance.Blue; // TODO: This probably should be Red
                     }
                     return false;
                 },

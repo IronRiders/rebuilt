@@ -72,8 +72,8 @@ public class LauncherCommands {
      * {@link LauncherSubsystem#setHoodExtension(double) LauncherSubsystem's
      * setLauncherGoal} for more details.
      * 
-     * @param extension The target extension to set for the launcher.
-     * @return A command that sets the launcher's extension.
+     * @param angle The target angle in rotations to set for the launcher's hood .
+     * @return A command that sets the launcher's hood angle.
      */
     public Command setAngleManually(Angle angle) {
         return Commands.runOnce(() -> launcher.setHoodAngle(angle));
@@ -81,6 +81,20 @@ public class LauncherCommands {
     // public Command setExtensionFromElastic(){
     // return Commands.runOnce(()-> launcher.setExtensionManually());
     // }
+
+    /**
+     * Sets the launcher's internal variable for the angle setpoint when it is the manual targeting mode to a given value. See
+     * {@link LauncherSubsystem#setManualLauncherAngle(angle) LauncherSubsystem's
+     * setLauncherGoal} for more details and also check the LauncherSubsystem's peroidc for the exact impmentation of the manual Mode.
+     * 
+     * @param extension The target extension to set for the launcher.
+     * @return A command that sets the launcher's extension.
+     * THIS DOES NOT SET THIS IS THE GOAL AND ONLY SETS THE INTERNAL TARGET WHEN THE ROBOT IS IN MANUAL LAUNCHER MODE
+     */
+
+    public Command setCustomFlyWheelSpeed(double flywheelSpeed) {
+        return Commands.runOnce(() -> launcher.setManualFlyWheelSpeed(flywheelSpeed));
+    }
 
     /**
      * Sets the launcher's flywheel velocity to a given value. See

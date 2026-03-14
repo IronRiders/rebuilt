@@ -109,6 +109,9 @@ public class FieldPositions {
      * @return The prepared pose, in meters
      */
     private static Pose2d preparePose(Pose2d pose, boolean isMeters) {
+        // TODO: THIS NAME IS CONFUSING
+        // the boolean blue is true if the alliance if the alliance is red but the rest
+        // of the code is set up to invert the coordinates correctely based on the logic
         boolean blue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
         if (blue) {
@@ -160,7 +163,7 @@ public class FieldPositions {
         return out;
     }
 
-    /** A position for the hub, Measurements in INCHES! */
+    /** A position for the hub, Measurements in INCHES! FOR THE RED SIDE */
     public class Hub {
         // Default red
         public static final Pose3d HUB_TOP = new Pose3d(new Translation3d(469.11, 158.84, 72.00),

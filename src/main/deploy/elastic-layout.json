@@ -1,102 +1,12 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 32,
   "tabs": [
     {
       "name": "Teleoperated",
       "grid_layout": {
-        "layouts": [
-          {
-            "title": "Climber Camera",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "USB Camera 0",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 256.0,
-                "type": "Camera Stream",
-                "properties": {
-                  "topic": "/CameraPublisher/USB Camera 0",
-                  "period": 0.06,
-                  "rotation_turns": 0
-                }
-              }
-            ]
-          },
-          {
-            "title": "Elevator",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Homed?",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Homed?",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "Force Home",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Force Home",
-                  "period": 0.06,
-                  "show_type": false
-                }
-              }
-            ]
-          }
-        ],
+        "layouts": [],
         "containers": [
-          {
-            "title": "Field",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 640.0,
-            "height": 256.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Field",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
-            }
-          },
           {
             "title": "Pigeon 2 (v6) [9]",
             "x": 1024.0,
@@ -111,21 +21,8 @@
             }
           },
           {
-            "title": "Reset Gyro",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/RobotCommands/Reset Gyro",
-              "period": 0.06,
-              "show_type": false
-            }
-          },
-          {
             "title": "swerve",
-            "x": 768.0,
+            "x": 0.0,
             "y": 256.0,
             "width": 256.0,
             "height": 256.0,
@@ -139,69 +36,9 @@
             }
           },
           {
-            "title": "Invert Drive",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Subsystems/Drive/Invert Drive",
-              "period": 0.06,
-              "show_type": false
-            }
-          },
-          {
-            "title": "Invert Rotation",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Subsystems/Drive/Invert Rotation",
-              "period": 0.06,
-              "show_type": false
-            }
-          },
-          {
-            "title": "Drive Inverted?",
-            "x": 512.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Subsystems/Drive/Drive Inverted?",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Rotation Inverted?",
-            "x": 256.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Subsystems/Drive/Rotation Inverted?",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Auto Select",
-            "x": 1024.0,
-            "y": 384.0,
+            "x": 768.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -209,6 +46,352 @@
               "topic": "/SmartDashboard/Auto Select",
               "period": 0.06,
               "sort_options": false
+            }
+          },
+          {
+            "title": "Invert rotation",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Drive/Invert rotation",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Invert drive",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Drive/Invert drive",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Reset odometry blue tower",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Drive/Reset odometry blue tower",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Reset odometry red tower",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Drive/Reset odometry red tower",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 256.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field",
+              "period": 0.06,
+              "field_game": "Rebuilt",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Set Launcher Idle State",
+            "x": 1280.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Idle State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher Manual State",
+            "x": 1280.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Manual State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher Ready State",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Ready State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher Stow State",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Stow State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher to Flywheel Velocity",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher to Flywheel Velocity",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Fly Wheel Velocity M1 ",
+            "x": 1024.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M1 ",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Fly Wheel Velocity M2 ",
+            "x": 1152.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M2 ",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Fly Wheel Velocity M3 ",
+            "x": 1280.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M3 ",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "State",
+            "x": 1408.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/State",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "manualFlywheelVelocity",
+            "x": 1024.0,
+            "y": 640.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/manualFlywheelVelocity",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 60.0,
+              "divisions": 7,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "index on",
+            "x": 768.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/index on",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "index stop",
+            "x": 512.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/index stop",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "index reverse",
+            "x": 256.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/index reverse",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Wrist Down",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/Wrist Down",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Wrist Up",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/Wrist Up",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Eject",
+            "x": 256.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Intake/Eject",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "index reverse",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/index reverse",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "indexer state",
+            "x": 896.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/indexer state",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "state",
+            "x": 768.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/state",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": true
             }
           }
         ]
@@ -222,12 +405,831 @@
       }
     },
     {
-      "name": "Testing",
+      "name": "Tab 5",
       "grid_layout": {
         "layouts": [
           {
-            "title": "ElevatorWristCTL",
+            "title": "Wrist",
+            "x": 352.0,
+            "y": 288.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Down",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Down",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Jostle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Jostle",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Up",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Up",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "pid",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 384.0,
+                "type": "ProfiledPIDController",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/pid",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Motor output",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Motor output",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Pos Raw",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Pos Raw",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "pos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/pos",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "state",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/state",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          },
+          {
+            "title": "Indexer",
+            "x": 1280.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 576.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "index on",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Indexer/index on",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "index reverse",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Indexer/index reverse",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "index stop",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Indexer/index stop",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Launcher",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 512.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Set Launcher Idle State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Idle State",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Launcher Manual State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Manual State",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Launcher Ready State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Ready State",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Launcher Stow State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Stow State",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Launcher to Flywheel Velocity",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher to Flywheel Velocity",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Min Angle .2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Min Angle .2",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Min Angle 0",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Min Angle 0",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "kicker off",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/kicker off",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "kicker on",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/kicker on",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Fly Wheel PID goal",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel PID goal",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Fly Wheel PID out",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel PID out",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Fly Wheel Velocity M1 ",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M1 ",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Fly Wheel Velocity M2 ",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M2 ",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Fly Wheel Velocity M3 ",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M3 ",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Launcher RPS",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Launcher RPS",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Set Angle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Angle",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "kicker Motor Velocity",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/kicker Motor Velocity",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "manualFlywheelVelocity",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/manualFlywheelVelocity",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "manualHoodAngle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/manualHoodAngle",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "Set Launcher to Manual Extension 0.0",
+            "x": 352.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher to Manual Extension 0.0",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher to Manual Extension 0.5",
+            "x": 352.0,
+            "y": 128.0,
+            "width": 320.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher to Manual Extension 0.5",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher Idle State",
+            "x": 640.0,
+            "y": 416.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Idle State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher Ready State",
+            "x": 640.0,
+            "y": 544.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Ready State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher Stow State",
+            "x": 640.0,
+            "y": 672.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Stow State",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Set Launcher to Flywheel Velocity",
+            "x": 928.0,
+            "y": 416.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher to Flywheel Velocity",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Fly Wheel Velocity M1 ",
+            "x": 896.0,
+            "y": 544.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M1 ",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Fly Wheel Velocity M2 ",
+            "x": 1024.0,
+            "y": 544.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M2 ",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Fly Wheel Velocity M3 ",
             "x": 1152.0,
+            "y": 544.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M3 ",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Launcher RPS",
+            "x": 896.0,
+            "y": 672.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/Launcher RPS",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "PID out",
+            "x": 1024.0,
+            "y": 672.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/PID out",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "manualFlywheelVelocity",
+            "x": 1152.0,
+            "y": 672.0,
+            "width": 544.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/manualFlywheelVelocity",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 90.0,
+              "divisions": 9,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Motor output",
+            "x": 736.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/Motor output",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "state",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/state",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "index on",
+            "x": 352.0,
+            "y": 576.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/index on",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "index stop",
+            "x": 352.0,
+            "y": 704.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Indexer/index stop",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Wrist Down",
+            "x": 672.0,
+            "y": 288.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/Wrist Down",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "kicker on",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/kicker on",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "kicker off",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/kicker off",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Intake",
+            "x": 928.0,
+            "y": 288.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Intake/Intake",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Stop Intake",
+            "x": 1024.0,
+            "y": 160.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Intake/Stop Intake",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "Jostle",
+            "x": 640.0,
+            "y": 800.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/Jostle",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "State",
+            "x": 32.0,
+            "y": 768.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/State",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "New Launcher State",
+            "x": 224.0,
+            "y": 768.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/New Launcher State",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": true
+            }
+          },
+          {
+            "title": "Hub dist",
+            "x": 992.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Drive/Hub dist",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 6",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Launcher",
+            "x": 608.0,
             "y": 0.0,
             "width": 256.0,
             "height": 640.0,
@@ -237,298 +1239,248 @@
             },
             "children": [
               {
-                "title": "Reset",
+                "title": "Set Extension 0.5",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/ElevatorWristCTL/Reset",
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Extension 0.5",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
                 }
               },
               {
-                "title": "Set to INTAKING",
+                "title": "Set Launcher Idle State",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/ElevatorWristCTL/Set to INTAKING",
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Idle State",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
                 }
               },
               {
-                "title": "Set to L2",
+                "title": "Set Launcher Ready State",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/ElevatorWristCTL/Set to L2",
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Ready State",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
                 }
               },
               {
-                "title": "Set to L3",
+                "title": "Set Launcher Stow State",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/ElevatorWristCTL/Set to L3",
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher Stow State",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
                 }
               },
               {
-                "title": "Set to L4",
+                "title": "Set Launcher to Flywheel Velocity",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/ElevatorWristCTL/Set to L4",
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Launcher to Flywheel Velocity",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
                 }
               },
               {
-                "title": "Set to STOW",
+                "title": "Set Max Extension 0.95",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/ElevatorWristCTL/Set to STOW",
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Max Extension 0.95",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Set Min Extension 0.05",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Set Min Extension 0.05",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Fly Wheel Velocity M1 ",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M1 ",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Fly Wheel Velocity M2 ",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M2 ",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Fly Wheel Velocity M3 ",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Fly Wheel Velocity M3 ",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Last requested extension",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Last requested extension",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Launcher RPS",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/Launcher RPS",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "PID goal",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/PID goal",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "PID out",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/PID out",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "State",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/State",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "manualExtensionPosition",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/manualExtensionPosition",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "manualFlywheelVelocity",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Launcher/manualFlywheelVelocity",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
                 }
               }
             ]
           },
           {
             "title": "Wrist",
-            "x": 1664.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 512.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "At goal?",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Wrist/At goal?",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "Current PID ouput",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Wrist/Current PID ouput",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Current angle",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Wrist/Current angle",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Current angle raw",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Wrist/Current angle raw",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Current goal pos",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Wrist/Current goal pos",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Current target",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Wrist/Current target",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "Intake",
-            "x": 896.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 768.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Intake Eject",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Intake Eject",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Intake Grab",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Intake Grab",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Intake Score",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Intake Score",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Intake Stop",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Intake Stop",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Beam Break Triggered",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Beam Break Triggered",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "Left Velocity",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Left Velocity",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Right Velocity",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Intake/Right Velocity",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "Elevator",
-            "x": 1408.0,
+            "x": 1184.0,
             "y": 0.0,
             "width": 256.0,
             "height": 896.0,
@@ -538,455 +1490,101 @@
             },
             "children": [
               {
-                "title": "Rehome",
+                "title": "Jostle",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 256.0,
                 "height": 128.0,
                 "type": "Command",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Rehome",
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Jostle",
                   "period": 0.06,
-                  "show_type": true
+                  "show_type": true,
+                  "maximize_button_space": false
                 }
               },
               {
-                "title": "At Goal?",
+                "title": "Wrist Down",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Wrist Down",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Wrist Up",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Command",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Wrist Up",
+                  "period": 0.06,
+                  "show_type": true,
+                  "maximize_button_space": false
+                }
+              },
+              {
+                "title": "Motor output",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/At Goal?",
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Motor output",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "Pos Raw",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/Pos Raw",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "pos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/pos",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": true
+                }
+              },
+              {
+                "title": "state",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Subsystems/Wrist/state",
                   "period": 0.06,
                   "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Follower Encoder",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Follower Encoder",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Forward Limit Switch",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Forward Limit Switch",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "Goal Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Goal Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Goal State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Goal State",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Homed",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Homed",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "Primary Encoder",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Primary Encoder",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Reverse Limit Switch",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Elevator/Reverse Limit Switch",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Drive",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 512.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Drive to Target",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Drive/Drive to Target",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Invert",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Drive/Invert",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "inversion status",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Drive/inversion status",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              },
-              {
-                "title": "vision has pose",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Drive/vision has pose",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "Climb",
-            "x": 384.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 768.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Climb",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Climb",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Climb MAX",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Climb MAX",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Climb MIN",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Climb MIN",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Rehome",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Rehome",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              },
-              {
-                "title": "Current Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Current Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Goal Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Goal Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Goal State",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/Goal State",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "at Goal?",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Boolean Box",
-                "properties": {
-                  "topic": "/SmartDashboard/Subsystems/Climb/at Goal?",
-                  "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4294198070,
-                  "true_icon": "None",
-                  "false_icon": "None"
-                }
-              }
-            ]
-          },
-          {
-            "title": "CameraPublisher",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "USB Camera 0",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 256.0,
-                "type": "Camera Stream",
-                "properties": {
-                  "topic": "/CameraPublisher/USB Camera 0",
-                  "period": 0.06,
-                  "rotation_turns": 0
-                }
-              }
-            ]
-          },
-          {
-            "title": "PathPlanner",
-            "x": 0.0,
-            "y": 512.0,
-            "width": 128.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "vel",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/PathPlanner/vel",
-                  "period": 0.06,
-                  "data_type": "double[]",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "BatterySim",
-            "x": 384.0,
-            "y": 768.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "BatteryVoltage (Volts)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/BatterySim/BatteryVoltage (Volts)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "TotalCurrent (Amps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/BatterySim/TotalCurrent (Amps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "photonvision",
-            "x": 0.0,
-            "y": 768.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "ledModeRequest",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/photonvision/ledModeRequest",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
+                  "show_submit_button": true
                 }
               }
             ]
@@ -994,87 +1592,69 @@
         ],
         "containers": [
           {
-            "title": "PID",
-            "x": 1664.0,
-            "y": 512.0,
+            "title": "Jostle",
+            "x": 928.0,
+            "y": 192.0,
             "width": 256.0,
-            "height": 384.0,
-            "type": "PIDController",
-            "properties": {
-              "topic": "/SmartDashboard/Subsystems/Wrist/PID",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "swerve",
-            "x": 640.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "YAGSL Swerve Drive",
-            "properties": {
-              "topic": "/SmartDashboard/swerve",
-              "period": 0.06,
-              "show_robot_rotation": true,
-              "show_desired_states": true,
-              "angle_offset": 0.0
-            }
-          },
-          {
-            "title": "Command Schedule",
-            "x": 1152.0,
-            "y": 640.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "Scheduler",
-            "properties": {
-              "topic": "/SmartDashboard/Command Schedule",
-              "period": 0.06
-            }
-          },
-          {
-            "title": "Field",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Field",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
-            }
-          },
-          {
-            "title": "FMSInfo",
-            "x": 640.0,
-            "y": 768.0,
-            "width": 512.0,
             "height": 128.0,
-            "type": "FMSInfo",
+            "type": "Command",
             "properties": {
-              "topic": "/FMSInfo",
+              "topic": "/SmartDashboard/Subsystems/Wrist/Jostle",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "pid",
+            "x": 896.0,
+            "y": 320.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "ProfiledPIDController",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/pid",
               "period": 0.06
             }
           },
           {
-            "title": "Pigeon 2 (v6) [9]",
-            "x": 128.0,
+            "title": "pid",
+            "x": 352.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "ProfiledPIDController",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Wrist/pid",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "kicker off",
+            "x": 320.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Subsystems/Launcher/kicker off",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "kicker on",
+            "x": 352.0,
             "y": 512.0,
             "width": 256.0,
-            "height": 256.0,
-            "type": "Gyro",
+            "height": 128.0,
+            "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/Pigeon 2 (v6) [9]",
+              "topic": "/SmartDashboard/Subsystems/Launcher/kicker on",
               "period": 0.06,
-              "counter_clockwise_positive": false
+              "show_type": true,
+              "maximize_button_space": false
             }
           }
         ]
