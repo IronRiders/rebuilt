@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Center-Pre-Score"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Set Launcher Ready State"
@@ -20,6 +14,12 @@
           "type": "named",
           "data": {
             "name": "Shooter fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "New Path"
           }
         }
       ]
