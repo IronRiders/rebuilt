@@ -59,7 +59,7 @@ public class LauncherSubsystem extends IronSubsystem {
 
     private final TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-    public double manualFlywheelVelocity = 40;
+    public double manualFlywheelVelocity = 35;
     public double manualHoodAngle = .5;
 
     public double distance;
