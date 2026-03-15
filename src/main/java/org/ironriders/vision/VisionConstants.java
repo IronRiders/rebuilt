@@ -102,6 +102,8 @@ public class VisionConstants {
 
     public static final Double SKEW_THROWAWAY_THRESHOLD = 15d; // deg,
     public static final Double POSE_DISTANCE_THROWAWAY_THRESHOLD = 6d; // meters
+    public static final Double AMBIGUITY_THROWAWAY_THRESHOLD = 0.2d; // ambiguity ratio, from https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/3D-tracking.html#ambiguity;
+
     public static final Double TARGET_DISTANCE_THROWAWAY_THRESHOLD = 4d; // meters
 
     public static final Double WEIGHT_SCALE = 5d;
