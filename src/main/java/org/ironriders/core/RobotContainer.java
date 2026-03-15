@@ -55,34 +55,35 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-        public static LauncherMaps launcherMaps = new LauncherMaps();
+    public static LauncherMaps launcherMaps = new LauncherMaps();
 
-        public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
-        public static final DriveCommands driveCommands = DriveSubsystem.getCommands();
+    public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    public static final DriveCommands driveCommands = DriveSubsystem.getCommands();
 
-        public static final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
-        public static final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
+    public static final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
+    public static final IndexerCommands indexerCommands = indexerSubsystem.getCommands();
 
-        public static final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-        public static final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
+    public static final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public static final IntakeCommands intakeCommands = intakeSubsystem.getCommands();
 
-        public static final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
-        public static final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
+    public static final LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
+    public static final LauncherCommands launcherCommands = launcherSubsystem.getCommands();
 
-        public static final WristSubsystem wristSubsystem = new WristSubsystem();
-        public static final WristCommands wristCommands = wristSubsystem.getCommands();
+    public static final WristSubsystem wristSubsystem = new WristSubsystem();
+    public static final WristCommands wristCommands = wristSubsystem.getCommands();
 
-        public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-        public static final ClimberCommands climberCommands = climberSubsystem.getCommands();
+    public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    public static final ClimberCommands climberCommands = climberSubsystem.getCommands();
 
-        public static final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public static final VisionSubsystem visionSubsystem = new VisionSubsystem(
+            DriveSubsystem.getSwerveDrive()::addVisionMeasurement);
 
-        public static Zone passingZone = new Zone(ZoneType.PASSING);
-        public static Zone scoringZone = new Zone(ZoneType.SCORING);
+    public static Zone passingZone = new Zone(ZoneType.PASSING);
+    public static Zone scoringZone = new Zone(ZoneType.SCORING);
 
-        public final Double triggerThreshold = 0.75;
+    public final Double triggerThreshold = 0.75;
 
-        private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
 
         public static final CommandXboxController primaryController = new CommandXboxController(
                         DriveConstants.CONTROLLER_PRIMARY_PORT);
@@ -92,126 +93,122 @@ public class RobotContainer {
                         intakeCommands,
                         launcherCommands, wristCommands, climberCommands, primaryController.getHID());
 
-        private static boolean targetingHub = false;
-        private static boolean targetingPassing = false;
+    private static boolean targetingHub = false;
+    private static boolean targetingPassing = false;
 
-        public RobotContainer() {
-                autoChooser = AutoBuilder.buildAutoChooser();
-                SmartDashboard.putData("Auto Select", autoChooser);
+    public RobotContainer() {
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Select", autoChooser);
 
-                DriverStation.silenceJoystickConnectionWarning(true);
+        DriverStation.silenceJoystickConnectionWarning(true);
 
-                DogLog.log("System/Init", "Starting DogLog to prevent 5-second stall when it is first used.");
+        DogLog.log("System/Init", "Starting DogLog to prevent 5-second stall when it is first used.");
 
-                configureBindings();
-        }
+        configureBindings();
+    }
 
-        public static void revertToSafeDefaults() {
-                targetingHub = false;
-                targetingPassing = false;
-                TargetingControl.revertToSafeDefaults();
-        }
+    public static void revertToSafeDefaults() {
+        targetingHub = false;
+        targetingPassing = false;
+        TargetingControl.revertToSafeDefaults();
+    }
 
-        public static void init() {
-                CommandScheduler.getInstance().schedule(robotCommands.stow());
-        }
+    public static void init() {
+        CommandScheduler.getInstance().schedule(robotCommands.stow());
+    }
 
-        private void configureBindings() {
-                driveSubsystem.setDefaultCommand(Commands.parallel(
-                                robotCommands
-                                                .driveTeleop(
-                                                                () -> Utils.controlCurve(primaryController.getLeftY(),
-                                                                                DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                                                () -> Utils.controlCurve(primaryController.getLeftX(),
-                                                                                DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                                                () -> Utils.controlCurve(primaryController.getRightX(),
-                                                                                DriveConstants.ROTATION_CONTROL_EXPONENT,
-                                                                                DriveConstants.ROTATION_CONTROL_DEADBAND))
-                                                .withName("Drive Teleop")));
+    private void configureBindings() {
+        driveSubsystem.setDefaultCommand(Commands.parallel(
+                robotCommands
+                        .driveTeleop(
+                                () -> Utils.controlCurve(-primaryController.getLeftY(),
+                                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                                () -> Utils.controlCurve(-primaryController.getLeftX(),
+                                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                                () -> Utils.controlCurve(primaryController.getRightX(),
+                                        DriveConstants.ROTATION_CONTROL_EXPONENT,
+                                        DriveConstants.ROTATION_CONTROL_DEADBAND))
+                        .withName("Drive Teleop")));
 
-                primaryController.a().onTrue(
-                                new InstantCommand(() -> {
-                                        targetingHub = !targetingHub;
-                                        if (targetingHub) {
-                                                targetingPassing = false;
-                                                TargetingControl.targetHub();
-                                        } else {
-                                                revertToSafeDefaults();
-                                        }
-                                })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
+        primaryController.a().onTrue(
+                new InstantCommand(() -> {
+                    targetingHub = !targetingHub;
+                    if (targetingHub) {
+                        targetingPassing = false;
+                        TargetingControl.targetHub();
+                    } else {
+                        revertToSafeDefaults();
+                    }
+                })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
 
-                primaryController.x().onTrue(
-                                new InstantCommand(() -> {
-                                        targetingPassing = !targetingPassing;
-                                        if (targetingPassing) {
-                                                targetingHub = false;
-                                                TargetingControl.targetPassing();
-                                        } else {
-                                                revertToSafeDefaults();
-                                        }
-                                })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
+        primaryController.x().onTrue(
+                new InstantCommand(() -> {
+                    targetingPassing = !targetingPassing;
+                    if (targetingPassing) {
+                        targetingHub = false;
+                        TargetingControl.targetPassing();
+                    } else {
+                        revertToSafeDefaults();
+                    }
+                })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
 
-                // --- Align ---
-                // primaryController.y()
-                //                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-                //                                 AlignTargetingMode.OUTPOST)))
-                //                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+        // --- Align ---
+        primaryController.y()
+                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+                        AlignTargetingMode.OUTPOST)))
+                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-                primaryController.b()
-                                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-                                                AlignTargetingMode.BUMP)))
-                                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+        primaryController.b()
+                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+                        AlignTargetingMode.BUMP)))
+                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-                primaryController.leftBumper()
-                                .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands
-                                                .pathfindThenFlipPathIfBetterThenFollow(
-                                                                PathPlannerHelpers.loadPath("Center Sweep")
-                                                                                .orElseThrow()))));
+        primaryController.leftBumper()
+                .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands
+                        .pathfindThenFlipPathIfBetterThenFollow(
+                                PathPlannerHelpers.loadPath("Center Sweep")
+                                        .orElseThrow()))));
 
-                // Line up to score
-                primaryController.rightBumper().onTrue(
-                                Commands.runOnce(() -> CommandScheduler.getInstance()
-                                                .schedule(driveCommands.pathfindToPoseThenAimAt(
-                                                                scoringZone.centerPoint(),
-                                                                FieldPositions.get(ElementType.HUB).toPose2d()))));
+        // Line up to score
+        primaryController.rightBumper().onTrue(
+                Commands.runOnce(() -> CommandScheduler.getInstance()
+                        .schedule(driveCommands.pathfindToPoseThenAimAt(
+                                scoringZone.centerPoint(),
+                                FieldPositions.get(ElementType.HUB).toPose2d()))));
 
-                // TODO: This binding currently only runs the kicker directly. It should
-                // eventually be updated to use robotCommands.fire() (or handle Launcher state)
-                // to ensure the flywheels and hood spin up properly.
-                primaryController.leftTrigger(triggerThreshold)
-                                .onTrue(robotCommands.fire())
-                                .onFalse(robotCommands.stopFire());
+        // TODO: This binding currently only runs the kicker directly. It should
+        // eventually be updated to use robotCommands.fire() (or handle Launcher state)
+        // to ensure the flywheels and hood spin up properly.
+        primaryController.leftTrigger(triggerThreshold)
+                .onTrue(robotCommands.fire())
+                .onFalse(robotCommands.stopFire());
 
-                primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake())
-                                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
+        primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake())
+                .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-                primaryController.povDown().onTrue(launcherCommands.set(State.READY));
+        primaryController.povDown().onTrue(launcherCommands.set(State.READY));
 
-                primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
+        // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-                // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
-                
-                secondaryController.a().onTrue(driveCommands.invertDrive());
-                secondaryController.x().onTrue(driveCommands.invertRotation());
-        }
+    }
 
-        public Command buildAlignCommand(DriverRequest request) {
-                return Commands
-                                .runOnce(() -> {
-                                        request.send("");
-                                        targetingHub = false;
-                                        targetingPassing = false;
-                                });
-        }
+    public Command buildAlignCommand(DriverRequest request) {
+        return Commands
+                .runOnce(() -> {
+                    request.send("");
+                    targetingHub = false;
+                    targetingPassing = false;
+                });
+    }
 
-        /**
-         * Get command configured in auto chooser.
-         *
-         * @return the command to run in autonomous
-         */
-        public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
-        }
+    /**
+     * Get command configured in auto chooser.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
+    }
 }

@@ -84,8 +84,7 @@ public class VisionCamera {
      */
     public void updateResultBuffer() {
         List<PhotonPipelineResult> results = m_photonCamera.getAllUnreadResults();
-
-        if (results == null || results.size() <= 0) {
+        if (results == null || results.size() < 1) {
             SmartDashboard.putString("VisionCamera/" + m_name + "/null response",
                     "null response from " + m_photonCamera.getName() + " at " + Timer.getFPGATimestamp());
             return; // don't update the buffer if we get a null response. Could be incorrect.

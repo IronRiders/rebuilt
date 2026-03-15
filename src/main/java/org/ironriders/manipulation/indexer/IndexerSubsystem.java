@@ -11,7 +11,7 @@ public class IndexerSubsystem extends IronSubsystem {
     private final IndexerCommands commands = new IndexerCommands(this);
 
     private TalonFX motor = new TalonFX(IndexerConstants.ID);
-    
+
     private TalonFXConfiguration configuration;
 
     public IndexerSubsystem() {
