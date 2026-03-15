@@ -204,7 +204,7 @@ public class VisionSubsystem extends IronSubsystem {
             validTargets.add(target);
         }
 
-        List<PhotonTrackedTarget> invalidTargets = camera.getTargets();
+        List<PhotonTrackedTarget> invalidTargets = new ArrayList<PhotonTrackedTarget>(camera.getTargets());
         invalidTargets.removeAll(validTargets);
 
         publish("Invalid targets",
