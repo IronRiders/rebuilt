@@ -7,6 +7,18 @@
         {
           "type": "named",
           "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Wrist Down"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Set Launcher Ready State"
           }
         },

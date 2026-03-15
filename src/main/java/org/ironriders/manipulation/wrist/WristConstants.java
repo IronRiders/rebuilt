@@ -32,7 +32,7 @@ public class WristConstants {
      */
     public enum State {
         UP(0),
-        DOWN(0.282),
+        DOWN(0.282), //orginaly .282
         // Jostle is instead the midpoint of the motion.
         JOSTLE(0.15);
 

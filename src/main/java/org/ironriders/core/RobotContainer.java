@@ -29,6 +29,7 @@ import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
+import org.ironriders.manipulation.wrist.WristConstants;
 import org.ironriders.manipulation.wrist.WristSubsystem;
 import org.ironriders.vision.VisionSubsystem;
 
@@ -152,10 +153,10 @@ public class RobotContainer {
                                 })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
 
                 // --- Align ---
-                primaryController.y()
-                                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-                                                AlignTargetingMode.OUTPOST)))
-                                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+                // primaryController.y()
+                //                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+                //                                 AlignTargetingMode.OUTPOST)))
+                //                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
                 primaryController.b()
                                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
@@ -186,6 +187,8 @@ public class RobotContainer {
                                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
                 primaryController.povDown().onTrue(launcherCommands.set(State.READY));
+
+                primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
                 // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
