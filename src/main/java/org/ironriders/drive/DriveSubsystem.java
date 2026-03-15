@@ -116,13 +116,15 @@ public class DriveSubsystem extends IronSubsystem {
 
         TargetingControl.update();
 
-       //if (RobotContainer.passingZone.inside() && lastZone != RobotContainer.passingZone) {
-       //    TargetingControl.targetPassing();
-       //    lastZone = RobotContainer.passingZone;
-       //} else if (RobotContainer.scoringZone.inside() && lastZone != RobotContainer.scoringZone) {
-       //    TargetingControl.targetHub();
-       //    lastZone = RobotContainer.scoringZone;
-       //}
+        // if (RobotContainer.passingZone.inside() && lastZone !=
+        // RobotContainer.passingZone) {
+        // TargetingControl.targetPassing();
+        // lastZone = RobotContainer.passingZone;
+        // } else if (RobotContainer.scoringZone.inside() && lastZone !=
+        // RobotContainer.scoringZone) {
+        // TargetingControl.targetHub();
+        // lastZone = RobotContainer.scoringZone;
+        // }
 
         if (Math.abs(RobotContainer.primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
             RobotContainer.revertToSafeDefaults();

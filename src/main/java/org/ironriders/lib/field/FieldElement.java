@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.ironriders.lib.Utils;
-import org.ironriders.vision.VisionSubsystem;
+import org.ironriders.vision.VisionConstants;
 
 /**
  * Representation of an element on the field. Includes pose, function, and
@@ -110,12 +110,11 @@ public class FieldElement {
         return findNearest(pose, Optional.empty());
     }
 
-    @SuppressWarnings("null")
     private static List<FieldElement> loadElements(DriverStation.Alliance alliance, int[] tags) {
         return Stream.of(Position.values())
                 .map(
                         element -> {
-                            var pose = VisionSubsystem.tagLayout.getTagPose(tags[element.id]);
+                            var pose = VisionConstants.TAG_FIELD_LAYOUT.getTagPose(tags[element.id]);
                             if (pose.isEmpty()) {
                                 Optional.empty();
                             }
