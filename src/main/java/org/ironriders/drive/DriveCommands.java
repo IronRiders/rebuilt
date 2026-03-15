@@ -29,6 +29,14 @@ public class DriveCommands {
         driveSubsystem.publish("Invert rotation", Commands.runOnce(()->driveSubsystem.switchRotation()));
     }
 
+
+    public Command invertDrive(){
+        return Commands.runOnce(()->driveSubsystem.switchDrive());
+    }
+
+     public Command invertRotation(){
+        return Commands.runOnce(()->driveSubsystem.switchRotation());
+    }
     /**
      * Command to drive the robot given a supplier.
      * 

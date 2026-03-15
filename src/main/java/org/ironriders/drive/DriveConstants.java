@@ -48,4 +48,5 @@ public class DriveConstants {
     public static final double DRIVE_OVERRIDE_THRESHOLD = 0.3;
 
     public static final int CONTROLLER_PRIMARY_PORT = 0;
+    public static final int CONTROLLER_SECONDARY_PORT = 1;
 }

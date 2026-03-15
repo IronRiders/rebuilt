@@ -86,7 +86,8 @@ public class RobotContainer {
 
         public static final CommandXboxController primaryController = new CommandXboxController(
                         DriveConstants.CONTROLLER_PRIMARY_PORT);
-
+        public static final CommandXboxController secondaryController = new CommandXboxController(
+                        DriveConstants.CONTROLLER_SECONDARY_PORT);
         public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
                         intakeCommands,
                         launcherCommands, wristCommands, climberCommands, primaryController.getHID());
@@ -119,10 +120,10 @@ public class RobotContainer {
                 driveSubsystem.setDefaultCommand(Commands.parallel(
                                 robotCommands
                                                 .driveTeleop(
-                                                                () -> Utils.controlCurve(-primaryController.getLeftY(),
+                                                                () -> Utils.controlCurve(primaryController.getLeftY(),
                                                                                 DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                                                                                 DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                                                () -> Utils.controlCurve(-primaryController.getLeftX(),
+                                                                () -> Utils.controlCurve(primaryController.getLeftX(),
                                                                                 DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                                                                                 DriveConstants.TRANSLATION_CONTROL_DEADBAND),
                                                                 () -> Utils.controlCurve(primaryController.getRightX(),
@@ -191,7 +192,9 @@ public class RobotContainer {
                 primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
                 // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
-
+                
+                secondaryController.a().onTrue(driveCommands.invertDrive());
+                secondaryController.x().onTrue(driveCommands.invertRotation());
         }
 
         public Command buildAlignCommand(DriverRequest request) {
