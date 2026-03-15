@@ -25,7 +25,7 @@ public class VisionSubsystem {
     private final Map<VisionCamera, PhotonPoseEstimator> estimators = new HashMap<>();
     private Matrix<N3, N1> curStdDevs;
     private final EstimateConsumer estConsumer;
-    private boolean isSimulation = false;
+    private final boolean isSimulation;
 
     // Simulation
     public static PhotonCameraSim cameraSim;
@@ -37,6 +37,7 @@ public class VisionSubsystem {
      *                    edu.wpi.first.math.estimator.SwerveDrivePoseEstimator}
      */
     public VisionSubsystem(EstimateConsumer estConsumer) {
+        this.isSimulation = false;
         this.estConsumer = estConsumer;
         VisionConstants.CAMERAS.forEach((camera) -> {
             estimators.put(
