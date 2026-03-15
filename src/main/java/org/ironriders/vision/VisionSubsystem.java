@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class VisionSubsystem extends IronSubsystem {
     public enum TagInvalidReason {
         NO_SKEW,
-        AMBIGUOUS,
         TOO_DISTANT,
         TOO_CLOSE
     }
@@ -172,14 +171,6 @@ public class VisionSubsystem extends IronSubsystem {
                 continue;
             }
 
-            // If the tag is too ambiguous, we can't trust it.
-            if(target.getPoseAmbiguity() > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
-                addBadTagToString(TagInvalidReason.AMBIGUOUS, String.valueOf(target.getPoseAmbiguity()));
-                tagStrings.put(target, debugString);
-
-                continue;
-            }
-
             // the distance is negative, something has gone wrong.
             if (distance < 0) {
                 addBadTagToString(TagInvalidReason.TOO_CLOSE, distanceString);
@@ -240,11 +231,11 @@ public class VisionSubsystem extends IronSubsystem {
             return;
         }
 
-        // Throw away the new pose if it is too far away and we have a bad reading.
+        // Throw away the new pose if it is too far away.
         if (estimatedPose.estimatedPose.getTranslation()
                 .getDistance(
                         DriveSubsystem.getPose3d().getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
-                && camera.getResult().getBestTarget().poseAmbiguity > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
+                && (DriverStation.isTeleopEnabled() || DriverStation.isAutonomousEnabled())) {
             return;
         }
 
