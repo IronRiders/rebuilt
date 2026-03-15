@@ -34,7 +34,7 @@ public class VisionSubsystem extends IronSubsystem {
         NO_SKEW,
         AMBIGUOUS,
         TOO_DISTANT,
-        TOO_CLOSE
+        NEGATIVE_DISTANCE
     }
 
     private String debugString;
@@ -182,7 +182,7 @@ public class VisionSubsystem extends IronSubsystem {
 
             // the distance is negative, something has gone wrong.
             if (distance < 0) {
-                addBadTagToString(TagInvalidReason.TOO_CLOSE, distanceString);
+                addBadTagToString(TagInvalidReason.NEGATIVE_DISTANCE, distanceString);
                 tagStrings.put(target, debugString);
 
                 continue;
