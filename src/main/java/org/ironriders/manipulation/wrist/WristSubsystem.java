@@ -58,7 +58,7 @@ public class WristSubsystem extends IronSubsystem {
         publish("pid out", wristMotor.getClosedLoopOutput());
         publish("supply current", wristMotor.getSupplyCurrent().getValueAsDouble());
         publish("state", currentState.name());
-        publish("goal (angle)", wristMotor.getClosedLoopReference())
+        publish("goal (angle)", wristMotor.getClosedLoopReference());
 
         switch (currentState) {
             case JOSTLE:
