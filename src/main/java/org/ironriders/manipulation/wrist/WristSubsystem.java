@@ -1,21 +1,16 @@
 package org.ironriders.manipulation.wrist;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.manipulation.wrist.WristConstants.State;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -27,56 +22,43 @@ public class WristSubsystem extends IronSubsystem {
     private final TalonFX wristMotor = new TalonFX(
             WristConstants.MOTOR_ID);
 
-    private final ArmFeedforward armFeedforward = new ArmFeedforward(
-            WristConstants.S,
-            WristConstants.G,
-            WristConstants.V);
-
-    private final ProfiledPIDController pid = new ProfiledPIDController(
-            WristConstants.P,
-            WristConstants.I,
-            WristConstants.D,
-            WristConstants.CONSTRAINTS);
-
-    private final CANcoder encoder = new CANcoder(WristConstants.ENCODER_ID);
-
     private State currentState = State.DOWN;
     private double lastStateChangeTime = 0;
 
     private final WristCommands commands;
 
-    //private double jostlingIterator = 0;
-    private CANcoderConfiguration cANcoderConfiguration = new CANcoderConfiguration();
-
-    //private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
-    //private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
+    // private double jostlingIterator = 0;
+    // private Double jostleMin = State.JOSTLE.position -
+    // WristConstants.JOSTLE_RANGE;
+    // private Double jostleMax = State.JOSTLE.position +
+    // WristConstants.JOSTLE_RANGE;
 
     public WristSubsystem() {
         commands = new WristCommands(this);
-        cANcoderConfiguration.MagnetSensor.withSensorDirection(SensorDirectionValue.Clockwise_Positive);
-        cANcoderConfiguration.MagnetSensor.withMagnetOffset(WristConstants.ENCODER_OFFSET);
-        encoder.getConfigurator().apply(cANcoderConfiguration);
 
-        TalonFXConfiguration configuration = new TalonFXConfiguration();
-        configuration
-                .withCurrentLimits(new CurrentLimitsConfigs().withSupplyCurrentLimit(WristConstants.CURRENT_LIMIT));
-        configuration.withMotorOutput(new MotorOutputConfigs().withInverted(WristConstants.MOTOR_INVERSION));
-        configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
+        var slot = new Slot0Configs();
+        slot.kP = WristConstants.P;
+        slot.kI = WristConstants.I;
+        slot.kD = WristConstants.D;
+        slot.kS = WristConstants.S;
+        slot.kV = WristConstants.V;
+        slot.kG = WristConstants.G;
+        slot.GravityType = GravityTypeValue.Arm_Cosine;
         wristMotor.getConfigurator()
-                .apply(configuration);
+                .apply(slot);
 
         setGoal(currentState);
-        pid.reset(getPositionRaw());
     }
 
     @Override
     public void periodic() {
-        publish("pos", getPositionDegrees());
-        publish("Pos Raw", getPositionRaw());
-        publish("pid", pid);
-
+        publish("rotations", wristMotor.getPosition().getValue().in(Rotations) * WristConstants.MECHANISM_RATIO);
+        publish("pos raw", getPositionRaw());
+        publish("pid err", wristMotor.getClosedLoopError());
+        publish("pid out", wristMotor.getClosedLoopOutput());
+        publish("supply current", wristMotor.getSupplyCurrent().getValueAsDouble());
         publish("state", currentState.name());
+        publish("goal (angle)", wristMotor.getClosedLoopReference())
 
         switch (currentState) {
             case JOSTLE:
@@ -85,24 +67,21 @@ public class WristSubsystem extends IronSubsystem {
                     lastStateChangeTime = Timer.getFPGATimestamp();
                     break;
                 } else if (timeDifference > 1.5) {
-                    pid.setGoal(State.DOWN.position);
+                    wristMotor.setControl(State.DOWN.posvol);
                     break;
                 } else if (timeDifference > 1) {
-                    pid.setGoal(State.UP.position);
+                    wristMotor.setControl(State.UP.posvol);
                     break;
                 } else if (timeDifference > .5) {
-                    pid.setGoal(State.DOWN.position);
+                    wristMotor.setControl(State.DOWN.posvol);
                     break;
                 } else {
-                    pid.setGoal(State.UP.position);
+                    wristMotor.setControl(State.UP.posvol);
                 }
             default:
                 break;
         }
-        double output = pid.calculate(getPositionRaw())
-                + armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
-        publish("Motor output", output);
-        wristMotor.set(output);
+        publish("Motor output", wristMotor.getClosedLoopOutput());
     }
 
     /**
@@ -111,11 +90,11 @@ public class WristSubsystem extends IronSubsystem {
      * @return The angle in degrees from vertical, with positive forward.
      */
     public double getPositionDegrees() {
-        return (encoder.getAbsolutePosition().getValueAsDouble() * 360);
+        return (wristMotor.getPosition().getValue().in(Degrees) * WristConstants.MECHANISM_RATIO);
     }
 
     public double getPositionRaw() {
-        return (encoder.getAbsolutePosition().getValueAsDouble());
+        return (wristMotor.getPosition().getValueAsDouble());
     }
 
     public State getState() {
@@ -128,7 +107,7 @@ public class WristSubsystem extends IronSubsystem {
      * @return The velocity in RadiansPerSecond
      */
     public double getVelocityRadiansPerSecond() {
-        return encoder.getVelocity().getValue().in(RadiansPerSecond);
+        return wristMotor.getVelocity().getValue().in(RadiansPerSecond);
     }
 
     /**
@@ -140,10 +119,10 @@ public class WristSubsystem extends IronSubsystem {
         switch (goal) {
             case JOSTLE:
             case UP:
-                pid.setGoal(State.UP.position);
+                wristMotor.setControl(State.UP.posvol);
                 break;
             case DOWN:
-                pid.setGoal(goal.position);
+                wristMotor.setControl(State.DOWN.posvol);
                 break;
             default:
                 break;
@@ -160,7 +139,7 @@ public class WristSubsystem extends IronSubsystem {
         if (currentState == State.JOSTLE) {
             return false;
         }
-        return pid.atGoal();
+        return wristMotor.getClosedLoopError().getValue() < WristConstants.JOSTLE_TOLERANCE;
     }
 
     /**
