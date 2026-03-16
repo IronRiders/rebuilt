@@ -84,7 +84,7 @@ public class VisionSubsystem extends IronSubsystem {
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
 
         // for every camera...
         VisionConstants.CAMERAS.stream().forEach((camera) -> {
@@ -173,7 +173,7 @@ public class VisionSubsystem extends IronSubsystem {
             }
 
             // If the tag is too ambiguous, we can't trust it.
-            if(target.getPoseAmbiguity() > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
+            if (target.getPoseAmbiguity() > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
                 addBadTagToString(TagInvalidReason.AMBIGUOUS, String.valueOf(target.getPoseAmbiguity()));
                 tagStrings.put(target, debugString);
 
@@ -240,14 +240,16 @@ public class VisionSubsystem extends IronSubsystem {
             return;
         }
 
-        // Throw away the new pose if it is too far away and we have a bad reading.
-        if ((estimatedPose.estimatedPose.getTranslation()
+        boolean tooFar = estimatedPose.estimatedPose.getTranslation()
                 .getDistance(
-                        DriveSubsystem.getPose3d().getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
-                        || DriveSubsystem.getIsZeroingPoseWithVision()
-                        )
-                    
-                && camera.getResult().getBestTarget().poseAmbiguity > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
+                        DriveSubsystem.getPose3d()
+                                .getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD;
+        // Throw away the new pose if it is too far away and we have a bad reading.
+        if (tooFar && !DriveSubsystem.getIsZeroingPoseWithVision()) {
+            return;
+        }
+
+        if (camera.getResult().getBestTarget().poseAmbiguity > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
             return;
         }
 
