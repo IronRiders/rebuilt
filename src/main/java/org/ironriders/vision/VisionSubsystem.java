@@ -241,9 +241,12 @@ public class VisionSubsystem extends IronSubsystem {
         }
 
         // Throw away the new pose if it is too far away and we have a bad reading.
-        if (estimatedPose.estimatedPose.getTranslation()
+        if ((estimatedPose.estimatedPose.getTranslation()
                 .getDistance(
                         DriveSubsystem.getPose3d().getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
+                        || DriveSubsystem.getIsZeroingPoseWithVision()
+                        )
+                    
                 && camera.getResult().getBestTarget().poseAmbiguity > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
             return;
         }
@@ -262,6 +265,11 @@ public class VisionSubsystem extends IronSubsystem {
         // Actually add the estimate.
         DriveSubsystem.getSwerveDrive().addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(),
                 estimatedPose.timestampSeconds); // Use capture time, not now, for latency compensation
+
+        // Pose has been established from a good vision reading — disable zeroing mode.
+        if (DriveSubsystem.getIsZeroingPoseWithVision()) {
+            DriveSubsystem.zeroingPoseWithVision(false);
+        }
     }
 
     // debugging helper functions
