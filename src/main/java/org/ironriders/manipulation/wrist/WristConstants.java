@@ -1,11 +1,16 @@
 package org.ironriders.manipulation.wrist;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Time;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 
 /**
@@ -57,4 +62,6 @@ public class WristConstants {
 
     public static final double MECHANISM_RATIO = 1; // TODO: get;
     public static final double ERROR_TOLERANCE = 0.01; // TODO: get
+    public static final AngularVelocity HOME_VELOCITY_THRESHOLD = DegreesPerSecond.of(5);
+    public static final Time HOME_TIMEOUT = Seconds.of(20);
 }

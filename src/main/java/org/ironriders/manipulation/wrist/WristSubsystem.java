@@ -1,8 +1,12 @@
 package org.ironriders.manipulation.wrist;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+
+import java.util.function.Supplier;
 
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.manipulation.wrist.WristConstants.State;
@@ -10,6 +14,7 @@ import org.ironriders.manipulation.wrist.WristConstants.State;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.controls.PositionVoltage;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -95,6 +100,19 @@ public class WristSubsystem extends IronSubsystem {
 
     public double getPositionRaw() {
         return (wristMotor.getPosition().getValueAsDouble());
+    }
+
+    public void home() throws InterruptedException {
+        var oldControl = wristMotor.getAppliedControl();
+        wristMotor.setControl(new PositionVoltage(-0.1));
+        Supplier<Double> velocityDPS = () -> {
+            return wristMotor.getVelocity().getValue().abs(DegreesPerSecond);
+        };
+        double thresholdDPS = WristConstants.HOME_VELOCITY_THRESHOLD.in(DegreesPerSecond);
+        while (velocityDPS.get() > thresholdDPS) {
+            this.wait((long) WristConstants.HOME_TIMEOUT.in(Milliseconds));
+        }
+        wristMotor.setControl(oldControl);
     }
 
     public State getState() {

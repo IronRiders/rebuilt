@@ -49,4 +49,17 @@ public class WristCommands {
     public Command jostleBalls() {
         return set(State.JOSTLE);
     }
+
+    public Command home() {
+        return wristSubsystem.runOnce(() -> {
+            try {
+                wristSubsystem.home();
+            } catch (InterruptedException e) {
+                this.wristSubsystem.notifyError(
+                        this.wristSubsystem.buildNotification(
+                                e.getClass().descriptorString() + e.getCause().getMessage(),
+                                e.getStackTrace().toString()));
+            }
+        });
+    }
 }
