@@ -54,6 +54,8 @@ public class DriveSubsystem extends IronSubsystem {
 
     public Zone lastZone;
 
+    int n = 0;
+
     public DriveSubsystem() throws RuntimeException {
         try {
             swerveDrive = new SwerveParser(DriveConstants.SWERVE_JSON_DIRECTORY) // YAGSL reads from the deploy/swerve
@@ -108,6 +110,8 @@ public class DriveSubsystem extends IronSubsystem {
         rotationPid.enableContinuousInput(0, Math.PI * 2);
 
         rotationPid.setTolerance(0.05);
+
+        FieldPositions.Zones.SCORING_POINTS.forEach((p) -> putObject("GOAL" + String.valueOf(n++)).setPose(p));
     }
 
     @Override
@@ -116,13 +120,15 @@ public class DriveSubsystem extends IronSubsystem {
 
         TargetingControl.update();
 
-       //if (RobotContainer.passingZone.inside() && lastZone != RobotContainer.passingZone) {
-       //    TargetingControl.targetPassing();
-       //    lastZone = RobotContainer.passingZone;
-       //} else if (RobotContainer.scoringZone.inside() && lastZone != RobotContainer.scoringZone) {
-       //    TargetingControl.targetHub();
-       //    lastZone = RobotContainer.scoringZone;
-       //}
+        // if (RobotContainer.passingZone.inside() && lastZone !=
+        // RobotContainer.passingZone) {
+        // TargetingControl.targetPassing();
+        // lastZone = RobotContainer.passingZone;
+        // } else if (RobotContainer.scoringZone.inside() && lastZone !=
+        // RobotContainer.scoringZone) {
+        // TargetingControl.targetHub();
+        // lastZone = RobotContainer.scoringZone;
+        // }
 
         if (Math.abs(RobotContainer.primaryController.getRightX()) > DriveConstants.DRIVE_OVERRIDE_THRESHOLD) {
             RobotContainer.revertToSafeDefaults();
