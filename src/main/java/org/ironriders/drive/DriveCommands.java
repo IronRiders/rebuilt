@@ -25,8 +25,11 @@ public class DriveCommands {
         driveSubsystem.publish("Reset odometry blue tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
         driveSubsystem.publish("Reset gyro", resetRotation());
 
-        driveSubsystem.publish("Invert drive", Commands.runOnce(()->driveSubsystem.switchDrive()));
-        driveSubsystem.publish("Invert rotation", Commands.runOnce(()->driveSubsystem.switchRotation()));
+        driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
+        driveSubsystem.publish("Invert rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
+
+        driveSubsystem.publish("Set False zero pose with vision", setZeroingPoseWithVision(false));
+        driveSubsystem.publish("Set True zero pose with vision", setZeroingPoseWithVision(true));
     }
 
 
@@ -123,7 +126,7 @@ public class DriveCommands {
 
     /**
      * Command to pathfind to the start of a given path and then aim at a target.
-    */
+     */
     public Command pathfindToPoseThenAimAt(Pose2d pose, Pose2d target) {
         return Commands.runOnce(() -> PathPlannerHelpers.pathfindToPoseThenAimAt(pose, target));
     }
@@ -140,17 +143,27 @@ public class DriveCommands {
         return Commands.runOnce(() -> DriveSubsystem.resetRotation());
     }
 
-    /** Command to reset the swerve drive's measured position and rotation to the origin */
+    /**
+     * Command to reset the swerve drive's measured position and rotation to the
+     * origin
+     */
     public Command resetOdometry() {
         return Commands.runOnce(() -> DriveSubsystem.resetOdometry(new Pose2d()));
     }
 
-        /** Command to reset the swerve drive's measured position and rotation to a given pose. */
+    /**
+     * Command to reset the swerve drive's measured position and rotation to a given
+     * pose.
+     */
     public Command resetOdometryTo(Pose2d pose) {
         return Commands.runOnce(() -> DriveSubsystem.resetOdometry(pose));
     }
 
     public Command resetPID() {
-        return Commands.runOnce(()->DriveSubsystem.resetPID());
+        return Commands.runOnce(() -> DriveSubsystem.resetPID());
+    }
+
+    public Command setZeroingPoseWithVision(boolean enabled) {
+        return Commands.runOnce(() -> DriveSubsystem.zeroingPoseWithVision(enabled));
     }
 }

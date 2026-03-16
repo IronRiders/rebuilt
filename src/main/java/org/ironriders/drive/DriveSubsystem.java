@@ -41,6 +41,7 @@ public class DriveSubsystem extends IronSubsystem {
 
     private static boolean rotationInvert = false;
     private static boolean driveInvert = false;
+    private static boolean isZeroingPoseWithVision = false;
 
     public static boolean PIDRotation = false;
 
@@ -261,5 +262,13 @@ public class DriveSubsystem extends IronSubsystem {
      */
     public void switchDrive() {
         driveInvert = !driveInvert;
+    }
+
+    public static void zeroingPoseWithVision(boolean enable){
+        isZeroingPoseWithVision = enable;
+    }
+
+    public static boolean getIsZeroingPoseWithVision(){
+        return isZeroingPoseWithVision;
     }
 }
