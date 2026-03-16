@@ -133,12 +133,36 @@
   "eventMarkers": [
     {
       "name": "Wrist Down",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.9425451092117755,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Wrist Down"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stop Intake",
+      "waypointRelativePos": 3.269230769230779,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "Wrist Down"
+          "name": "Stop Intake"
         }
       }
     },

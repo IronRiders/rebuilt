@@ -50,11 +50,16 @@
       "name": "Wrist Down",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Wrist Down"
+        }
+      }
     },
     {
       "name": "Launch",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.139126305792973,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -65,22 +70,16 @@
     },
     {
       "name": "fire",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
         "data": {
           "commands": [
             {
-              "type": "wait",
-              "data": {
-                "waitTime": 2.0
-              }
-            },
-            {
               "type": "named",
               "data": {
-                "name": "fire"
+                "name": "Shooter fire"
               }
             }
           ]

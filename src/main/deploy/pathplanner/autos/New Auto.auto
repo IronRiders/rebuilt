@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Center-Pre-Score"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Intake"
@@ -32,6 +26,12 @@
           "type": "named",
           "data": {
             "name": "Shooter fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "New Path"
           }
         }
       ]

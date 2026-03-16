@@ -29,6 +29,7 @@ import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
+import org.ironriders.manipulation.wrist.WristConstants;
 import org.ironriders.manipulation.wrist.WristSubsystem;
 import org.ironriders.vision.VisionSubsystem;
 
@@ -85,7 +86,8 @@ public class RobotContainer {
 
     public static final CommandXboxController primaryController = new CommandXboxController(
             DriveConstants.CONTROLLER_PRIMARY_PORT);
-
+        public static final CommandXboxController secondaryController = new CommandXboxController(
+                        DriveConstants.CONTROLLER_SECONDARY_PORT);
     public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
             intakeCommands,
             launcherCommands, wristCommands, climberCommands, primaryController.getHID());
@@ -118,10 +120,10 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(Commands.parallel(
                 robotCommands
                         .driveTeleop(
-                                () -> Utils.controlCurve(-primaryController.getLeftY(),
+                                () -> Utils.controlCurve(primaryController.getLeftY(),
                                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                () -> Utils.controlCurve(-primaryController.getLeftX(),
+                                () -> Utils.controlCurve(primaryController.getLeftX(),
                                         DriveConstants.TRANSLATION_CONTROL_EXPONENT,
                                         DriveConstants.TRANSLATION_CONTROL_DEADBAND),
                                 () -> Utils.controlCurve(primaryController.getRightX(),
@@ -151,11 +153,11 @@ public class RobotContainer {
                     }
                 })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
 
-        // --- Align ---
-        primaryController.y()
-                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-                        AlignTargetingMode.OUTPOST)))
-                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+                // --- Align ---
+                // primaryController.y()
+                //                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+                //                                 AlignTargetingMode.OUTPOST)))
+                //                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.b()
                 .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
@@ -187,11 +189,15 @@ public class RobotContainer {
         primaryController.rightTrigger(triggerThreshold).onTrue(robotCommands.intake())
                 .onFalse(intakeCommands.set(IntakeConstants.State.STOP));
 
-        primaryController.povDown().onTrue(launcherCommands.set(State.READY));
+                primaryController.povDown().onTrue(launcherCommands.set(State.READY));
 
-        // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+                primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
-    }
+                // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+                
+                secondaryController.a().onTrue(driveCommands.invertDrive());
+                secondaryController.x().onTrue(driveCommands.invertRotation());
+        }
 
     public Command buildAlignCommand(DriverRequest request) {
         return Commands
