@@ -260,15 +260,23 @@ public class FieldPositions {
                 new Pose2d(SCORING_ZONE_HEIGHT, FIELD_WIDTH_METERS, new Rotation2d()))
                 .getPoints();
 
-        public static final Pose2d[] PASSING_POINTS_ARRAY = {
+        public static final Pose2d[] PASSING_TARGETS_ARRAY = {
                 new Pose2d((SCORING_ZONE_HEIGHT / 2.3), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
                 new Pose2d((SCORING_ZONE_HEIGHT / 2.3), 1.5, new Rotation2d()) };
 
-        public static final List<Pose2d> PASSING_POINTS = new ArrayList<>();
+        public static final Pose2d[] SCORING_POINTS_ARRAY = {
+                new Pose2d((SCORING_ZONE_HEIGHT / 2.3), FIELD_WIDTH_METERS - 1.5, new Rotation2d()),
+                new Pose2d((SCORING_ZONE_HEIGHT / 2.3), 1.5, new Rotation2d()) };
+
+        public static final List<Pose2d> PASSING_TARGETS = new ArrayList<>();
+        public static final List<Pose2d> SCORING_POINTS = new ArrayList<>();
 
         static {
-            for (Pose2d point : FieldPositions.Zones.PASSING_POINTS_ARRAY) {
-                PASSING_POINTS.add(FieldPositions.prepareMetersPose(point));
+            for (Pose2d point : FieldPositions.Zones.PASSING_TARGETS_ARRAY) {
+                PASSING_TARGETS.add(FieldPositions.prepareMetersPose(point));
+            }
+            for (Pose2d point : FieldPositions.Zones.SCORING_POINTS_ARRAY) {
+                SCORING_POINTS.add(FieldPositions.prepareMetersPose(point));
             }
         }
     }
