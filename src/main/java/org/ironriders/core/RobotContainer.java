@@ -172,10 +172,12 @@ public class RobotContainer {
 
                 // Line up to score
                 primaryController.rightBumper().onTrue(
+                                Commands.sequence(
                                 Commands.runOnce(() -> CommandScheduler.getInstance()
                                                 .schedule(driveCommands.pathfindToPoseThenAimAt(
                                                                 scoringZone.centerPoint(),
-                                                                FieldPositions.get(ElementType.HUB).toPose2d()))));
+                                                                FieldPositions.get(ElementType.HUB).toPose2d()))),
+                                                                launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed)));
 
                 // TODO: This binding currently only runs the kicker directly. It should
                 // eventually be updated to use robotCommands.fire() (or handle Launcher state)
