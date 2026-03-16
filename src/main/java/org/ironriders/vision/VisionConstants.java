@@ -23,7 +23,7 @@ public class VisionConstants {
     static {
         switch (CAMERA_MODE) {
             case REAL:
-                CAMERAS.add(new VisionCamera("front-launcher", new Transform3d(
+                CAMERAS.add(new VisionCamera("launcher", new Transform3d( //TODO: rename to the real camera. Disabled for now 
                         new Translation3d(
                                 0,
                                 0,

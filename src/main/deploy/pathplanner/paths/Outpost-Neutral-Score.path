@@ -133,7 +133,7 @@
   "eventMarkers": [
     {
       "name": "Wrist Down",
-      "waypointRelativePos": 0.5721747388414038,
+      "waypointRelativePos": 0.9425451092117755,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
