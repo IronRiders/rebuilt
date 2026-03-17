@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
@@ -85,6 +86,11 @@ public class RobotContainer {
 
     public static final CommandXboxController primaryController = new CommandXboxController(
             DriveConstants.CONTROLLER_PRIMARY_PORT);
+
+    
+    public static final CommandGenericHID secondaryController = new CommandGenericHID(
+            DriveConstants.CONTROLLER_SECONDARY_PORT);
+
 
     public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
             intakeCommands,
@@ -188,6 +194,18 @@ public class RobotContainer {
         primaryController.povDown().onTrue(launcherCommands.set(State.READY));
 
         // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+
+
+        secondaryController.button(0).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
+                        .schedule(driveCommands.pathfindToPoseThenAimAt(
+                                DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
+                                FieldPositions.get(ElementType.HUB).toPose2d()))));
+
+
+        secondaryController.button(1).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
+                        .schedule(driveCommands.pathfindToPoseThenAimAt(
+                                DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
+                                FieldPositions.get(ElementType.HUB).toPose2d()))));
 
     }
 

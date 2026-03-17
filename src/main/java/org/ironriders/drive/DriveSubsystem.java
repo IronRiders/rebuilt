@@ -111,7 +111,8 @@ public class DriveSubsystem extends IronSubsystem {
 
         rotationPid.setTolerance(0.05);
 
-        FieldPositions.Zones.SCORING_POINTS.forEach((p) -> putObject("GOAL" + String.valueOf(n++)).setPose(p));
+        FieldPositions.Zones.TRENCH_SCORING_POINTS.forEach((p) -> putObject("TRENCH_GOAL" + String.valueOf(n++)).setPose(p));
+        FieldPositions.Zones.TOWER_SCORING_POINTS.forEach((p) -> putObject("TOWER_GOAL" + String.valueOf(n++)).setPose(p));
     }
 
     @Override
