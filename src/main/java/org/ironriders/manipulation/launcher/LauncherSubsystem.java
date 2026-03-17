@@ -67,7 +67,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
-        configuration.CurrentLimits.StatorCurrentLimit = 40;
+        configuration.CurrentLimits.StatorCurrentLimit = 60;
 
         configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -127,6 +127,7 @@ public class LauncherSubsystem extends IronSubsystem {
         manualHoodAngle = getPublishedNumber("manualHoodAngle", manualHoodAngle);
 
         publish("kicker Motor Velocity", kickerMotor.getVelocity().getValue().in(RotationsPerSecond));
+        publish("Is In Flywheel tolerance", isReady());
 
         putPose2d(currentTarget.toPose2d(), "LauncherTarget");
 

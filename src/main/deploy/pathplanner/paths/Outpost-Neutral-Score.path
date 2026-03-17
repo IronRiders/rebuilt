@@ -32,48 +32,48 @@
     },
     {
       "anchor": {
-        "x": 7.64596678529063,
-        "y": 3.4378647686832746
+        "x": 7.667485172004747,
+        "y": 3.2764768683274017
       },
       "prevControl": {
-        "x": 7.612035051150906,
-        "y": 2.969723179229967
+        "x": 7.633553437865023,
+        "y": 2.808335278874094
       },
       "nextControl": {
-        "x": 7.667223835257139,
-        "y": 3.7311391742126885
+        "x": 7.688742221971256,
+        "y": 3.5697512738568156
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.171957295373667,
-        "y": 0.5719346289752627
+        "x": 5.967532621589562,
+        "y": 0.7480664294187431
       },
       "prevControl": {
-        "x": 7.304261124324766,
-        "y": 0.5689814397007675
+        "x": 7.076908127208481,
+        "y": 0.9747968197879846
       },
       "nextControl": {
-        "x": 4.644151838671412,
-        "y": 0.5759193357058122
+        "x": 5.287872131190307,
+        "y": 0.6091597314375203
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8366073546856474,
-        "y": 0.5719346289752627
+        "x": 2.7612930011862398,
+        "y": 0.8664175563463812
       },
       "prevControl": {
-        "x": 3.6865836298932395,
-        "y": 0.5328825622775799
+        "x": 3.327190812720848,
+        "y": 0.27753533568904454
       },
       "nextControl": {
-        "x": 2.4682762124929374,
-        "y": 0.588857562886836
+        "x": 2.505808782450258,
+        "y": 1.1322784785933808
       },
       "isLocked": false,
       "linkedName": null
@@ -118,7 +118,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0.7078763708873415,
-      "maxWaypointRelativePos": 3.898305084745754,
+      "maxWaypointRelativePos": 2.3258785942492324,
       "constraints": {
         "maxVelocity": 1.0,
         "maxAcceleration": 3.0,
@@ -133,7 +133,7 @@
   "eventMarkers": [
     {
       "name": "Wrist Down",
-      "waypointRelativePos": 0.9425451092117755,
+      "waypointRelativePos": 0.7431149097815777,
       "endWaypointRelativePos": null,
       "command": {
         "type": "sequential",
@@ -171,16 +171,30 @@
       "waypointRelativePos": 5.0,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "Shooter fire"
+          "commands": [
+            {
+              "type": "race",
+              "data": {
+                "commands": [
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "Set Launcher Manual State"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 17.1,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 12.1,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -188,7 +202,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -122.879
+    "rotation": -120.37000000000002
   },
   "reversed": false,
   "folder": null,
@@ -196,5 +210,5 @@
     "velocity": 0,
     "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
