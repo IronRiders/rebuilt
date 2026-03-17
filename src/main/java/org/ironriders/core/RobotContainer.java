@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
@@ -191,11 +192,19 @@ public class RobotContainer {
 
                 primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
-                // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
-                
-                secondaryController.a().onTrue(driveCommands.invertDrive());
-                secondaryController.x().onTrue(driveCommands.invertRotation());
-        }
+
+        secondaryController.button(0).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
+                        .schedule(driveCommands.pathfindToPoseThenAimAt(
+                                DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
+                                FieldPositions.get(ElementType.HUB).toPose2d()))));
+
+
+        secondaryController.button(1).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
+                        .schedule(driveCommands.pathfindToPoseThenAimAt(
+                                DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
+                                FieldPositions.get(ElementType.HUB).toPose2d()))));
+
+    }
 
     public Command buildAlignCommand(DriverRequest request) {
         return Commands
