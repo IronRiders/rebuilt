@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
@@ -84,13 +85,14 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-        public static final CommandXboxController primaryController = new CommandXboxController(
-                        DriveConstants.CONTROLLER_PRIMARY_PORT);
-        public static final CommandXboxController secondaryController = new CommandXboxController(
-                        DriveConstants.CONTROLLER_SECONDARY_PORT);
-        public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
-                        intakeCommands,
-                        launcherCommands, wristCommands, climberCommands, primaryController.getHID());
+    public static final CommandXboxController primaryController = new CommandXboxController(
+            DriveConstants.CONTROLLER_PRIMARY_PORT);
+    public static final CommandXboxController secondaryController = new CommandXboxController(
+            DriveConstants.CONTROLLER_SECONDARY_PORT);
+
+    public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
+            intakeCommands,
+            launcherCommands, wristCommands, climberCommands, primaryController.getHID());
 
     private static boolean targetingHub = false;
     private static boolean targetingPassing = false;
@@ -212,7 +214,21 @@ public class RobotContainer {
                 secondaryController.leftTrigger().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CORNER.speed));
                 //Close Hub Range -- X
                 secondaryController.x().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.HUB.speed));
-        }
+
+        // Vision path planning Drive team won't use it 
+        // secondaryController.button(0).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
+        //                 .schedule(driveCommands.pathfindToPoseThenAimAt(
+        //                         DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
+        //                         FieldPositions.get(ElementType.HUB).toPose2d()))));
+
+
+        // secondaryController.button(1).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
+        //                 .schedule(driveCommands.pathfindToPoseThenAimAt(
+        //                         DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
+        //                         FieldPositions.get(ElementType.HUB).toPose2d()))));
+
+    }
+
 
     public Command buildAlignCommand(DriverRequest request) {
         return Commands

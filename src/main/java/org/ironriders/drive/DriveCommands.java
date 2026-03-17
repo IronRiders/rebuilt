@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
 
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -13,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class DriveCommands {
@@ -30,6 +32,16 @@ public class DriveCommands {
 
         driveSubsystem.publish("Set False reset pose with vision", setZeroingPoseWithVision(false));
         driveSubsystem.publish("Set True reset pose with vision", setZeroingPoseWithVision(true));
+
+         driveSubsystem.publish("Pathfind to tower scoring", Commands.runOnce(() -> CommandScheduler.getInstance()
+                .schedule(pathfindToPoseThenAimAt(
+                        DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
+                        FieldPositions.get(ElementType.HUB).toPose2d()))));
+
+        driveSubsystem.publish("Pathfind to trench scoring", Commands.runOnce(() -> CommandScheduler.getInstance()
+                .schedule(pathfindToPoseThenAimAt(
+                        DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
+                        FieldPositions.get(ElementType.HUB).toPose2d()))));
     }
 
 
@@ -40,6 +52,7 @@ public class DriveCommands {
      public Command invertRotation(){
         return Commands.runOnce(()->driveSubsystem.switchRotation());
     }
+    
     /**
      * Command to drive the robot given a supplier.
      * 
