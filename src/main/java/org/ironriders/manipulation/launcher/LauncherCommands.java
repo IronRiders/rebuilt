@@ -28,6 +28,12 @@ public class LauncherCommands {
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
 
+        launcher.publish("Velocity 27.5", setFlyWheelVelocityManually(27.5));
+        launcher.publish("Velocity 33.5", setFlyWheelVelocityManually(33.5));
+        launcher.publish("Tower Velocity 36", setFlyWheelVelocityManually(36d));
+        launcher.publish("Velocity 49.5", setFlyWheelVelocityManually(49.5));
+
+
         launcher.publish("kicker on", runKicker());
         launcher.publish("kicker off", stopKicker());
     }
