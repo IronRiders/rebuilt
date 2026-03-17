@@ -12,12 +12,12 @@ public class WristConstants {
     public static final int MOTOR_ID = 17;
     public static final int ENCODER_ID = 20;
 
-    public static final Double ENCODER_OFFSET = 0.0339;
+    public static final Double ENCODER_OFFSET = 0.3696;
     // 132.0d;
 
     public static final Double CURRENT_LIMIT = 40.0; // Current limit for the supply current
     public static InvertedValue MOTOR_INVERSION = InvertedValue.Clockwise_Positive;
-    public static final Double P = 1.5; // proportional gain /TESTED but jerky needs feed forward
+    public static final Double P = 2.0; // proportional gain /TESTED but jerky needs feed forward
     public static final Double I = 0.0; // Integral gain
     public static final Double D = 0.1; // Derivative gain
     public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(100 / 360,
