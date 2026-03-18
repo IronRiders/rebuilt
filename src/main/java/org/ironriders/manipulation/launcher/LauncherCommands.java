@@ -25,13 +25,11 @@ public class LauncherCommands {
         launcher.publish("Set Min Angle .2", setAngleManually(Angle.ofRelativeUnits(0, Rotations)));
         // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
 
-        launcher.publish("Set Launcher to Flywheel Velocity",
-                setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
 
-        launcher.publish("Velocity 27.5", setFlyWheelVelocityManually(27.5));
-        launcher.publish("Velocity 33.5", setFlyWheelVelocityManually(33.5));
-        launcher.publish("Tower Velocity 36", setFlyWheelVelocityManually(36d));
-        launcher.publish("Velocity 49.5", setFlyWheelVelocityManually(49.5));
+        launcher.publish("Velocity 27.5", setCustomFlyWheelSpeed(27.5));
+        launcher.publish("Velocity 33.5", setCustomFlyWheelSpeed(33.5));
+        launcher.publish("Tower Velocity 36", setCustomFlyWheelSpeed(36d));
+        launcher.publish("Velocity 49.5", setCustomFlyWheelSpeed(49.5));
 
 
         launcher.publish("kicker on", runKicker());
@@ -110,7 +108,7 @@ public class LauncherCommands {
      * @param velocity The target flywheel velocity to set for the launcher.
      * @return A command that sets the launcher's flywheel velocity.
      */
-    public Command setFlyWheelVelocityManually(double velocity) {
+    public Command setFlyWheelVeocityInternalTarget(double velocity) {
         return Commands.runOnce(() -> launcher.setFlywheelGoal(velocity));
     }
 }
