@@ -29,11 +29,11 @@ public class LauncherCommands {
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
 
-        launcher.publish("Close Hub Velocity 27.5", setFlyWheelVelocityManually(FlyWheelState.HUB.speed));
-        launcher.publish("Midrange Velocity 33.5", setFlyWheelVelocityManually(FlyWheelState.CENTER.speed));
-        launcher.publish("Tower Velocity 36", setFlyWheelVelocityManually(FlyWheelState.TOWER.speed));
-        launcher.publish("Trench Velocity 36.2", setFlyWheelVelocityManually(FlyWheelState.TRENCH.speed));
-        launcher.publish("Corner Velocity 49.5", setFlyWheelVelocityManually(FlyWheelState.CORNER.speed));
+        launcher.publish("Close Hub Velocity 27.5", setCustomFlyWheelSpeed(FlyWheelState.HUB.speed));
+        launcher.publish("Midrange Velocity 33.5", setCustomFlyWheelSpeed(FlyWheelState.CENTER.speed));
+        launcher.publish("Tower Velocity 36", setCustomFlyWheelSpeed(FlyWheelState.TOWER.speed));
+        launcher.publish("Trench Velocity 36.2", setCustomFlyWheelSpeed(FlyWheelState.TRENCH.speed));
+        launcher.publish("Corner Velocity 49.5", setCustomFlyWheelSpeed(FlyWheelState.CORNER.speed));
 
 
         launcher.publish("kicker on", runKicker());
@@ -112,7 +112,7 @@ public class LauncherCommands {
      * @param velocity The target flywheel velocity to set for the launcher.
      * @return A command that sets the launcher's flywheel velocity.
      */
-    public Command setFlyWheelVelocityManually(double velocity) {
+    public Command setFlyWheelVeocityInternalTarget(double velocity) {
         return Commands.runOnce(() -> launcher.setFlywheelGoal(velocity));
     }
 }

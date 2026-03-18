@@ -76,7 +76,7 @@ public class RobotCommands {
 
     public Command customAutoFire(double flywheelSpeed) {
         return Commands.sequence(
-                launcherCommands.setFlyWheelVelocityManually(flywheelSpeed),
+                launcherCommands.setCustomFlyWheelSpeed(flywheelSpeed),
                 launcherCommands.readyAndFire(),
                 Commands.parallel(
                         indexerCommands.set(IndexerConstants.State.INDEX),
