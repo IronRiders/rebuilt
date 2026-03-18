@@ -105,3 +105,16 @@ wpi.java.configureTestTasks(test)
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
+
+task deploy(overwrite: true) {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'diff', '--name-only'
+        ignoreExitValue = true
+        standardOutput = stdout
+    }
+
+    if (!stdout.toString().trim().isEmpty()) {
+        throw new Exception(String.format("You cannot deploy uncommitted code to the robot. Commit your code first, %s!", System.getenv("username")))
+    }
+}
