@@ -89,10 +89,10 @@ public class DriveCommands {
                         : -1;
 
         return drive(
-                () -> new Translation2d(inputTranslationX.getAsDouble(),
+                () -> new Translation2d(inputTranslationX.getAsDouble() * driveSubsystem.getDriveSpeedModifer(),
                         inputTranslationY.getAsDouble())
                         .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert),
-                () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_MAX_ANGULAR_TELEOP * invert,
+                () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_MAX_ANGULAR_TELEOP * invert* driveSubsystem.getDriveSpeedModifer(),
                 () -> fieldRelative);
     }
 
@@ -170,5 +170,9 @@ public class DriveCommands {
 
     public Command setZeroingPoseWithVision(boolean enabled) {
         return Commands.runOnce(() -> DriveSubsystem.zeroingPoseWithVision(enabled));
+    }
+
+    public Command setDriveSpeedModifer (double speed){
+        return Commands.runOnce(() -> DriveSubsystem.setDriveSpeedModifer(speed));
     }
 }
