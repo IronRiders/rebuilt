@@ -43,6 +43,8 @@ public class DriveSubsystem extends IronSubsystem {
     private static boolean driveInvert = false;
     private static boolean isZeroingPoseWithVision = false;
 
+    private static double driveSpeedModifer = 1d;
+
     public static boolean PIDRotation = false;
 
     public static AtomicBoolean isDriving = new AtomicBoolean(false);
@@ -276,5 +278,13 @@ public class DriveSubsystem extends IronSubsystem {
 
     public static boolean getIsZeroingPoseWithVision(){
         return isZeroingPoseWithVision;
+    }
+
+    public static void setDriveSpeedModifer(double newDriveSpeedModifer){
+        driveSpeedModifer = newDriveSpeedModifer;
+    }
+
+    public  double getDriveSpeedModifer(){
+        return driveSpeedModifer;
     }
 }
