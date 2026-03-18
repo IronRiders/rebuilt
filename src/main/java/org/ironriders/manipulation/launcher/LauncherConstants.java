@@ -51,12 +51,10 @@ public class LauncherConstants {
 
     public enum FlyWheelState{
         CENTER(33.5),
-        TOWER_OUTPOST(38),  //TODO: TEST
-        TOWER_DEPOT(38),    //TODO: TEST
-        CORNER_DEPOT(44),   //TODO: TEST
-        CORNER_OUTPOST(44), //TODO: TEST
-        TRENCH_OUTPOST(40), //TODO: TEST
-        TRENCH_DEPOT(40);   //TODO: TEST
+        TOWER(36d),   
+        CORNER(49.5),
+        TRENCH(36.2),   //TODO: TEST
+        HUB(27.5); //TODO: TEST 
 
         public double speed;
 
