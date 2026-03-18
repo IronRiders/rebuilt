@@ -28,8 +28,8 @@ public class DriveCommands {
         driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
         driveSubsystem.publish("Invert rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
 
-        driveSubsystem.publish("Set False zero pose with vision", setZeroingPoseWithVision(false));
-        driveSubsystem.publish("Set True zero pose with vision", setZeroingPoseWithVision(true));
+        driveSubsystem.publish("Set False reset pose with vision", setZeroingPoseWithVision(false));
+        driveSubsystem.publish("Set True reset pose with vision", setZeroingPoseWithVision(true));
     }
 
 
