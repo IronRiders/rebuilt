@@ -2,6 +2,7 @@ package org.ironriders.manipulation.launcher;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import org.ironriders.manipulation.launcher.LauncherConstants.FlyWheelState;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import edu.wpi.first.units.measure.Angle;
@@ -28,10 +29,11 @@ public class LauncherCommands {
         launcher.publish("Set Launcher to Flywheel Velocity",
                 setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
 
-        launcher.publish("Velocity 27.5", setFlyWheelVelocityManually(27.5));
-        launcher.publish("Velocity 33.5", setFlyWheelVelocityManually(33.5));
-        launcher.publish("Tower Velocity 36", setFlyWheelVelocityManually(36d));
-        launcher.publish("Velocity 49.5", setFlyWheelVelocityManually(49.5));
+        launcher.publish("Close Hub Velocity 27.5", setFlyWheelVelocityManually(FlyWheelState.HUB.speed));
+        launcher.publish("Midrange Velocity 33.5", setFlyWheelVelocityManually(FlyWheelState.CENTER.speed));
+        launcher.publish("Tower Velocity 36", setFlyWheelVelocityManually(FlyWheelState.TOWER.speed));
+        launcher.publish("Trench Velocity 36.2", setFlyWheelVelocityManually(FlyWheelState.TRENCH.speed));
+        launcher.publish("Corner Velocity 49.5", setFlyWheelVelocityManually(FlyWheelState.CORNER.speed));
 
 
         launcher.publish("kicker on", runKicker());

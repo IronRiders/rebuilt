@@ -195,7 +195,24 @@ public class RobotContainer {
 
         // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-    }
+                // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+                
+                // Invert Drive -- A
+                secondaryController.a().onTrue(driveCommands.invertDrive());
+                // Invert Rotation -- B
+                secondaryController.b().onTrue(driveCommands.invertRotation());
+
+                //Midrange (old default) -- Right Bumper
+                secondaryController.rightBumper().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed));
+                //Tower -- Left Bumper
+                secondaryController.leftBumper().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.TOWER.speed));
+                //Trench -- Right Trigger
+                secondaryController.rightTrigger().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.TRENCH.speed));
+                //Corner -- Left Trigger
+                secondaryController.leftTrigger().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CORNER.speed));
+                //Close Hub Range -- X
+                secondaryController.x().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.HUB.speed));
+        }
 
     public Command buildAlignCommand(DriverRequest request) {
         return Commands
