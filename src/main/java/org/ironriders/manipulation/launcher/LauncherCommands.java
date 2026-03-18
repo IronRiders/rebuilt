@@ -26,7 +26,6 @@ public class LauncherCommands {
         launcher.publish("Set Min Angle .2", setAngleManually(Angle.ofRelativeUnits(0, Rotations)));
         // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
 
-
         launcher.publish("Close Hub Velocity 27.5", setCustomFlyWheelSpeed(FlyWheelState.HUB.speed));
         launcher.publish("Midrange Velocity 33.5", setCustomFlyWheelSpeed(FlyWheelState.CENTER.speed));
         launcher.publish("Tower Velocity 36", setCustomFlyWheelSpeed(FlyWheelState.TOWER.speed));
