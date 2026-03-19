@@ -73,9 +73,10 @@ public class RobotContainer {
 
     public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public static final ClimberCommands climberCommands = climberSubsystem.getCommands();
-
-    public static final VisionSubsystem visionSubsystem = new VisionSubsystem(
-            DriveSubsystem.getSwerveDrive()::addVisionMeasurement);
+    public static final VisionSubsystem visionSubsystem = new VisionSubsystem((addable) -> {
+        DriveSubsystem.getSwerveDrive().addVisionMeasurement(addable.estimatedPose().toPose2d(),
+                addable.timestampSeconds(), addable.devs());
+    });
 
     public static Zone passingZone = new Zone(ZoneType.PASSING);
     public static Zone scoringZone = new Zone(ZoneType.SCORING);

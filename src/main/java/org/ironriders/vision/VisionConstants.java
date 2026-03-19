@@ -1,12 +1,14 @@
 package org.ironriders.vision;
 
-import java.util.List;
 import java.util.Map;
+
+import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -46,36 +48,32 @@ public class VisionConstants {
             "launcher-hood",
             new Transform3d(
                     new Translation3d(
-                            0, // forward (meters)
-                            0, // left (meters)
-                            0.498 // up (meters)
-                    ),
+                            0,
+                            0,
+                            0.498),
                     new Rotation3d(
-                            0.0, // roll
-                            -Math.toRadians(20), // pitch
-                            Math.PI // yaw
-                    )),
+                            0.0,
+                            -Math.toRadians(20),
+                            Math.PI)),
             "swerve-back-left",
             new Transform3d(
                     new Translation3d(
-                            0.212, // forward (meters)
-                            0.218, // left (meters)
-                            0.16 // up (meters)
-                    ),
+                            0.212,
+                            0.218,
+                            0.16),
                     new Rotation3d(
-                            0.0, // roll
-                            -Math.toRadians(25), // pitch
+                            0.0,
+                            -Math.toRadians(25),
                             Math.toRadians(45))),
             "swerve-back-right",
             new Transform3d(
                     new Translation3d(
-                            0.212, // forward (meters)
-                            -0.218, // left (meters)
-                            0.16 // up (meters)
-                    ),
+                            0.212,
+                            -0.218,
+                            0.16),
                     new Rotation3d(
-                            0.0, // roll
-                            -Math.toRadians(25), // pitch
+                            0.0,
+                            -Math.toRadians(25),
                             -Math.toRadians(45))));
     // These are marked as "example values" in the code, but according to XBot, they
     // work very well
@@ -84,4 +82,10 @@ public class VisionConstants {
 
     public static final AprilTagFieldLayout TAG_FIELD_LAYOUT = AprilTagFieldLayout
             .loadField(AprilTagFields.kDefaultField);
+    public static final SimCameraProperties SIM_CAM_PROPS = new SimCameraProperties() // todo: get actual values
+            .setCalibration(960, 720, Rotation2d.fromDegrees(90))
+            .setCalibError(0.35, 0.1)
+            .setFPS(15)
+            .setAvgLatencyMs(50)
+            .setLatencyStdDevMs(50);
 }
