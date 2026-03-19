@@ -175,8 +175,8 @@ public class DriveSubsystem extends IronSubsystem {
                     false);
         } else {
             swerveDrive.drive(
-                    translation.times(driveInvert ? -1 : 1),
-                    rotation * (rotationInvert ? -1 : 1),
+                    translation.times(driveInvert ? -1 : 1).times(driveSpeedModifer),
+                    rotation * (rotationInvert ? -1 : 1) * (driveSpeedModifer),
                     fieldRelative,
                     false);
         }

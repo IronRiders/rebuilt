@@ -181,7 +181,7 @@ public class RobotContainer {
         //                         FieldPositions.get(ElementType.HUB).toPose2d()))),
         //                         launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed)));
 
-        primaryController.rightBumper().onTrue(driveCommands.setDriveSpeedModifer(.5)).onFalse(driveCommands.setDriveSpeedModifer(1d));
+        primaryController.rightBumper().onTrue(driveCommands.setDriveSpeedModifer(.30)).onFalse(driveCommands.setDriveSpeedModifer(1d));
 
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)
