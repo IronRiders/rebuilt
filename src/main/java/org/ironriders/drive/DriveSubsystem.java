@@ -152,6 +152,7 @@ public class DriveSubsystem extends IronSubsystem {
 
         double distance = Utils.getPoseDifference(getPose(), FieldPositions.get(ElementType.HUB).toPose2d()).getNorm();
         publish("Hub dist", distance);
+        publish("Drive Speed Modifer", driveSpeedModifer);
     }
 
     /**
@@ -252,11 +253,27 @@ public class DriveSubsystem extends IronSubsystem {
 
     /**
      * Sets the robot's odometry to a given pose with rotation at 0.
+     * DOES NOT SET ROTATION ONLY SETS TRANSLATION
      * 
      * @param pose2d The pose to reset the odometry to.
      */
     public static void resetOdometry(Pose2d pose2d) {
         swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(0)));
+    }
+
+    /**
+     * Sets the robot's odometry to a given pose with rotation at the rotation.
+     * 
+     * @param pose2d The pose to reset the odometry to.
+     */
+    public static void resetOdometry(Pose2d pose2d, boolean setRotation) {
+        if(setRotation){
+            resetOdometry(pose2d);
+            swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(pose2d.getRotation().getRadians())));
+        }
+        else{
+           resetOdometry(pose2d);
+        }
     }
 
     /**
@@ -281,7 +298,7 @@ public class DriveSubsystem extends IronSubsystem {
         return isZeroingPoseWithVision;
     }
 
-    public static void setDriveSpeedModifer(double newDriveSpeedModifer){
+    public void setDriveSpeedModifer(double newDriveSpeedModifer){
         driveSpeedModifer = newDriveSpeedModifer;
     }
 

@@ -25,11 +25,13 @@ public class DriveCommands {
 
         driveSubsystem.publish("Reset odometry red tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5) + FieldPositions.Field.CENTER.getX(), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
         driveSubsystem.publish("Reset odometry blue tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
-        driveSubsystem.publish("Reset Gyro trench ", resetOdometryTo(new Pose2d(4.472,0.415, new Rotation2d(-90))));
+        driveSubsystem.publish("Reset Gyro trench ", resetOdometryTo(new Pose2d(4.472,0.415, new Rotation2d(-Math.PI/2)), true));
         driveSubsystem.publish("Reset gyro", resetRotation());
 
         driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
         driveSubsystem.publish("Invert rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
+        driveSubsystem.publish(".5 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(.5d)));
+        driveSubsystem.publish("1.0 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(1d)));
 
         driveSubsystem.publish("Set False reset pose with vision", setZeroingPoseWithVision(false));
         driveSubsystem.publish("Set True reset pose with vision", setZeroingPoseWithVision(true));
@@ -53,6 +55,11 @@ public class DriveCommands {
      public Command invertRotation(){
         return Commands.runOnce(()->driveSubsystem.switchRotation());
     }
+
+    public Command setDriveSpeedModifer(double speed){
+        return Commands.run(()-> driveSubsystem.setDriveSpeedModifer(speed));
+    }
+    
     
     /**
      * Command to drive the robot given a supplier.
@@ -95,12 +102,12 @@ public class DriveCommands {
         double invert = DriverStation.getAlliance().isEmpty()
                 || DriverStation.getAlliance().get() == DriverStation.Alliance.Blue
                         ? 1
-                        : -1;
+                      : -1;
 
         return drive(
-                () -> new Translation2d(inputTranslationX.getAsDouble() * driveSubsystem.getDriveSpeedModifer(),
+                () -> new Translation2d(inputTranslationX.getAsDouble(),
                         inputTranslationY.getAsDouble())
-                        .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert),
+                        .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert * driveSubsystem.getDriveSpeedModifer()),
                 () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_MAX_ANGULAR_TELEOP * invert* driveSubsystem.getDriveSpeedModifer(),
                 () -> fieldRelative);
     }
@@ -173,15 +180,19 @@ public class DriveCommands {
         return Commands.runOnce(() -> DriveSubsystem.resetOdometry(pose));
     }
 
+    /**
+     * Command to reset the swerve drive's measured position and rotation to a given
+     * pose.
+     */
+    public Command resetOdometryTo(Pose2d pose, boolean setRotation) {
+        return Commands.runOnce(() -> DriveSubsystem.resetOdometry(pose, setRotation));
+    }
+
     public Command resetPID() {
         return Commands.runOnce(() -> DriveSubsystem.resetPID());
     }
 
     public Command setZeroingPoseWithVision(boolean enabled) {
         return Commands.runOnce(() -> DriveSubsystem.zeroingPoseWithVision(enabled));
-    }
-
-    public Command setDriveSpeedModifer (double speed){
-        return Commands.runOnce(() -> DriveSubsystem.setDriveSpeedModifer(speed));
     }
 }
