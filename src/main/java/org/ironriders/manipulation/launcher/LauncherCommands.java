@@ -33,7 +33,7 @@ public class LauncherCommands {
     }
 
     public Command readyAndFire() {
-        return Commands.sequence(set(State.READY), runKicker());
+        return Commands.sequence(set(State.MANUAL), runKicker());
     }
 
     public Command runKicker() {
