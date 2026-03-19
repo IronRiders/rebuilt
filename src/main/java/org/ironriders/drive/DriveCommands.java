@@ -25,6 +25,7 @@ public class DriveCommands {
 
         driveSubsystem.publish("Reset odometry red tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5) + FieldPositions.Field.CENTER.getX(), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
         driveSubsystem.publish("Reset odometry blue tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
+        driveSubsystem.publish("Reset Gyro trench ", resetOdometryTo(new Pose2d(4.472,0.415, new Rotation2d(-90))));
         driveSubsystem.publish("Reset gyro", resetRotation());
 
         driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
