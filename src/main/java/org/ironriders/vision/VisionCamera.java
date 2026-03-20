@@ -190,7 +190,7 @@ public class VisionCamera {
                 avgDist += tagPose.get().toPose2d().getTranslation()
                         .getDistance(estimate.get().estimatedPose.toPose2d().getTranslation());
             }
-            if (numTags > 0) {
+            if (numTags <= 0) {
                 this.stdDevs = VisionConstants.SINGLE_TAG_STD_DEV;
             } else {
                 avgDist /= numTags;
