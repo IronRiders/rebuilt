@@ -30,9 +30,11 @@ public class DriveCommands {
         driveSubsystem.publish("Reset odometry blue tower",
                 resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5),
                         FieldPositions.Field.CENTER.getY(), new Rotation2d())));
-        driveSubsystem.publish("Reset Gyro trench ",
-                resetOdometryTo(new Pose2d(4.472, 0.415, new Rotation2d(-Math.PI / 2)), true));
+
         driveSubsystem.publish("Reset gyro", resetRotation());
+
+        driveSubsystem.publish("Reset Gyro Trench Right", resetOdometryToTrench(false));
+        driveSubsystem.publish("Reset Gyro Trench Left", resetOdometryToTrench(true));
 
         driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
         driveSubsystem.publish("Invert rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
@@ -201,8 +203,8 @@ public class DriveCommands {
         return Commands.runOnce(() -> DriveSubsystem.zeroingPoseWithVision(enabled));
     }
 
-    public Command resetOdometryToTrench(boolean isRightTrench) {
+    public Command resetOdometryToTrench(boolean isLeftTrench) {
         return Commands.runOnce(() -> DriveSubsystem.resetGyroTrench(
-                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue), isRightTrench));
+                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue), isLeftTrench));
     }
 }
