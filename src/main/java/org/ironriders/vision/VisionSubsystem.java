@@ -256,7 +256,8 @@ public class VisionSubsystem extends IronSubsystem {
         // shooting, and smoothness doesn't matter if you're not using it to move the
         // robot)
         if (DriverStation.isAutonomous() && !RobotContainer.scoringZone.inside()) {
-            DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(VecBuilder.fill(20, 20, 50));
+            //DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(VecBuilder.fill(20, 20, 50));
+            return;
         } else {
             DriveSubsystem.getSwerveDrive().setVisionMeasurementStdDevs(estimateStdDevVector(camera));
         }

@@ -29,6 +29,7 @@ import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
+import org.ironriders.manipulation.wrist.WristConstants;
 import org.ironriders.manipulation.wrist.WristSubsystem;
 import org.ironriders.vision.VisionSubsystem;
 
@@ -84,17 +85,13 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    public static final CommandXboxController primaryController = new CommandXboxController(
-            DriveConstants.CONTROLLER_PRIMARY_PORT);
-
-    
-    public static final CommandGenericHID secondaryController = new CommandGenericHID(
-            DriveConstants.CONTROLLER_SECONDARY_PORT);
-
-
-    public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
-            intakeCommands,
-            launcherCommands, wristCommands, climberCommands, primaryController.getHID());
+        public static final CommandXboxController primaryController = new CommandXboxController(
+                        DriveConstants.CONTROLLER_PRIMARY_PORT);
+        public static final CommandXboxController secondaryController = new CommandXboxController(
+                        DriveConstants.CONTROLLER_SECONDARY_PORT);
+        public final static RobotCommands robotCommands = new RobotCommands(driveCommands, indexerCommands,
+                        intakeCommands,
+                        launcherCommands, wristCommands, climberCommands, primaryController.getHID());
 
     private static boolean targetingHub = false;
     private static boolean targetingPassing = false;
@@ -120,20 +117,20 @@ public class RobotContainer {
         CommandScheduler.getInstance().schedule(robotCommands.stow());
     }
 
-    private void configureBindings() {
-        driveSubsystem.setDefaultCommand(Commands.parallel(
-                robotCommands
-                        .driveTeleop(
-                                () -> Utils.controlCurve(-primaryController.getLeftY(),
-                                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                () -> Utils.controlCurve(-primaryController.getLeftX(),
-                                        DriveConstants.TRANSLATION_CONTROL_EXPONENT,
-                                        DriveConstants.TRANSLATION_CONTROL_DEADBAND),
-                                () -> Utils.controlCurve(primaryController.getRightX(),
-                                        DriveConstants.ROTATION_CONTROL_EXPONENT,
-                                        DriveConstants.ROTATION_CONTROL_DEADBAND))
-                        .withName("Drive Teleop")));
+        private void configureBindings() {
+                driveSubsystem.setDefaultCommand(Commands.parallel(
+                                robotCommands
+                                                .driveTeleop(
+                                                                () -> Utils.controlCurve(primaryController.getLeftY(),
+                                                                                DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                                                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                                                                () -> Utils.controlCurve(primaryController.getLeftX(),
+                                                                                DriveConstants.TRANSLATION_CONTROL_EXPONENT,
+                                                                                DriveConstants.TRANSLATION_CONTROL_DEADBAND),
+                                                                () -> Utils.controlCurve(primaryController.getRightX(),
+                                                                                DriveConstants.ROTATION_CONTROL_EXPONENT,
+                                                                                DriveConstants.ROTATION_CONTROL_DEADBAND))
+                                                .withName("Drive Teleop")));
 
         primaryController.a().onTrue(
                 new InstantCommand(() -> {
@@ -193,7 +190,7 @@ public class RobotContainer {
 
         primaryController.povDown().onTrue(launcherCommands.set(State.READY));
 
-        // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
+                primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
 
         secondaryController.button(0).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
