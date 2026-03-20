@@ -271,7 +271,7 @@ public class VisionSubsystem extends IronSubsystem {
         DriveSubsystem.getSwerveDrive().addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(),
                 estimatedPose.timestampSeconds); // Use capture time, not now, for latency compensation
 
-        // Pose has been established from a good vision reading — disable zeroing mode.
+        // Pose has been established from a good vision reading -- disable zeroing mode.
         if (DriveSubsystem.getIsZeroingPoseWithVision()) {
             DriveSubsystem.zeroingPoseWithVision(false);
         }
