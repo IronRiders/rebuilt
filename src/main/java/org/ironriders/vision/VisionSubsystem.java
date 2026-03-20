@@ -39,8 +39,8 @@ public class VisionSubsystem extends IronSubsystem {
 
     private String debugString;
 
-    public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark); // For practice field
-    //public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded); // For comp
+    //public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark); // For practice field
+    public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded); // For comp
 
 
     public static VisionSystemSim visionSim = new VisionSystemSim("main");
