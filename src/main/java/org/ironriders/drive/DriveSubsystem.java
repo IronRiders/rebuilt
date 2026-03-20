@@ -3,6 +3,7 @@ package org.ironriders.drive;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.dyn4j.geometry.Rotation;
 import org.ironriders.core.RobotContainer;
 import org.ironriders.core.TargetingControl;
 import org.ironriders.lib.IronSubsystem;
@@ -13,6 +14,7 @@ import org.ironriders.lib.field.FieldElement.ElementType;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import swervelib.SwerveDrive;
@@ -114,8 +117,10 @@ public class DriveSubsystem extends IronSubsystem {
 
         rotationPid.setTolerance(0.05);
 
-        FieldPositions.Zones.TRENCH_SCORING_POINTS.forEach((p) -> putObject("TRENCH_GOAL" + String.valueOf(n++)).setPose(p));
-        FieldPositions.Zones.TOWER_SCORING_POINTS.forEach((p) -> putObject("TOWER_GOAL" + String.valueOf(n++)).setPose(p));
+        FieldPositions.Zones.TRENCH_SCORING_POINTS
+                .forEach((p) -> putObject("TRENCH_GOAL" + String.valueOf(n++)).setPose(p));
+        FieldPositions.Zones.TOWER_SCORING_POINTS
+                .forEach((p) -> putObject("TOWER_GOAL" + String.valueOf(n++)).setPose(p));
     }
 
     @Override
@@ -267,12 +272,11 @@ public class DriveSubsystem extends IronSubsystem {
      * @param pose2d The pose to reset the odometry to.
      */
     public static void resetOdometry(Pose2d pose2d, boolean setRotation) {
-        if(setRotation){
+        if (setRotation) {
+            swerveDrive.resetOdometry(
+                    new Pose2d(pose2d.getTranslation(), new Rotation2d(pose2d.getRotation().getRadians())));
+        } else {
             resetOdometry(pose2d);
-            swerveDrive.resetOdometry(new Pose2d(pose2d.getTranslation(), new Rotation2d(pose2d.getRotation().getRadians())));
-        }
-        else{
-           resetOdometry(pose2d);
         }
     }
 
@@ -290,19 +294,34 @@ public class DriveSubsystem extends IronSubsystem {
         driveInvert = !driveInvert;
     }
 
-    public static void zeroingPoseWithVision(boolean enable){
+    public static void zeroingPoseWithVision(boolean enable) {
         isZeroingPoseWithVision = enable;
     }
 
-    public static boolean getIsZeroingPoseWithVision(){
+    public static boolean getIsZeroingPoseWithVision() {
         return isZeroingPoseWithVision;
     }
 
-    public void setDriveSpeedModifer(double newDriveSpeedModifer){
+    public void setDriveSpeedModifer(double newDriveSpeedModifer) {
         driveSpeedModifer = newDriveSpeedModifer;
     }
 
-    public  double getDriveSpeedModifer(){
+    public double getDriveSpeedModifer() {
         return driveSpeedModifer;
+    }
+
+    public static void resetGyroTrench(DriverStation.Alliance allianceColor, boolean isDepotTrench) {
+        Pose2d trenchPose2d = new Pose2d(4.472, 0.415, new Rotation2d(-Math.PI / 2)); // Blue Outpost Trench pose set
+                                                                                      // intially
+        double fieldYLength = 8.069326;
+        if (isDepotTrench) {
+            trenchPose2d = new Pose2d(trenchPose2d.getX(), fieldYLength - trenchPose2d.getY(),
+                    new Rotation2d(trenchPose2d.getRotation().getRadians() + Math.PI)); // Flipping to the depot side
+        }
+        if (allianceColor == Alliance.Red) {
+            trenchPose2d = FlippingUtil.flipFieldPose(trenchPose2d);
+        }
+
+        resetOdometry(trenchPose2d, true);
     }
 }

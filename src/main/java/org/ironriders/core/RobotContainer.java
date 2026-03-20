@@ -215,6 +215,9 @@ public class RobotContainer {
                 //Close Hub Range -- X
                 secondaryController.x().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.HUB.speed));
 
+                secondaryController.povLeft().onTrue(driveCommands.resetOdometryToTrench(true));
+                secondaryController.povRight().onTrue(driveCommands.resetOdometryToTrench(false));
+
         // Vision path planning Drive team won't use it 
         // secondaryController.button(0).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
         //                 .schedule(driveCommands.pathfindToPoseThenAimAt(
