@@ -17,10 +17,6 @@ import edu.wpi.first.math.numbers.N3;
 
 /** Constants for the {@link VisionSubsystem} */
 public class VisionConstants {
-    public enum CameraMode {
-        SIM,
-        REAL;
-    }
 
     public static final Map<String, Transform3d> CAMERA_TRANSFORMS = Map.of(
             "launcher-back",
@@ -75,8 +71,8 @@ public class VisionConstants {
                             0.0,
                             -Math.toRadians(25),
                             -Math.toRadians(45))));
-    // These are marked as "example values" in the code, but according to XBot, they
-    // work very well
+    // These are marked as "example values" in the code, but according to XBot they
+    // work very well during comp
     public static final Matrix<N3, N1> SINGLE_TAG_STD_DEV = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> MULTI_TAG_STD_DEV = VecBuilder.fill(0.5, 0.5, 1);
 
