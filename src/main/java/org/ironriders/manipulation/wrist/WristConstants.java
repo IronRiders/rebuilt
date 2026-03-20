@@ -12,10 +12,10 @@ public class WristConstants {
     public static final int MOTOR_ID = 17;
     public static final int ENCODER_ID = 20;
 
-    public static final Double ENCODER_OFFSET = 0.3696;
+    public static final Double ENCODER_OFFSET = -0.136962890625d;
     // 132.0d;
 
-    public static final Double CURRENT_LIMIT = 40.0; // Current limit for the supply current
+    public static final Double CURRENT_LIMIT = 60.0; // Current limit for the supply current
     public static InvertedValue MOTOR_INVERSION = InvertedValue.Clockwise_Positive;
     public static final Double P = 2.0; // proportional gain /TESTED but jerky needs feed forward
     public static final Double I = 0.0; // Integral gain
@@ -31,8 +31,8 @@ public class WristConstants {
      * Named positions of the wrist. 0 is all the way up, positive forward.
      */
     public enum State {
-        UP(0),
-        DOWN(0.282), //orginaly .282
+        UP(0.0),
+        DOWN(0.2814), //orginaly .282
         // Jostle is instead the midpoint of the motion.
         JOSTLE(0.15);
 

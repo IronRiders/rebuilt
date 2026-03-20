@@ -168,11 +168,11 @@ public class RobotContainer {
                         AlignTargetingMode.BUMP)))
                 .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-        primaryController.leftBumper()
-                .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands
-                        .pathfindThenFlipPathIfBetterThenFollow(
-                                PathPlannerHelpers.loadPath("Center Sweep")
-                                        .orElseThrow()))));
+        //primaryController.leftBumper()
+        //        .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands
+        //                .pathfindThenFlipPathIfBetterThenFollow(
+       //                         PathPlannerHelpers.loadPath("Center Sweep")
+       //                                 .orElseThrow()))));
 
         // Line up to score
         // primaryController.rightBumper().onTrue(
