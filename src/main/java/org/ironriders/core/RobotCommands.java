@@ -49,8 +49,10 @@ public class RobotCommands {
 
         this.controller = controller;
         NamedCommands.registerCommand("Shooter fire", fire());
-        NamedCommands.registerCommand("Custom Flywheel Fire 33.5", customAutoFire(33.5) );
-        NamedCommands.registerCommand("Custom Flywheel Fire 38", customAutoFire(38.0) );
+        NamedCommands.registerCommand("Custom Flywheel Fire 33.5", customAutoFire(33.5));
+        NamedCommands.registerCommand("Custom Flywheel Fire 38", customAutoFire(38.0));
+        NamedCommands.registerCommand("Eject Balls", eject_load());
+
     }
 
     /**
@@ -106,7 +108,8 @@ public class RobotCommands {
                 wristCommands.set(WristConstants.State.UP), climberCommands.home());
     }
 
-    public Command eject_load(){
-        return Commands.parallel(indexerCommands.set(IndexerConstants.State.REVERSE),wristCommands.set(WristConstants.State.DOWN),intakeCommands.eject());
+    public Command eject_load() {
+        return Commands.parallel(indexerCommands.set(IndexerConstants.State.REVERSE),
+                wristCommands.set(WristConstants.State.DOWN), intakeCommands.eject());
     }
 }

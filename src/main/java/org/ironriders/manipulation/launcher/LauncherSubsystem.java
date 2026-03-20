@@ -249,6 +249,9 @@ public class LauncherSubsystem extends IronSubsystem {
      * @return True if the launcher is ready, false otherwise.
      */
     public boolean isReady() {
+        if (currentState == State.STOW) {
+            return false;
+        }
         return flyWheelMotors.parallelStream()
                 .allMatch(m -> Math.abs(m.getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE);
     }
@@ -342,11 +345,10 @@ public class LauncherSubsystem extends IronSubsystem {
         return manualFlywheelVelocity;
     }
 
-     public void setManualFlyWheelSpeed (double newManualFlywheelVelocity) {
+    public void setManualFlyWheelSpeed(double newManualFlywheelVelocity) {
         manualFlywheelVelocity = newManualFlywheelVelocity;
-         publish("manualFlywheelVelocity", manualFlywheelVelocity);
+        publish("manualFlywheelVelocity", manualFlywheelVelocity);
     }
-
 
     public double getManualHoodAngle() {
         return manualHoodAngle;
