@@ -2,6 +2,7 @@ package org.ironriders.vision;
 
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -18,7 +19,7 @@ import edu.wpi.first.math.numbers.N3;
 /** Constants for the {@link VisionSubsystem} */
 public class VisionConstants {
 
-    public static final Map<String, Transform3d> CAMERA_TRANSFORMS = Map.of(
+    public static final Map<String, @NonNull Transform3d> CAMERA_TRANSFORMS = Map.of(
             "launcher-back",
             new Transform3d(
                     new Translation3d(

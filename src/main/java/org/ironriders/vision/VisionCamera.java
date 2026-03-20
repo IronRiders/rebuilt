@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
+import org.jspecify.annotations.NonNull;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -44,7 +45,7 @@ public class VisionCamera {
 
     private final String name;
     private final PhotonCamera camera;
-    private Optional<PhotonCameraSim> cameraSim;
+    private Optional<@NonNull PhotonCameraSim> cameraSim;
     private final PhotonPoseEstimator estimator;
     private CameraMode mode;
     private boolean simulation;
@@ -55,7 +56,7 @@ public class VisionCamera {
     }
 
     public VisionCamera(String name, Transform3d robotToCamera, AprilTagFieldLayout fieldLayout, CameraMode mode,
-            Optional<PhotonCameraSim> cameraSim) {
+            Optional<@NonNull PhotonCameraSim> cameraSim) {
         this.name = name;
         this.camera = new PhotonCamera(name);
         this.estimator = new PhotonPoseEstimator(fieldLayout, robotToCamera);

@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.ironriders.lib.IronSubsystem;
+import org.jspecify.annotations.NonNull;
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
@@ -74,7 +75,7 @@ public class VisionSubsystem extends IronSubsystem {
      * @param cameraTransforms
      */
     public VisionSubsystem(Consumer<SettableVisionLog> estConsumer,
-            AprilTagFieldLayout fieldLayout, VisionMode mode, Map<String, Transform3d> cameraTransforms) {
+            AprilTagFieldLayout fieldLayout, VisionMode mode, Map<String, @NonNull Transform3d> cameraTransforms) {
         this(constructCameras(cameraTransforms, decideCameraMode(mode), fieldLayout, getSimulationStatus(mode)),
                 estConsumer, mode,
                 fieldLayout);
@@ -100,7 +101,7 @@ public class VisionSubsystem extends IronSubsystem {
      * camera names and their {@link Transform3d transforms} from the robot center.
      * // TODO: figure out unit.
      */
-    public static List<VisionCamera> constructCameras(Map<String, Transform3d> cameraTransforms,
+    public static List<VisionCamera> constructCameras(Map<String, @NonNull Transform3d> cameraTransforms,
             VisionCamera.CameraMode camMode, AprilTagFieldLayout fieldLayout, boolean simulation) {
         var cams = new LinkedList<VisionCamera>();
         for (var entry : cameraTransforms.entrySet()) {
