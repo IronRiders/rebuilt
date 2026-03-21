@@ -163,10 +163,11 @@ public class RobotContainer {
 
         primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
-        primaryController.b()
-                .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-                        AlignTargetingMode.BUMP)))
-                .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+        primaryController.b().onTrue(robotCommands.eject_load());
+        // primaryController.b()
+        //         .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+        //                 AlignTargetingMode.BUMP)))
+        //         .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         //primaryController.leftBumper()
         //        .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands

@@ -252,8 +252,10 @@ public class LauncherSubsystem extends IronSubsystem {
         if (currentState == State.STOW) {
             return false;
         }
-        return flyWheelMotors.parallelStream()
-                .allMatch(m -> Math.abs(m.getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE);
+        return Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
+        &&Math.abs(flyWheelMotors.get(1).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
+        &&Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
+        ;
     }
 
     /**

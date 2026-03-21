@@ -40,7 +40,7 @@ public class WristSubsystem extends IronSubsystem {
 
     private final CANcoder encoder = new CANcoder(WristConstants.ENCODER_ID);
 
-    private State currentState = State.DOWN;
+    private State currentState = State.UP;
     private double lastStateChangeTime = 0;
 
     private final WristCommands commands;
