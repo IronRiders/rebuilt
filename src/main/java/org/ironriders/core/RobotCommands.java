@@ -92,8 +92,8 @@ public class RobotCommands {
                 Commands.parallel(
                         launcherCommands.set(State.STOW),
                         indexerCommands.set(IndexerConstants.State.STOP),
-                        wristCommands.set(WristConstants.State.DOWN)),
-                intakeCommands.set(IntakeConstants.State.STOP));
+                        wristCommands.set(WristConstants.State.DOWN),
+                        intakeCommands.set(IntakeConstants.State.STOP)));
     }
 
     public Command intake() {
