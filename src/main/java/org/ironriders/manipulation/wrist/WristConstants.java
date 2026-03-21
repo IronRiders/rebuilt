@@ -12,7 +12,7 @@ public class WristConstants {
     public static final int MOTOR_ID = 17;
     public static final int ENCODER_ID = 20;
 
-    public static final Double ENCODER_OFFSET = -0.136962890625d;
+    public static final Double ENCODER_OFFSET = -0.137451171875d;
     // 132.0d;
 
     public static final Double CURRENT_LIMIT = 40.0; // Current limit for the supply current
@@ -32,7 +32,7 @@ public class WristConstants {
      */
     public enum State {
         UP(0.01),
-        DOWN(0.282), //orginaly .282
+        DOWN(0.272), //orginaly .282
         // Jostle is instead the midpoint of the motion.
         JOSTLE(0.15);
 
