@@ -17,7 +17,7 @@ public class WristConstants {
 
     public static final Double CURRENT_LIMIT = 40.0; // Current limit for the supply current
     public static InvertedValue MOTOR_INVERSION = InvertedValue.Clockwise_Positive;
-    public static final Double P = 6.0; // proportional gain /TESTED but jerky needs feed forward
+    public static final Double P = 1.0; // proportional gain /TESTED but jerky needs feed forward
     public static final Double I = 0.0; // Integral gain
     public static final Double D = 0.1; // Derivative gain
     public static final TrapezoidProfile.Constraints CONSTRAINTS = new TrapezoidProfile.Constraints(13.5 / 360,
