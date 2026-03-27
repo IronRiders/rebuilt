@@ -25,7 +25,10 @@ public class WristConstants {
 
     public static final Double JOSTLE_RANGE = 25d / 360; // distance the wrist will move from the centerpoint while
                                                          // jostling; in degrees.
-    public static final Double JOSTLE_TOLERANCE = 2d / 360; // in degrees.
+
+    public static final Double JOSTLE_TOLERANCE = 0.05;
+
+
 
     /**
      * Named positions of the wrist. 0 is all the way up, positive forward.

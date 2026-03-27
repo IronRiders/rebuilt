@@ -2,6 +2,7 @@ package org.ironriders.manipulation.wrist;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.lib.Utils;
 import org.ironriders.manipulation.wrist.WristConstants.State;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -45,11 +46,11 @@ public class WristSubsystem extends IronSubsystem {
 
     private final WristCommands commands;
 
-    //private double jostlingIterator = 0;
+    // private double jostlingIterator = 0;
     private CANcoderConfiguration cANcoderConfiguration = new CANcoderConfiguration();
 
-    //private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
-    //private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
+    private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
+    private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
 
     public WristSubsystem() {
         commands = new WristCommands(this);
@@ -80,27 +81,37 @@ public class WristSubsystem extends IronSubsystem {
 
         switch (currentState) {
             case JOSTLE:
-                double timeDifference = Timer.getFPGATimestamp() - lastStateChangeTime;
-                if (timeDifference > 2.5) {
-                    lastStateChangeTime = Timer.getFPGATimestamp();
-                    break;
-                } else if (timeDifference > 1.5) {
-                    pid.setGoal(State.DOWN.position);
-                    break;
-                } else if (timeDifference > 1) {
-                    pid.setGoal(State.UP.position);
-                    break;
-                } else if (timeDifference > .5) {
-                    pid.setGoal(State.DOWN.position);
-                    break;
-                } else {
-                    pid.setGoal(State.UP.position);
+                // double timeDifference = Timer.getFPGATimestamp() - lastStateChangeTime;
+                // if (timeDifference > 2.5) {
+                // lastStateChangeTime = Timer.getFPGATimestamp();
+                // break;
+                // } else if (timeDifference > 1.5) {
+                // pid.setGoal(State.DOWN.position);
+                // break;
+                // } else if (timeDifference > 1) {
+                // pid.setGoal(State.UP.position);
+                // break;
+                // } else if (timeDifference > .5) {
+                // pid.setGoal(State.DOWN.position);
+                // break;
+                // } else {
+                // pid.setGoal(State.UP.position);
+                // }
+
+                if (Utils.inRange(jostleMax + WristConstants.JOSTLE_TOLERANCE,
+                        jostleMax - WristConstants.JOSTLE_TOLERANCE, getPositionRaw())) {
+                    pid.setGoal(jostleMin);
+                } else if (Utils.inRange(jostleMin + WristConstants.JOSTLE_TOLERANCE,
+                        jostleMin - WristConstants.JOSTLE_TOLERANCE, getPositionRaw())) {
+                    pid.setGoal(jostleMax);
                 }
+
             default:
                 break;
         }
         double output = pid.calculate(getPositionRaw());
-                //+ armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
+        // + armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()),
+        // getVelocityRadiansPerSecond());
         publish("Motor output", output);
         wristMotor.set(output);
     }
