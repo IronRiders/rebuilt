@@ -99,8 +99,8 @@ public class WristSubsystem extends IronSubsystem {
             default:
                 break;
         }
-        double output = pid.calculate(getPositionRaw())
-                + armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
+        double output = pid.calculate(getPositionRaw());
+                //+ armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
         publish("Motor output", output);
         wristMotor.set(output);
     }

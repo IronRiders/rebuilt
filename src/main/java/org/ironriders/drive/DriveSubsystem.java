@@ -3,7 +3,6 @@ package org.ironriders.drive;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.dyn4j.geometry.Rotation;
 import org.ironriders.core.RobotContainer;
 import org.ironriders.core.TargetingControl;
 import org.ironriders.lib.IronSubsystem;

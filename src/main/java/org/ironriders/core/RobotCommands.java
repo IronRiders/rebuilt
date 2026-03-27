@@ -109,7 +109,7 @@ public class RobotCommands {
     }
 
     public Command eject_load() {
-        return Commands.parallel(indexerCommands.set(IndexerConstants.State.REVERSE),
+        return Commands.parallel(indexerCommands.reverse(),
                 wristCommands.set(WristConstants.State.DOWN), intakeCommands.eject());
     }
 }

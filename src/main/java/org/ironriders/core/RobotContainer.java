@@ -9,13 +9,8 @@ import org.ironriders.climber.ClimberSubsystem;
 import org.ironriders.drive.DriveCommands;
 import org.ironriders.drive.DriveConstants;
 import org.ironriders.drive.DriveSubsystem;
-import org.ironriders.drive.PathPlannerHelpers;
 import org.ironriders.lib.DriverRequest;
-import org.ironriders.lib.DriverRequest.AlignTargetingMode;
-import org.ironriders.lib.DriverRequest.PriorityMode;
 import org.ironriders.lib.Utils;
-import org.ironriders.lib.field.FieldElement.ElementType;
-import org.ironriders.lib.field.FieldPositions;
 import org.ironriders.lib.field.Zone;
 import org.ironriders.lib.field.Zone.ZoneType;
 import org.ironriders.manipulation.indexer.IndexerCommands;
@@ -42,8 +37,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
