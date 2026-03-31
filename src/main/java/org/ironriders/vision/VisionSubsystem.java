@@ -13,7 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.ironriders.core.Robot;
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.vision.VisionCamera.CameraMode;
 import org.jspecify.annotations.NonNull;
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -22,29 +24,19 @@ import org.photonvision.simulation.VisionSystemSim;
 public class VisionSubsystem extends IronSubsystem {
 
     /**
-     * doing this instead of {@link EstimatedRobotPose} because it allows me to
+     * We use this class instead of {@link EstimatedRobotPose} because it allows me
+     * to
      * send standard deviations
      * 
      * @param estimatedPose    the estimated pose of the robot
      * @param timestampSeconds the timestamp of the estimate in seconds
      * @param devs             the standard deviations of the estimate
      */
-    public record SettableVisionLog(Pose3d estimatedPose, double timestampSeconds, Matrix<N3, N1> devs) {
-    }
-
-    public enum VisionMode {
-        OLD,
-        NEW_MULTI,
-        NEW_SINGLE,
-        OFF,
-        SIM_OLD,
-        SIM_NEW_MULTI,
-        SIM_NEW_SINGLE,
-        SIM_OFF;
+    public record VisionLogEntry(Pose3d estimatedPose, double timestampSeconds, Matrix<N3, N1> devs) {
     }
 
     private final List<VisionCamera> cameras;
-    private final Consumer<SettableVisionLog> estConsumer;
+    private final Consumer<VisionLogEntry> poseEstimateConsumer;
     private final boolean simulation;
 
     public static VisionSystemSim visionSim;
@@ -53,11 +45,11 @@ public class VisionSubsystem extends IronSubsystem {
      * Constructor for the vision subsystem. If in simulation, will construct
      * {@link PhotonCameraSim sim cameras} as well.
      */
-    public VisionSubsystem(List<VisionCamera> cameras, Consumer<SettableVisionLog> estConsumer,
-            VisionMode mode, AprilTagFieldLayout fieldLayout) {
+    public VisionSubsystem(List<VisionCamera> cameras, Consumer<VisionLogEntry> poseEstimateConsumer,
+            CameraMode mode, AprilTagFieldLayout fieldLayout) {
         this.cameras = cameras;
-        this.estConsumer = estConsumer;
-        if (getSimulationStatus(mode)) {
+        this.poseEstimateConsumer = poseEstimateConsumer;
+        if (Robot.isSimulation()) {
             this.simulation = true;
             visionSim = constructSim(cameras, fieldLayout);
         } else {
@@ -74,9 +66,9 @@ public class VisionSubsystem extends IronSubsystem {
      * @param mode
      * @param cameraTransforms
      */
-    public VisionSubsystem(Consumer<SettableVisionLog> estConsumer,
-            AprilTagFieldLayout fieldLayout, VisionMode mode, Map<String, @NonNull Transform3d> cameraTransforms) {
-        this(constructCameras(cameraTransforms, decideCameraMode(mode), fieldLayout, getSimulationStatus(mode)),
+    public VisionSubsystem(Consumer<VisionLogEntry> estConsumer,
+            AprilTagFieldLayout fieldLayout, CameraMode mode, Map<String, @NonNull Transform3d> cameraTransforms) {
+        this(constructCameras(cameraTransforms, mode, fieldLayout, Robot.isSimulation()),
                 estConsumer, mode,
                 fieldLayout);
     }
@@ -85,15 +77,8 @@ public class VisionSubsystem extends IronSubsystem {
      * Constructor for the default vision system. Uses the new multi-tag estimation
      * method.
      */
-    public VisionSubsystem(Consumer<SettableVisionLog> estConsumer) {
-        this(estConsumer, VisionConstants.TAG_FIELD_LAYOUT, VisionMode.NEW_MULTI, VisionConstants.CAMERA_TRANSFORMS);
-    }
-
-    private static boolean getSimulationStatus(VisionMode mode) {
-        return switch (mode) {
-            case SIM_OLD, SIM_NEW_MULTI, SIM_NEW_SINGLE, SIM_OFF -> true;
-            default -> false;
-        };
+    public VisionSubsystem(Consumer<VisionLogEntry> estConsumer) {
+        this(estConsumer, VisionConstants.TAG_FIELD_LAYOUT, CameraMode.MULTI_TAG, VisionConstants.CAMERA_TRANSFORMS);
     }
 
     /**
@@ -122,15 +107,6 @@ public class VisionSubsystem extends IronSubsystem {
      * @param mode the vision mode to decide the camera mode from
      * @returm the corrosponding camera mode
      */
-    public static VisionCamera.CameraMode decideCameraMode(VisionMode mode) {
-        return switch (mode) {
-            case SIM_NEW_MULTI -> VisionCamera.CameraMode.MULTI_SIM;
-            case NEW_MULTI -> VisionCamera.CameraMode.MULTI_REAL;
-            case SIM_NEW_SINGLE -> VisionCamera.CameraMode.SINGLE_SIM;
-            case NEW_SINGLE -> VisionCamera.CameraMode.SINGLE_REAL;
-            default -> VisionCamera.CameraMode.MULTI_REAL;
-        };
-    }
 
     /**
      * Helper method for chained constructors (see previous comment for reason).
@@ -146,7 +122,7 @@ public class VisionSubsystem extends IronSubsystem {
         var sim = new VisionSystemSim("main");
         sim.addAprilTags(fieldLayout);
         for (var cam : cameras) {
-            if (cam.isSimulation()) {
+            if (Robot.isSimulation()) {
                 sim.addCamera(cam.getCameraSim(), cam.getCameraOffset());
             } else {
                 throw new IllegalStateException("Vision cameras were instantiated incorrectly for simulation mode");
@@ -157,11 +133,11 @@ public class VisionSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
-        cameras.parallelStream().forEach(camera -> {
+        cameras.stream().forEach(camera -> {
             var estimates = camera.getEstimatedPose();
             for (var estimate : estimates) {
-                estConsumer.accept(
-                        new SettableVisionLog(estimate.estimatedPose(), estimate.timestampSeconds(), estimate.devs()));
+                poseEstimateConsumer.accept(
+                        new VisionLogEntry(estimate.estimatedPose(), estimate.timestampSeconds(), estimate.devs()));
                 if (simulation) {
                     if (estimates.isEmpty()) {
                         visionSim.getDebugField().getObject("VisionEstimation").setPoses();
