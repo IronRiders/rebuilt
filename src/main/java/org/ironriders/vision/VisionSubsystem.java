@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 import org.ironriders.core.Robot;
 import org.ironriders.lib.IronSubsystem;
+import org.ironriders.lib.VisionCamera;
 import org.ironriders.vision.VisionCamera.CameraMode;
 import org.jspecify.annotations.NonNull;
 import org.photonvision.PhotonCamera;
