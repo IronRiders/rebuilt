@@ -1,8 +1,5 @@
 package org.ironriders.vision;
 
-import java.util.Map;
-
-import org.jspecify.annotations.NonNull;
 import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -18,10 +15,8 @@ import edu.wpi.first.math.numbers.N3;
 
 /** Constants for the {@link VisionSubsystem} */
 public class VisionConstants {
-
-    public static final Map<String, @NonNull Transform3d> CAMERA_TRANSFORMS = Map.of(
-            "launcher-back",
-            new Transform3d(
+    public enum CAMERA {
+        LAUNCHER_BACK(true, "launcher-back", new Transform3d(
                     new Translation3d(
                             0.45,
                             -0.26,
@@ -29,9 +24,8 @@ public class VisionConstants {
                     new Rotation3d(
                             0.0,
                             -1 * Math.toRadians(15),
-                            0.0)),
-            "launcher-back-high",
-            new Transform3d(
+                            0.0))),
+        LAUNCHER_BACK_HIGH(false, "launcher-back-high", new Transform3d(
                     new Translation3d(
                             0.45, // forward (meters)
                             -0.26, // left (meters)
@@ -41,9 +35,8 @@ public class VisionConstants {
                             0.0, // roll
                             -Math.toRadians(30), // pitch
                             0.0 // yaw
-                    )),
-            "launcher-hood",
-            new Transform3d(
+                    ))),
+        LAUNCHER_HOOD(true, "launcher-hood",  new Transform3d(
                     new Translation3d(
                             0,
                             0,
@@ -51,9 +44,8 @@ public class VisionConstants {
                     new Rotation3d(
                             0.0,
                             -Math.toRadians(20),
-                            Math.PI)),
-            "swerve-back-left",
-            new Transform3d(
+                            Math.PI))),
+        SWERVE_BACK_LEFT(false, "swerve-back-left", new Transform3d(
                     new Translation3d(
                             0.212,
                             0.218,
@@ -61,9 +53,8 @@ public class VisionConstants {
                     new Rotation3d(
                             0.0,
                             -Math.toRadians(25),
-                            Math.toRadians(45))),
-            "swerve-back-right",
-            new Transform3d(
+                            Math.toRadians(45)))),
+        SWERVE_BACK_RIGHT(false, "swerve-back-right", new Transform3d(
                     new Translation3d(
                             0.212,
                             -0.218,
@@ -72,6 +63,16 @@ public class VisionConstants {
                             0.0,
                             -Math.toRadians(25),
                             -Math.toRadians(45))));
+        public final boolean isEnabled;
+        public final String cameraName;
+        public final Transform3d robotToCamera;
+        CAMERA(boolean isEnabled, String cameraName, Transform3d robotToCamera) {
+            this.cameraName = cameraName;
+            this.isEnabled = isEnabled;
+            this.robotToCamera = robotToCamera;
+        }
+    }
+
     // These are marked as "example values" in the code, but according to XBot they
     // work very well during comp
     public static final Matrix<N3, N1> SINGLE_TAG_STD_DEV = VecBuilder.fill(4, 4, 8);

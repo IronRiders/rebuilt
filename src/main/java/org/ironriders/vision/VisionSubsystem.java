@@ -16,7 +16,6 @@ import java.util.function.Consumer;
 import org.ironriders.core.Robot;
 import org.ironriders.lib.IronSubsystem;
 import org.ironriders.vision.VisionCamera.CameraMode;
-import org.jspecify.annotations.NonNull;
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
@@ -64,37 +63,40 @@ public class VisionSubsystem extends IronSubsystem {
      *                         {@link })
      * @param fieldLayout
      * @param mode
-     * @param cameraTransforms
+     * @param cameras
      */
-    public VisionSubsystem(Consumer<VisionLogEntry> estConsumer,
-            AprilTagFieldLayout fieldLayout, CameraMode mode, Map<String, @NonNull Transform3d> cameraTransforms) {
-        this(constructCameras(cameraTransforms, mode, fieldLayout, Robot.isSimulation()),
-                estConsumer, mode,
+    public VisionSubsystem(Consumer<VisionLogEntry> poseEstimateConsumer,
+            AprilTagFieldLayout fieldLayout, CameraMode mode, VisionConstants.CAMERA[] cameras) {
+        this(constructCameras(cameras, mode, fieldLayout, Robot.isSimulation()),
+                poseEstimateConsumer, mode,
                 fieldLayout);
     }
 
-    /**
-     * Constructor for the default vision system. Uses the new multi-tag estimation
-     * method.
-     */
-    public VisionSubsystem(Consumer<VisionLogEntry> estConsumer) {
-        this(estConsumer, VisionConstants.TAG_FIELD_LAYOUT, CameraMode.MULTI_TAG, VisionConstants.CAMERA_TRANSFORMS);
+    public VisionSubsystem(Consumer<VisionLogEntry> poseEstimateConsumer, CameraMode mode) {
+        this(constructCameras(VisionConstants.CAMERA.values(), mode, VisionConstants.TAG_FIELD_LAYOUT, Robot.isSimulation()), poseEstimateConsumer, mode, VisionConstants.TAG_FIELD_LAYOUT);
     }
+
+    public VisionSubsystem(Consumer<VisionLogEntry> poseEstimateConsumer) {
+        this(poseEstimateConsumer, CameraMode.MULTI_TAG);
+    }
+
+
 
     /**
      * Makes a list of {@link VisionCamera}s for the subsystem from a {@link Map} of
      * camera names and their {@link Transform3d transforms} from the robot center.
      * // TODO: figure out unit.
      */
-    public static List<VisionCamera> constructCameras(Map<String, @NonNull Transform3d> cameraTransforms,
+    public static List<VisionCamera> constructCameras(VisionConstants.CAMERA[] cameras,
             VisionCamera.CameraMode camMode, AprilTagFieldLayout fieldLayout, boolean simulation) {
         var cams = new LinkedList<VisionCamera>();
-        for (var entry : cameraTransforms.entrySet()) {
+        for (var camera : cameras) {
+            if (!camera.isEnabled) break;
             if (simulation) {
-                cams.add(new VisionCamera(entry.getKey(), entry.getValue(), fieldLayout, camMode,
-                        Optional.of(new PhotonCameraSim(new PhotonCamera(entry.getKey())))));
+                cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode,
+                        Optional.of(new PhotonCameraSim(new PhotonCamera(camera.cameraName)))));
             } else {
-                cams.add(new VisionCamera(entry.getKey(), entry.getValue(), fieldLayout, camMode, Optional.empty()));
+                cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode, Optional.empty()));
             }
         }
         return cams;
