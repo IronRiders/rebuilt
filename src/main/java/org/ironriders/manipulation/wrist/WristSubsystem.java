@@ -40,7 +40,7 @@ public class WristSubsystem extends IronSubsystem {
 
     private final CANcoder encoder = new CANcoder(WristConstants.ENCODER_ID);
 
-    private State currentState = State.UP;
+    private State currentState = State.DOWN;
     private double lastStateChangeTime = 0;
 
     private final WristCommands commands;
@@ -99,8 +99,8 @@ public class WristSubsystem extends IronSubsystem {
             default:
                 break;
         }
-        double output = pid.calculate(getPositionRaw());
-                //+ armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
+        double output = pid.calculate(getPositionRaw())
+                + armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
         publish("Motor output", output);
         wristMotor.set(output);
     }

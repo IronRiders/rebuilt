@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4826961483594863,
+        "x": 3.587342715231788,
         "y": 3.9769205298013244
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9890206516707445,
+        "x": 3.0936672185430463,
         "y": 3.9769205298013244
       },
       "isLocked": false,
@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 1.852425106990014,
+        "x": 2.338634105960265,
         "y": 3.9769205298013244
       },
       "prevControl": {
-        "x": 2.360620471228424,
+        "x": 2.846829470198675,
         "y": 3.962400662251655
       },
       "nextControl": null,
@@ -47,7 +47,18 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Shooter fire",
+      "name": "Wrist Down",
+      "waypointRelativePos": 0.2971086739780639,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Wrist Down"
+        }
+      }
+    },
+    {
+      "name": "fire",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
@@ -74,7 +85,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

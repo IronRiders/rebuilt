@@ -16,7 +16,7 @@ public class IndexerConstants {
     public enum State {
         INDEX(-0.2),
         STOP(0),
-        REVERSE(.3);
+        REVERSE(.2);
 
         public double speed;
 

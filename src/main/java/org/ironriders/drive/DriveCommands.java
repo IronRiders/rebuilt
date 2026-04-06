@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.ironriders.lib.field.FieldElement.ElementType;
 import org.ironriders.lib.field.FieldPositions;
 
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -14,7 +13,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class DriveCommands {
@@ -23,50 +21,22 @@ public class DriveCommands {
     public DriveCommands(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
 
-        driveSubsystem.publish("Reset odometry red tower",
-                resetOdometryTo(
-                        new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5) + FieldPositions.Field.CENTER.getX(),
-                                FieldPositions.Field.CENTER.getY(), new Rotation2d())));
-        driveSubsystem.publish("Reset odometry blue tower",
-                resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5),
-                        FieldPositions.Field.CENTER.getY(), new Rotation2d())));
-
+        driveSubsystem.publish("Reset odometry red tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5) + FieldPositions.Field.CENTER.getX(), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
+        driveSubsystem.publish("Reset odometry blue tower", resetOdometryTo(new Pose2d((FieldPositions.Field.CENTER.getX() / 2.5), FieldPositions.Field.CENTER.getY(), new Rotation2d())));
         driveSubsystem.publish("Reset gyro", resetRotation());
 
-        driveSubsystem.publish("Reset Gyro Trench Right", resetOdometryToTrench(false));
-        driveSubsystem.publish("Reset Gyro Trench Left", resetOdometryToTrench(true));
-
-        driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
-        driveSubsystem.publish("Invert rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
-        driveSubsystem.publish(".3 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(.3d)));
-        driveSubsystem.publish("1.0 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(1d)));
-
-        driveSubsystem.publish("Set False reset pose with vision", setZeroingPoseWithVision(false));
-        driveSubsystem.publish("Set True reset pose with vision", setZeroingPoseWithVision(true));
-
-        driveSubsystem.publish("Pathfind to tower scoring", Commands.runOnce(() -> CommandScheduler.getInstance()
-                .schedule(pathfindToPoseThenAimAt(
-                        DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
-                        FieldPositions.get(ElementType.HUB).toPose2d()))));
-
-        driveSubsystem.publish("Pathfind to trench scoring", Commands.runOnce(() -> CommandScheduler.getInstance()
-                .schedule(pathfindToPoseThenAimAt(
-                        DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
-                        FieldPositions.get(ElementType.HUB).toPose2d()))));
+        driveSubsystem.publish("Invert drive", Commands.runOnce(()->driveSubsystem.switchDrive()));
+        driveSubsystem.publish("Invert rotation", Commands.runOnce(()->driveSubsystem.switchRotation()));
     }
 
-    public Command invertDrive() {
-        return Commands.runOnce(() -> driveSubsystem.switchDrive());
+
+    public Command invertDrive(){
+        return Commands.runOnce(()->driveSubsystem.switchDrive());
     }
 
-    public Command invertRotation() {
-        return Commands.runOnce(() -> driveSubsystem.switchRotation());
+     public Command invertRotation(){
+        return Commands.runOnce(()->driveSubsystem.switchRotation());
     }
-
-    public Command setDriveSpeedModifer(double speed) {
-        return Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(speed));
-    }
-
     /**
      * Command to drive the robot given a supplier.
      * 
@@ -113,8 +83,7 @@ public class DriveCommands {
         return drive(
                 () -> new Translation2d(inputTranslationX.getAsDouble(),
                         inputTranslationY.getAsDouble())
-                        .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert
-                                * driveSubsystem.getDriveSpeedModifer()),
+                        .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert),
                 () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_MAX_ANGULAR_TELEOP * invert,
                 () -> fieldRelative);
     }
@@ -154,7 +123,7 @@ public class DriveCommands {
 
     /**
      * Command to pathfind to the start of a given path and then aim at a target.
-     */
+    */
     public Command pathfindToPoseThenAimAt(Pose2d pose, Pose2d target) {
         return Commands.runOnce(() -> PathPlannerHelpers.pathfindToPoseThenAimAt(pose, target));
     }
@@ -171,40 +140,17 @@ public class DriveCommands {
         return Commands.runOnce(() -> DriveSubsystem.resetRotation());
     }
 
-    /**
-     * Command to reset the swerve drive's measured position and rotation to the
-     * origin
-     */
+    /** Command to reset the swerve drive's measured position and rotation to the origin */
     public Command resetOdometry() {
         return Commands.runOnce(() -> DriveSubsystem.resetOdometry(new Pose2d()));
     }
 
-    /**
-     * Command to reset the swerve drive's measured position and rotation to a given
-     * pose.
-     */
+        /** Command to reset the swerve drive's measured position and rotation to a given pose. */
     public Command resetOdometryTo(Pose2d pose) {
         return Commands.runOnce(() -> DriveSubsystem.resetOdometry(pose));
     }
 
-    /**
-     * Command to reset the swerve drive's measured position and rotation to a given
-     * pose.
-     */
-    public Command resetOdometryTo(Pose2d pose, boolean setRotation) {
-        return Commands.runOnce(() -> DriveSubsystem.resetOdometry(pose, setRotation));
-    }
-
     public Command resetPID() {
-        return Commands.runOnce(() -> DriveSubsystem.resetPID());
-    }
-
-    public Command setZeroingPoseWithVision(boolean enabled) {
-        return Commands.runOnce(() -> DriveSubsystem.zeroingPoseWithVision(enabled));
-    }
-
-    public Command resetOdometryToTrench(boolean isLeftTrench) {
-        return Commands.runOnce(() -> DriveSubsystem.resetGyroTrench(
-                DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue), isLeftTrench));
+        return Commands.runOnce(()->DriveSubsystem.resetPID());
     }
 }

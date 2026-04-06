@@ -67,7 +67,7 @@ public class LauncherSubsystem extends IronSubsystem {
     public LauncherSubsystem() {
         commands = new LauncherCommands(this);
 
-        configuration.CurrentLimits.StatorCurrentLimit = 60;
+        configuration.CurrentLimits.StatorCurrentLimit = 40;
 
         configuration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -127,7 +127,6 @@ public class LauncherSubsystem extends IronSubsystem {
         manualHoodAngle = getPublishedNumber("manualHoodAngle", manualHoodAngle);
 
         publish("kicker Motor Velocity", kickerMotor.getVelocity().getValue().in(RotationsPerSecond));
-        publish("Is In Flywheel tolerance", isReady());
 
         putPose2d(currentTarget.toPose2d(), "LauncherTarget");
 
@@ -249,13 +248,8 @@ public class LauncherSubsystem extends IronSubsystem {
      * @return True if the launcher is ready, false otherwise.
      */
     public boolean isReady() {
-        if (currentState == State.STOW) {
-            return false;
-        }
-        return Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
-        &&Math.abs(flyWheelMotors.get(1).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
-        &&Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
-        ;
+        return flyWheelMotors.parallelStream()
+                .allMatch(m -> Math.abs(m.getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE);
     }
 
     /**
@@ -347,10 +341,11 @@ public class LauncherSubsystem extends IronSubsystem {
         return manualFlywheelVelocity;
     }
 
-    public void setManualFlyWheelSpeed(double newManualFlywheelVelocity) {
+     public void setManualFlyWheelSpeed (double newManualFlywheelVelocity) {
         manualFlywheelVelocity = newManualFlywheelVelocity;
-        publish("manualFlywheelVelocity", manualFlywheelVelocity);
+         publish("manualFlywheelVelocity", manualFlywheelVelocity);
     }
+
 
     public double getManualHoodAngle() {
         return manualHoodAngle;

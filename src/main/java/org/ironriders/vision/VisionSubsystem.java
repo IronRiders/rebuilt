@@ -32,16 +32,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class VisionSubsystem extends IronSubsystem {
     public enum TagInvalidReason {
         NO_SKEW,
-        AMBIGUOUS,
         TOO_DISTANT,
-        NEGATIVE_DISTANCE
+        TOO_CLOSE
     }
 
     private String debugString;
 
-    //public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark); // For practice field
-    public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded); // For comp
-
+    public static AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     public static VisionSystemSim visionSim = new VisionSystemSim("main");
 
@@ -86,7 +83,7 @@ public class VisionSubsystem extends IronSubsystem {
     }
 
     @Override
-    public void periodic() {
+    public void periodic(){
 
         // for every camera...
         VisionConstants.CAMERAS.stream().forEach((camera) -> {
@@ -174,17 +171,9 @@ public class VisionSubsystem extends IronSubsystem {
                 continue;
             }
 
-            // If the tag is too ambiguous, we can't trust it.
-            if (target.getPoseAmbiguity() > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
-                addBadTagToString(TagInvalidReason.AMBIGUOUS, String.valueOf(target.getPoseAmbiguity()));
-                tagStrings.put(target, debugString);
-
-                continue;
-            }
-
             // the distance is negative, something has gone wrong.
             if (distance < 0) {
-                addBadTagToString(TagInvalidReason.NEGATIVE_DISTANCE, distanceString);
+                addBadTagToString(TagInvalidReason.TOO_CLOSE, distanceString);
                 tagStrings.put(target, debugString);
 
                 continue;
@@ -206,7 +195,7 @@ public class VisionSubsystem extends IronSubsystem {
             validTargets.add(target);
         }
 
-        List<PhotonTrackedTarget> invalidTargets = new ArrayList<PhotonTrackedTarget>(camera.getTargets());
+        List<PhotonTrackedTarget> invalidTargets = camera.getTargets();
         invalidTargets.removeAll(validTargets);
 
         publish("Invalid targets",
@@ -242,16 +231,11 @@ public class VisionSubsystem extends IronSubsystem {
             return;
         }
 
-        boolean tooFar = estimatedPose.estimatedPose.getTranslation()
+        // Throw away the new pose if it is too far away.
+        if (estimatedPose.estimatedPose.getTranslation()
                 .getDistance(
-                        DriveSubsystem.getPose3d()
-                                .getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD;
-        // Throw away the new pose if it is too far away and we have a bad reading.
-        if (tooFar && !DriveSubsystem.getIsZeroingPoseWithVision()) {
-            return;
-        }
-
-        if (camera.getResult().getBestTarget().poseAmbiguity > VisionConstants.AMBIGUITY_THROWAWAY_THRESHOLD) {
+                        DriveSubsystem.getPose3d().getTranslation()) > VisionConstants.POSE_DISTANCE_THROWAWAY_THRESHOLD
+                && (DriverStation.isTeleopEnabled() || DriverStation.isAutonomousEnabled())) {
             return;
         }
 
@@ -270,11 +254,6 @@ public class VisionSubsystem extends IronSubsystem {
         // Actually add the estimate.
         DriveSubsystem.getSwerveDrive().addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(),
                 estimatedPose.timestampSeconds); // Use capture time, not now, for latency compensation
-
-        // Pose has been established from a good vision reading — disable zeroing mode.
-        if (DriveSubsystem.getIsZeroingPoseWithVision()) {
-            DriveSubsystem.zeroingPoseWithVision(false);
-        }
     }
 
     // debugging helper functions
