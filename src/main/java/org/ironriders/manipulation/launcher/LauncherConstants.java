@@ -49,6 +49,20 @@ public class LauncherConstants {
         MANUAL;
     }
 
+    public enum FlyWheelState{
+        CENTER(33.5),
+        TOWER(36d),   
+        CORNER(49.5),
+        TRENCH(36.2),   //TODO: TEST
+        HUB(27.5); //TODO: TEST 
+
+        public double speed;
+
+        FlyWheelState(double speed){
+            this.speed = speed;
+        }
+    }
+
     public enum KickerState {
         FIRE(-.5),
         STOP(0),

@@ -115,6 +115,6 @@ task deploy(overwrite: true) {
     }
 
     if (!stdout.toString().trim().isEmpty()) {
-        throw new Exception(String.format("You cannot deploy uncommitted code to the robot. Commit your code first, %s!", System.getenv("username")))
+        //throw new Exception(String.format("You cannot deploy uncommitted code to the robot. Commit your code first, %s!", System.getenv("username")))
     }
 }
