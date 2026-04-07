@@ -17,55 +17,57 @@ import edu.wpi.first.math.numbers.N3;
 public class VisionConstants {
     public enum CAMERA {
         LAUNCHER_BACK(true, "launcher-back", new Transform3d(
-                    new Translation3d(
-                            0.45,
-                            -0.26,
-                            0.19),
-                    new Rotation3d(
-                            0.0,
-                            -1 * Math.toRadians(15),
-                            0.0))),
+                new Translation3d(
+                        0.45,
+                        -0.26,
+                        0.19),
+                new Rotation3d(
+                        0.0,
+                        -1 * Math.toRadians(15),
+                        0.0))),
         LAUNCHER_BACK_HIGH(false, "launcher-back-high", new Transform3d(
-                    new Translation3d(
-                            0.45, // forward (meters)
-                            -0.26, // left (meters)
-                            0.19 // up (meters)
-                    ),
-                    new Rotation3d(
-                            0.0, // roll
-                            -Math.toRadians(30), // pitch
-                            0.0 // yaw
-                    ))),
-        LAUNCHER_HOOD(true, "launcher-hood",  new Transform3d(
-                    new Translation3d(
-                            0,
-                            0,
-                            0.498),
-                    new Rotation3d(
-                            0.0,
-                            -Math.toRadians(20),
-                            Math.PI))),
+                new Translation3d(
+                        0.45, // forward (meters)
+                        -0.26, // left (meters)
+                        0.19 // up (meters)
+                ),
+                new Rotation3d(
+                        0.0, // roll
+                        -Math.toRadians(30), // pitch
+                        0.0// yaw
+                ))),
+        LAUNCHER_HOOD(true, "launcher-hood", new Transform3d(
+                new Translation3d(
+                        0,
+                        0,
+                        0.498),
+                new Rotation3d(
+                        0.0,
+                        -Math.toRadians(20),
+                        Math.PI))),
         SWERVE_BACK_LEFT(false, "swerve-back-left", new Transform3d(
-                    new Translation3d(
-                            0.212,
-                            0.218,
-                            0.16),
-                    new Rotation3d(
-                            0.0,
-                            -Math.toRadians(25),
-                            Math.toRadians(45)))),
+                new Translation3d(
+                        0.212,
+                        0.218,
+                        0.16),
+                new Rotation3d(
+                        0.0,
+                        -Math.toRadians(25),
+                        Math.toRadians(45)))),
         SWERVE_BACK_RIGHT(false, "swerve-back-right", new Transform3d(
-                    new Translation3d(
-                            0.212,
-                            -0.218,
-                            0.16),
-                    new Rotation3d(
-                            0.0,
-                            -Math.toRadians(25),
-                            -Math.toRadians(45))));
+                new Translation3d(
+                        0.212,
+                        -0.218,
+                        0.16),
+                new Rotation3d(
+                        0.0,
+                        -Math.toRadians(25),
+                        -Math.toRadians(45))));
+
         public final boolean isEnabled;
         public final String cameraName;
         public final Transform3d robotToCamera;
+
         CAMERA(boolean isEnabled, String cameraName, Transform3d robotToCamera) {
             this.cameraName = cameraName;
             this.isEnabled = isEnabled;

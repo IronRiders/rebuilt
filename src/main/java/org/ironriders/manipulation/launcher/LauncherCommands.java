@@ -2,6 +2,7 @@ package org.ironriders.manipulation.launcher;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import org.ironriders.manipulation.launcher.LauncherConstants.FlyWheelState;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 
 import edu.wpi.first.units.measure.Angle;
@@ -25,8 +26,12 @@ public class LauncherCommands {
         launcher.publish("Set Min Angle .2", setAngleManually(Angle.ofRelativeUnits(0, Rotations)));
         // launcher.publish("Set Launcher Elastic", setExtensionFromElastic());
 
-        launcher.publish("Set Launcher to Flywheel Velocity",
-                setFlyWheelVelocityManually(launcher.getManualFlywheelVelocity()));
+        launcher.publish("Close Hub Velocity 27.5", setCustomFlyWheelSpeed(FlyWheelState.HUB.speed));
+        launcher.publish("Midrange Velocity 33.5", setCustomFlyWheelSpeed(FlyWheelState.CENTER.speed));
+        launcher.publish("Tower Velocity 36", setCustomFlyWheelSpeed(FlyWheelState.TOWER.speed));
+        launcher.publish("Trench Velocity 36.2", setCustomFlyWheelSpeed(FlyWheelState.TRENCH.speed));
+        launcher.publish("Corner Velocity 49.5", setCustomFlyWheelSpeed(FlyWheelState.CORNER.speed));
+
 
         launcher.publish("kicker on", runKicker());
         launcher.publish("kicker off", stopKicker());
@@ -104,7 +109,7 @@ public class LauncherCommands {
      * @param velocity The target flywheel velocity to set for the launcher.
      * @return A command that sets the launcher's flywheel velocity.
      */
-    public Command setFlyWheelVelocityManually(double velocity) {
+    public Command setFlyWheelVeocityInternalTarget(double velocity) {
         return Commands.runOnce(() -> launcher.setFlywheelGoal(velocity));
     }
 }

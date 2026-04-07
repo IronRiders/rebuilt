@@ -49,8 +49,10 @@ public class RobotCommands {
 
         this.controller = controller;
         NamedCommands.registerCommand("Shooter fire", fire());
-        NamedCommands.registerCommand("Custom Flywheel Fire 33.5", customAutoFire(33.5) );
-        NamedCommands.registerCommand("Custom Flywheel Fire 38", customAutoFire(38.0) );
+        NamedCommands.registerCommand("Custom Flywheel Fire 33.5", customAutoFire(33.5));
+        NamedCommands.registerCommand("Custom Flywheel Fire 38", customAutoFire(38.0));
+        NamedCommands.registerCommand("Eject Balls", eject_load());
+
     }
 
     /**
@@ -76,7 +78,7 @@ public class RobotCommands {
 
     public Command customAutoFire(double flywheelSpeed) {
         return Commands.sequence(
-                launcherCommands.setFlyWheelVelocityManually(flywheelSpeed),
+                launcherCommands.setCustomFlyWheelSpeed(flywheelSpeed),
                 launcherCommands.readyAndFire(),
                 Commands.parallel(
                         indexerCommands.set(IndexerConstants.State.INDEX),
@@ -90,8 +92,8 @@ public class RobotCommands {
                 Commands.parallel(
                         launcherCommands.set(State.STOW),
                         indexerCommands.set(IndexerConstants.State.STOP),
-                        wristCommands.set(WristConstants.State.DOWN)),
-                intakeCommands.set(IntakeConstants.State.STOP));
+                        wristCommands.set(WristConstants.State.DOWN),
+                        intakeCommands.set(IntakeConstants.State.STOP)));
     }
 
     public Command intake() {
@@ -106,7 +108,8 @@ public class RobotCommands {
                 wristCommands.set(WristConstants.State.UP), climberCommands.home());
     }
 
-    public Command eject_load(){
-        return Commands.parallel(indexerCommands.set(IndexerConstants.State.REVERSE),wristCommands.set(WristConstants.State.DOWN),intakeCommands.eject());
+    public Command eject_load() {
+        return Commands.parallel(indexerCommands.reverse(),
+                wristCommands.set(WristConstants.State.DOWN), intakeCommands.eject());
     }
 }

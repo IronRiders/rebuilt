@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost-Neutral-Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shooter fire"
+            "pathName": "Small Auto"
           }
         }
       ]
