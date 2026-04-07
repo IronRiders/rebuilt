@@ -59,8 +59,8 @@ public class VisionSubsystem extends IronSubsystem {
     /**
      * Constructor for the vision subsystem
      * 
-     * @param estConsumer      Consumer for estimated robot poses (should be
-     *                         {@link })
+     * @param estConsumer Consumer for estimated robot poses (should be
+     *                    {@link })
      * @param fieldLayout
      * @param mode
      * @param cameras
@@ -73,14 +73,13 @@ public class VisionSubsystem extends IronSubsystem {
     }
 
     public VisionSubsystem(Consumer<VisionLogEntry> poseEstimateConsumer, CameraMode mode) {
-        this(constructCameras(VisionConstants.CAMERA.values(), mode, VisionConstants.TAG_FIELD_LAYOUT, Robot.isSimulation()), poseEstimateConsumer, mode, VisionConstants.TAG_FIELD_LAYOUT);
+        this(constructCameras(VisionConstants.CAMERA.values(), mode, VisionConstants.TAG_FIELD_LAYOUT,
+                Robot.isSimulation()), poseEstimateConsumer, mode, VisionConstants.TAG_FIELD_LAYOUT);
     }
 
     public VisionSubsystem(Consumer<VisionLogEntry> poseEstimateConsumer) {
         this(poseEstimateConsumer, CameraMode.MULTI_TAG);
     }
-
-
 
     /**
      * Makes a list of {@link VisionCamera}s for the subsystem from a {@link Map} of
@@ -91,12 +90,14 @@ public class VisionSubsystem extends IronSubsystem {
             VisionCamera.CameraMode camMode, AprilTagFieldLayout fieldLayout, boolean simulation) {
         var cams = new LinkedList<VisionCamera>();
         for (var camera : cameras) {
-            if (!camera.isEnabled) break;
+            if (!camera.isEnabled)
+                break;
             if (simulation) {
                 cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode,
                         Optional.of(new PhotonCameraSim(new PhotonCamera(camera.cameraName)))));
             } else {
-                cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode, Optional.empty()));
+                cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode,
+                        Optional.empty()));
             }
         }
         return cams;
