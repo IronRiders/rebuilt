@@ -12,11 +12,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 
 /** Constants for the {@link VisionSubsystem} */
 public class VisionConstants {
     public enum CAMERA {
-        LAUNCHER_BACK(true, "launcher-back", new Transform3d(
+        LAUNCHER_BACK(false, "launcher-back", new Transform3d(
                 new Translation3d(
                         0.45, // forward (meters)
                         -0.26, // left (meters)
@@ -60,7 +61,14 @@ public class VisionConstants {
                 new Rotation3d(
                         0.0,
                         -Math.toRadians(25),
-                        -Math.toRadians(45))));
+                        -Math.toRadians(45)))),
+        ROBOT_CENTER(true, "robot-center", new Transform3d(new Translation3d(
+            Units.inchesToMeters(-0.393),
+            0d,
+            Units.inchesToMeters(20.272)
+        ), new Rotation3d(
+            0d, Math.toRadians(25), 0d
+        )));
 
         public final boolean isEnabled;
         public final String cameraName;
