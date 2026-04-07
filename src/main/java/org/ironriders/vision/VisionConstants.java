@@ -76,6 +76,9 @@ public class VisionConstants {
     // These are marked as "example values" in the code, but according to XBot they
     // work very well during comp
     public static final Matrix<N3, N1> SINGLE_TAG_STD_DEV = VecBuilder.fill(4, 4, 8);
+    public static final double THROWAWAY_TAG_DISTANCE_METERS_MULTITAG = 4d; // This is "a genaric default value" acc to
+                                                                            // Photonvision. I wonder if you could make
+                                                                            // an equasion using camera resolution?
     public static final Matrix<N3, N1> MULTI_TAG_STD_DEV = VecBuilder.fill(0.5, 0.5, 1);
 
     public static final AprilTagFieldLayout TAG_FIELD_LAYOUT = AprilTagFieldLayout

@@ -169,7 +169,7 @@ public class VisionCamera {
                 return VisionConstants.SINGLE_TAG_STD_DEV;
             } else {
                 avgDistMeters /= numTags;
-                if (numTags == 1 && avgDistMeters > 4) {
+                if (numTags == 1 && avgDistMeters > VisionConstants.THROWAWAY_TAG_DISTANCE_METERS_MULTITAG) {
                     return VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
                 } else {
                     return VisionConstants.MULTI_TAG_STD_DEV.times(1 + (avgDistMeters * avgDistMeters / 30));
