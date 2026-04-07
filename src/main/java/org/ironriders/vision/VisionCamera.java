@@ -36,7 +36,6 @@ public class VisionCamera {
         SINGLE_TAG;
     }
 
-    private final String name;
     private final PhotonCamera camera;
     private Optional<@NonNull PhotonCameraSim> cameraSim;
     private final PhotonPoseEstimator poseEstimator;
@@ -48,7 +47,6 @@ public class VisionCamera {
 
     public VisionCamera(String name, Transform3d robotToCamera, AprilTagFieldLayout fieldLayout, CameraMode mode,
             Optional<@NonNull PhotonCameraSim> cameraSim) {
-        this.name = name;
         this.camera = new PhotonCamera(name);
         this.poseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCamera);
         this.mode = mode;
@@ -64,14 +62,6 @@ public class VisionCamera {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Transform3d getCameraOffset() {
-        return poseEstimator.getRobotToCameraTransform();
-    }
-
     public PhotonCameraSim getCameraSim() {
         if (cameraSim.isEmpty()) {
             throw new IllegalStateException("This camera does not have a simulation instance");
@@ -80,6 +70,10 @@ public class VisionCamera {
             throw new IllegalStateException("Cannot get simulation instance of a real camera");
         }
         return cameraSim.get();
+    }
+
+    public Transform3d getCameraOffset() {
+        return poseEstimator.getRobotToCameraTransform();
     }
 
     /**
@@ -95,7 +89,7 @@ public class VisionCamera {
         };
     }
 
-    public List<PoseEstimate> getPoseSingleTag() {
+    private List<PoseEstimate> getPoseSingleTag() {
         var unread = camera.getAllUnreadResults();
         var poses = new LinkedList<PoseEstimate>();
         for (var result : unread) {
@@ -112,7 +106,7 @@ public class VisionCamera {
         return poses;
     }
 
-    public List<PoseEstimate> getPoseMultiTag() {
+    private List<PoseEstimate> getPoseMultiTag() {
         var poses = new LinkedList<PoseEstimate>();
         for (var result : camera.getAllUnreadResults()) {
             var estimate = poseEstimator.estimateCoprocMultiTagPose(result);
@@ -146,7 +140,7 @@ public class VisionCamera {
      * @param poseEstimator The pose estimator to get tag poses from
      * @return The standard deviations to use for this pose estimate
      */
-    public Matrix<N3, N1> getStdDevs(Optional<EstimatedRobotPose> estimate,
+    private Matrix<N3, N1> getStdDevs(Optional<EstimatedRobotPose> estimate,
             List<PhotonTrackedTarget> targets) {
         if (estimate.isEmpty()) {
             return VisionConstants.SINGLE_TAG_STD_DEV;
@@ -163,7 +157,7 @@ public class VisionCamera {
                                                                                                      // individual
                                                                                                      // apriltag
                                                                                                      // positions are
-                                                                                                     // likewise stored.
+                                                                                                     // likewise.
                 if (tagPoseMeters.isEmpty()) {
                     continue;
                 }

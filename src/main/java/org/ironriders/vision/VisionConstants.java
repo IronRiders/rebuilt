@@ -18,24 +18,22 @@ public class VisionConstants {
     public enum CAMERA {
         LAUNCHER_BACK(true, "launcher-back", new Transform3d(
                 new Translation3d(
-                        0.45,
-                        -0.26,
-                        0.19),
+                        0.45, // forward (meters)
+                        -0.26, // left (meters)
+                        0.19), // up (meters)
                 new Rotation3d(
                         0.0,
                         -1 * Math.toRadians(15),
                         0.0))),
         LAUNCHER_BACK_HIGH(false, "launcher-back-high", new Transform3d(
                 new Translation3d(
-                        0.45, // forward (meters)
-                        -0.26, // left (meters)
-                        0.19 // up (meters)
-                ),
+                        0.45,
+                        -0.26,
+                        0.19),
                 new Rotation3d(
-                        0.0, // roll
-                        -Math.toRadians(30), // pitch
-                        0.0// yaw
-                ))),
+                        0.0,
+                        -Math.toRadians(30),
+                        0.0))),
         LAUNCHER_HOOD(true, "launcher-hood", new Transform3d(
                 new Translation3d(
                         0,
@@ -82,7 +80,8 @@ public class VisionConstants {
 
     public static final AprilTagFieldLayout TAG_FIELD_LAYOUT = AprilTagFieldLayout
             .loadField(AprilTagFields.kDefaultField);
-    public static final SimCameraProperties SIM_CAM_PROPS = new SimCameraProperties() // todo: get actual values
+    public static final SimCameraProperties SIM_CAM_PROPS = new SimCameraProperties() // todo: get actual values from
+                                                                                      // chainlynx code or previous code
             .setCalibration(960, 720, Rotation2d.fromDegrees(90))
             .setCalibError(0.35, 0.1)
             .setFPS(15)

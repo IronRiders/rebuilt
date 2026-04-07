@@ -20,6 +20,8 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
 
+import dev.doglog.DogLog;
+
 public class VisionSubsystem extends IronSubsystem {
 
     /**
@@ -128,7 +130,7 @@ public class VisionSubsystem extends IronSubsystem {
             if (Robot.isSimulation()) {
                 sim.addCamera(cam.getCameraSim(), cam.getCameraOffset());
             } else {
-                throw new IllegalStateException("Vision cameras were instantiated incorrectly for simulation mode");
+                DogLog.log("Vision", "Vision cameras were instantiated incorrectly for simulation mode");
             }
         }
         return sim;
