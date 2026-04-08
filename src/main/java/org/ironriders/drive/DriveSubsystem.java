@@ -45,7 +45,7 @@ public class DriveSubsystem extends IronSubsystem {
     private static boolean driveInvert = false;
     private static boolean isZeroingPoseWithVision = false;
 
-    private static double driveSpeedModifer = 1d;
+    private static double driveSpeedModifier = 1d;
 
     public static boolean PIDRotation = false;
 
@@ -156,7 +156,7 @@ public class DriveSubsystem extends IronSubsystem {
 
         double distance = Utils.getPoseDifference(getPose(), FieldPositions.get(ElementType.HUB).toPose2d()).getNorm();
         publish("Hub dist", distance);
-        publish("Drive Speed Modifer", driveSpeedModifer);
+        publish("Drive Speed Modifier", driveSpeedModifier);
     }
 
     /**
@@ -179,8 +179,8 @@ public class DriveSubsystem extends IronSubsystem {
                     false);
         } else {
             swerveDrive.drive(
-                    translation.times(driveInvert ? -1 : 1).times(driveSpeedModifer),
-                    rotation * (rotationInvert ? -1 : 1) * (driveSpeedModifer),
+                    translation.times(driveInvert ? -1 : 1).times(driveSpeedModifier),
+                    rotation * (rotationInvert ? -1 : 1) * (driveSpeedModifier),
                     fieldRelative,
                     false);
         }
@@ -301,12 +301,12 @@ public class DriveSubsystem extends IronSubsystem {
         return isZeroingPoseWithVision;
     }
 
-    public void setDriveSpeedModifer(double newDriveSpeedModifer) {
-        driveSpeedModifer = newDriveSpeedModifer;
+    public void setDriveSpeedModifier(double newDriveSpeedModifer) {
+        driveSpeedModifier = newDriveSpeedModifer;
     }
 
-    public double getDriveSpeedModifer() {
-        return driveSpeedModifer;
+    public double getDriveSpeedModifier() {
+        return driveSpeedModifier;
     }
 
     public static void resetGyroTrench(DriverStation.Alliance allianceColor, boolean isDepotTrench) {

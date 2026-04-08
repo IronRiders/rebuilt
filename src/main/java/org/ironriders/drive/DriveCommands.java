@@ -38,8 +38,8 @@ public class DriveCommands {
 
         driveSubsystem.publish("Invert drive", Commands.runOnce(() -> driveSubsystem.switchDrive()));
         driveSubsystem.publish("Invert rotation", Commands.runOnce(() -> driveSubsystem.switchRotation()));
-        driveSubsystem.publish(".3 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(.3d)));
-        driveSubsystem.publish("1.0 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(1d)));
+        driveSubsystem.publish(".3 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifier(.3d)));
+        driveSubsystem.publish("1.0 Drive speed", Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifier(1d)));
 
         driveSubsystem.publish("Set False reset pose with vision", setZeroingPoseWithVision(false));
         driveSubsystem.publish("Set True reset pose with vision", setZeroingPoseWithVision(true));
@@ -64,7 +64,7 @@ public class DriveCommands {
     }
 
     public Command setDriveSpeedModifer(double speed) {
-        return Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifer(speed));
+        return Commands.runOnce(() -> driveSubsystem.setDriveSpeedModifier(speed));
     }
 
     /**
@@ -114,7 +114,7 @@ public class DriveCommands {
                 () -> new Translation2d(inputTranslationX.getAsDouble(),
                         inputTranslationY.getAsDouble())
                         .times(DriveConstants.SWERVE_MAX_TRANSLATION_TELEOP * invert
-                                * driveSubsystem.getDriveSpeedModifer()),
+                                * driveSubsystem.getDriveSpeedModifier()),
                 () -> inputRotation.getAsDouble() * DriveConstants.SWERVE_MAX_ANGULAR_TELEOP * invert,
                 () -> fieldRelative);
     }
