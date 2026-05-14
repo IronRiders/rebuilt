@@ -35,7 +35,7 @@ public class VisionConstants {
                         0.0,
                         -Math.toRadians(30),
                         0.0))),
-        LAUNCHER_HOOD(true, "launcher-hood", new Transform3d(
+        LAUNCHER_HOOD(false, "launcher-hood", new Transform3d(
                 new Translation3d(
                         0,
                         0,
@@ -67,7 +67,7 @@ public class VisionConstants {
             0d,
             Units.inchesToMeters(20.272)
         ), new Rotation3d(
-            0d, Math.toRadians(25), 0d
+            0d, Math.toRadians(25), Math.PI
         )));
 
         public final boolean isEnabled;

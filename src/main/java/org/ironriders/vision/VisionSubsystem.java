@@ -90,16 +90,20 @@ public class VisionSubsystem extends IronSubsystem {
      */
     public static List<VisionCamera> constructCameras(VisionConstants.CAMERA[] cameras,
             VisionCamera.CameraMode camMode, AprilTagFieldLayout fieldLayout, boolean simulation) {
+        DogLog.log("Cameras", VisionConstants.CAMERA.values());
         var cams = new LinkedList<VisionCamera>();
         for (var camera : cameras) {
-            if (!camera.isEnabled)
-                break;
-            if (simulation) {
+            if (!camera.isEnabled) {
+                DogLog.log("!Enabled", camera);
+                continue;
+            }    if (simulation) {
+                DogLog.log("Sim", true);
                 cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode,
                         Optional.of(new PhotonCameraSim(new PhotonCamera(camera.cameraName)))));
             } else {
                 cams.add(new VisionCamera(camera.cameraName, camera.robotToCamera, fieldLayout, camMode,
                         Optional.empty()));
+                DogLog.log("Camera Added", camera.name());
             }
         }
         return cams;
@@ -138,12 +142,15 @@ public class VisionSubsystem extends IronSubsystem {
 
     @Override
     public void periodic() {
+        DogLog.log("VisionRunning", true);
+        DogLog.log("VisionCameras", cameras.size());
         cameras.stream().forEach(camera -> {
             var estimates = camera.getEstimatedPose();
+            DogLog.log("CameraEstimates", estimates.size());
             for (var estimate : estimates) {
                 poseEstimateConsumer.accept(
                         new VisionLogEntry(estimate.estimatedPose(), estimate.timestampSeconds(), estimate.devs()));
-                DogLog.log("PoseEstimate: ", estimate.estimatedPose().toString());
+                DogLog.log("PoseEstimate", estimate.estimatedPose());
                 if (simulation) {
                     if (estimates.isEmpty()) {
                         visionSim.getDebugField().getObject("VisionEstimation").setPoses();

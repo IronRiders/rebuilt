@@ -110,8 +110,10 @@ public class VisionCamera {
         var poses = new LinkedList<PoseEstimate>();
         for (var result : camera.getAllUnreadResults()) {
             var estimate = poseEstimator.estimateCoprocMultiTagPose(result);
+            DogLog.log("PoseIsEmpty", estimate.isEmpty());
             if (estimate.isEmpty()) {
                 estimate = poseEstimator.estimateLowestAmbiguityPose(result);
+                DogLog.log("SinglePoseIsEmpty", estimate.isEmpty());
                 if (estimate.isEmpty()) {
                     continue; // if neither come up, there likely is no tag in vision. If this is true, we
                               // should throw it away.
