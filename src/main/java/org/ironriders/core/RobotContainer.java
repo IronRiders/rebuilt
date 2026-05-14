@@ -24,8 +24,9 @@ import org.ironriders.manipulation.launcher.LauncherSubsystem;
 import org.ironriders.manipulation.launcher.LauncherConstants.State;
 import org.ironriders.manipulation.launcher.LauncherConstants;
 import org.ironriders.manipulation.wrist.WristCommands;
-import org.ironriders.manipulation.wrist.WristConstants;
 import org.ironriders.manipulation.wrist.WristSubsystem;
+import org.ironriders.manipulation.wrist.WristConstants;
+
 import org.ironriders.vision.VisionSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -68,8 +69,10 @@ public class RobotContainer {
 
     public static final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public static final ClimberCommands climberCommands = climberSubsystem.getCommands();
-
-    public static final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public static final VisionSubsystem visionSubsystem = new VisionSubsystem((addable) -> {
+        DriveSubsystem.getSwerveDrive().addVisionMeasurement(addable.estimatedPose().toPose2d(),
+                addable.timestampSeconds(), addable.devs());
+    });
 
     public static Zone passingZone = new Zone(ZoneType.PASSING);
     public static Zone scoringZone = new Zone(ZoneType.SCORING);
@@ -127,57 +130,59 @@ public class RobotContainer {
                         .withName("Drive Teleop")));
 
         // primaryController.a().onTrue(
-        //         new InstantCommand(() -> {
-        //             targetingHub = !targetingHub;
-        //             if (targetingHub) {
-        //                 targetingPassing = false;
-        //                 TargetingControl.targetHub();
-        //             } else {
-        //                 revertToSafeDefaults();
-        //             }
-        //         })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
+        // new InstantCommand(() -> {
+        // targetingHub = !targetingHub;
+        // if (targetingHub) {
+        // targetingPassing = false;
+        // TargetingControl.targetHub();
+        // } else {
+        // revertToSafeDefaults();
+        // }
+        // })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
 
         // primaryController.x().onTrue(
-        //         new InstantCommand(() -> {
-        //             targetingPassing = !targetingPassing;
-        //             if (targetingPassing) {
-        //                 targetingHub = false;
-        //                 TargetingControl.targetPassing();
-        //             } else {
-        //                 revertToSafeDefaults();
-        //             }
-        //         })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
+        // new InstantCommand(() -> {
+        // targetingPassing = !targetingPassing;
+        // if (targetingPassing) {
+        // targetingHub = false;
+        // TargetingControl.targetPassing();
+        // } else {
+        // revertToSafeDefaults();
+        // }
+        // })).onTrue(launcherCommands.set(LauncherConstants.State.READY));
 
         // --- Align ---
         // primaryController.y()
-        //         .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-        //                 AlignTargetingMode.OUTPOST)))
-        //         .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+        // .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+        // AlignTargetingMode.OUTPOST)))
+        // .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
         primaryController.y().onTrue(wristCommands.set(WristConstants.State.UP));
 
         primaryController.b().onTrue(robotCommands.eject_load());
         // primaryController.b()
-        //         .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
-        //                 AlignTargetingMode.BUMP)))
-        //         .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
+        // .onTrue(buildAlignCommand(new DriverRequest(PriorityMode.ALIGN_PRIORITY,
+        // AlignTargetingMode.BUMP)))
+        // .onFalse(Commands.runOnce(() -> revertToSafeDefaults()));
 
-        //primaryController.leftBumper()
-        //        .onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().schedule(driveCommands
-        //                .pathfindThenFlipPathIfBetterThenFollow(
-       //                         PathPlannerHelpers.loadPath("Center Sweep")
-       //                                 .orElseThrow()))));
+        // primaryController.leftBumper()
+        // .onTrue(Commands.runOnce(() ->
+        // CommandScheduler.getInstance().schedule(driveCommands
+        // .pathfindThenFlipPathIfBetterThenFollow(
+        // PathPlannerHelpers.loadPath("Center Sweep")
+        // .orElseThrow()))));
 
         // Line up to score
         // primaryController.rightBumper().onTrue(
-        //                         Commands.sequence(
-        //         Commands.runOnce(() -> CommandScheduler.getInstance()
-        //                 .schedule(driveCommands.pathfindToPoseThenAimAt(
-        //                         scoringZone.centerPoint(),
-        //                         FieldPositions.get(ElementType.HUB).toPose2d()))),
-        //                         launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed)));
+        // Commands.sequence(
+        // Commands.runOnce(() -> CommandScheduler.getInstance()
+        // .schedule(driveCommands.pathfindToPoseThenAimAt(
+        // scoringZone.centerPoint(),
+        // FieldPositions.get(ElementType.HUB).toPose2d()))),
+        // launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed)));
 
-        primaryController.rightBumper().onTrue(driveCommands.setDriveSpeedModifer(.30)).onFalse(driveCommands.setDriveSpeedModifer(1d));
+        primaryController.rightBumper().onTrue(driveCommands.setDriveSpeedModifer(.30))
+                .onFalse(driveCommands.setDriveSpeedModifer(1d));
 
         // TODO: This binding currently only runs the kicker directly. It should
         // eventually be updated to use robotCommands.fire() (or handle Launcher state)
@@ -193,41 +198,46 @@ public class RobotContainer {
 
         // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-                // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
-                
-                // Invert Drive -- A
-                secondaryController.a().onTrue(driveCommands.invertDrive());
-                // Invert Rotation -- B
-                secondaryController.b().onTrue(driveCommands.invertRotation());
+        // primaryController.leftTrigger(triggerThreshold).whileTrue(launcherCommands.set(State.STOW));
 
-                //Midrange (old default) -- Right Bumper
-                secondaryController.rightBumper().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed));
-                //Tower -- Left Bumper
-                secondaryController.leftBumper().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.TOWER.speed));
-                //Trench -- Right Trigger
-                secondaryController.rightTrigger().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.TRENCH.speed));
-                //Corner -- Left Trigger
-                secondaryController.leftTrigger().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CORNER.speed));
-                //Close Hub Range -- X
-                secondaryController.x().onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.HUB.speed));
+        // Invert Drive -- A
+        secondaryController.a().onTrue(driveCommands.invertDrive());
+        // Invert Rotation -- B
+        secondaryController.b().onTrue(driveCommands.invertRotation());
 
-                secondaryController.povLeft().onTrue(driveCommands.resetOdometryToTrench(true));
-                secondaryController.povRight().onTrue(driveCommands.resetOdometryToTrench(false));
+        // Midrange (old default) -- Right Bumper
+        secondaryController.rightBumper()
+                .onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CENTER.speed));
+        // Tower -- Left Bumper
+        secondaryController.leftBumper()
+                .onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.TOWER.speed));
+        // Trench -- Right Trigger
+        secondaryController.rightTrigger()
+                .onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.TRENCH.speed));
+        // Corner -- Left Trigger
+        secondaryController.leftTrigger()
+                .onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.CORNER.speed));
+        // Close Hub Range -- X
+        secondaryController.x()
+                .onTrue(launcherCommands.setCustomFlyWheelSpeed(LauncherConstants.FlyWheelState.HUB.speed));
 
-        // Vision path planning Drive team won't use it 
-        // secondaryController.button(0).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
-        //                 .schedule(driveCommands.pathfindToPoseThenAimAt(
-        //                         DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
-        //                         FieldPositions.get(ElementType.HUB).toPose2d()))));
+        secondaryController.povLeft().onTrue(driveCommands.resetOdometryToTrench(true));
+        secondaryController.povRight().onTrue(driveCommands.resetOdometryToTrench(false));
 
+        // Vision path planning Drive team won't use it
+        // secondaryController.button(0).onTrue(Commands.runOnce(() ->
+        // CommandScheduler.getInstance()
+        // .schedule(driveCommands.pathfindToPoseThenAimAt(
+        // DriveSubsystem.getPose().nearest(FieldPositions.Zones.TOWER_SCORING_POINTS),
+        // FieldPositions.get(ElementType.HUB).toPose2d()))));
 
-        // secondaryController.button(1).onTrue(Commands.runOnce(() -> CommandScheduler.getInstance()
-        //                 .schedule(driveCommands.pathfindToPoseThenAimAt(
-        //                         DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
-        //                         FieldPositions.get(ElementType.HUB).toPose2d()))));
+        // secondaryController.button(1).onTrue(Commands.runOnce(() ->
+        // CommandScheduler.getInstance()
+        // .schedule(driveCommands.pathfindToPoseThenAimAt(
+        // DriveSubsystem.getPose().nearest(FieldPositions.Zones.TRENCH_SCORING_POINTS),
+        // FieldPositions.get(ElementType.HUB).toPose2d()))));
 
     }
-
 
     public Command buildAlignCommand(DriverRequest request) {
         return Commands

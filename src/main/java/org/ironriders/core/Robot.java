@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
 
             autonomousCommand.cancel();
         }
-    
+
         RobotContainer.init();
     }
 
@@ -106,7 +106,8 @@ public class Robot extends TimedRobot {
         PhotonCamera.setVersionCheckEnabled(false); // Silence camera not found warnings.
 
         // teleport to the center of the field on startup.
-        DriveSubsystem.getSwerveDrive().getMapleSimDrive().orElseThrow().setSimulationWorldPose(FieldPositions.Field.CENTER);
+        DriveSubsystem.getSwerveDrive().getMapleSimDrive().orElseThrow()
+                .setSimulationWorldPose(FieldPositions.Field.CENTER);
         DriveSubsystem.getSwerveDrive().resetOdometry(FieldPositions.Field.CENTER);
 
         DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);

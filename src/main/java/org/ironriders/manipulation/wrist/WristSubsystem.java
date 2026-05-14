@@ -15,7 +15,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -45,11 +44,13 @@ public class WristSubsystem extends IronSubsystem {
 
     private final WristCommands commands;
 
-    //private double jostlingIterator = 0;
+    // private double jostlingIterator = 0;
     private CANcoderConfiguration cANcoderConfiguration = new CANcoderConfiguration();
 
-    //private Double jostleMin = State.JOSTLE.position - WristConstants.JOSTLE_RANGE;
-    //private Double jostleMax = State.JOSTLE.position + WristConstants.JOSTLE_RANGE;
+    // private Double jostleMin = State.JOSTLE.position -
+    // WristConstants.JOSTLE_RANGE;
+    // private Double jostleMax = State.JOSTLE.position +
+    // WristConstants.JOSTLE_RANGE;
 
     public WristSubsystem() {
         commands = new WristCommands(this);
@@ -100,7 +101,8 @@ public class WristSubsystem extends IronSubsystem {
                 break;
         }
         double output = pid.calculate(getPositionRaw());
-                //+ armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()), getVelocityRadiansPerSecond());
+        // + armFeedforward.calculate(Units.rotationsToRadians(getPositionRaw()),
+        // getVelocityRadiansPerSecond());
         publish("Motor output", output);
         wristMotor.set(output);
     }
