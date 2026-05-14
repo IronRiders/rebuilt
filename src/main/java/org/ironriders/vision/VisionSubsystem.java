@@ -143,6 +143,7 @@ public class VisionSubsystem extends IronSubsystem {
             for (var estimate : estimates) {
                 poseEstimateConsumer.accept(
                         new VisionLogEntry(estimate.estimatedPose(), estimate.timestampSeconds(), estimate.devs()));
+                DogLog.log("PoseEstimate: ", estimate.estimatedPose().toString());
                 if (simulation) {
                     if (estimates.isEmpty()) {
                         visionSim.getDebugField().getObject("VisionEstimation").setPoses();
