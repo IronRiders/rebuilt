@@ -253,9 +253,8 @@ public class LauncherSubsystem extends IronSubsystem {
             return false;
         }
         return Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
-        &&Math.abs(flyWheelMotors.get(1).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
-        &&Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
-        ;
+                && Math.abs(flyWheelMotors.get(1).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE
+                && Math.abs(flyWheelMotors.get(0).getClosedLoopError().getValueAsDouble()) < FLYWHEEL_TOLERANCE;
     }
 
     /**
